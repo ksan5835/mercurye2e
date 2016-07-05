@@ -317,6 +317,11 @@ class ComposerStaticInit900bade2382f88957192608442e768a5
     );
 
     public static $classMap = array (
+        'CreateBizservicestaffTable' => __DIR__ . '/../..' . '/database/migrations/2016_06_29_094315_create_bizservicestaff_table.php',
+        'CreateBizstaffworkinghoursTable' => __DIR__ . '/../..' . '/database/migrations/2016_06_29_094315_create_bizstaffworkinghours_table.php',
+        'CreateBooksTable' => __DIR__ . '/../..' . '/database/migrations/2016_06_24_094314_create_books_table.php',
+        'CreateCustomerTable' => __DIR__ . '/../..' . '/database/migrations/2016_06_29_094315_create_customer_table.php',
+        'CreateCustomerproviderTable' => __DIR__ . '/../..' . '/database/migrations/2016_06_24_094314_create_customerprovider_table.php',
         'CreateOauthAccessTokenScopesTable' => __DIR__ . '/../..' . '/database/migrations/2014_04_24_111657_create_oauth_access_token_scopes_table.php',
         'CreateOauthAccessTokensTable' => __DIR__ . '/../..' . '/database/migrations/2014_04_24_111518_create_oauth_access_tokens_table.php',
         'CreateOauthAuthCodeScopesTable' => __DIR__ . '/../..' . '/database/migrations/2014_04_24_111403_create_oauth_auth_code_scopes_table.php',

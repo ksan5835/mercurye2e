@@ -11,6 +11,10 @@
 |
 */
 
+$app->post('oauth/access_token', function() {
+    return response()->json(Authorizer::issueAccessToken());
+});
+
 $app->get('/', function() use ($app) {
     return "Lumen RESTful API By CoderExample arun";
 });

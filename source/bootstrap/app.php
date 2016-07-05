@@ -23,9 +23,11 @@ $app = new Laravel\Lumen\Application(
     realpath(__DIR__.'/../')
 );
 
- $app->withFacades();
+class_alias('Illuminate\Support\Facades\Config', 'Config');
+class_alias(\LucaDegasperi\OAuth2Server\Facades\Authorizer::class, 'Authorizer');
 
- $app->withEloquent();
+$app->withFacades();
+$app->withEloquent();
 
 /*
 |--------------------------------------------------------------------------
@@ -58,7 +60,16 @@ $app->singleton(
 | route or middleware that'll be assigned to some specific routes.
 |
 */
-
+$app->middleware([
+    \LucaDegasperi\OAuth2Server\Middleware\OAuthExceptionHandlerMiddleware::class
+]);
+$app->routeMiddleware([
+    'check-authorization-params' => \LucaDegasperi\OAuth2Server\Middleware\CheckAuthCodeRequestMiddleware::class,
+    'csrf' => \Laravel\Lumen\Http\Middleware\VerifyCsrfToken::class,
+    'oauth' => \LucaDegasperi\OAuth2Server\Middleware\OAuthMiddleware::class,
+    'oauth-client' => \LucaDegasperi\OAuth2Server\Middleware\OAuthClientOwnerMiddleware::class,
+    'oauth-user' => \LucaDegasperi\OAuth2Server\Middleware\OAuthUserOwnerMiddleware::class,
+]);
 // $app->middleware([
 //    App\Http\Middleware\ExampleMiddleware::class
 // ]);
@@ -77,6 +88,9 @@ $app->singleton(
 | totally optional, so you are not required to uncomment this line.
 |
 */
+
+$app->register(\LucaDegasperi\OAuth2Server\Storage\FluentStorageServiceProvider::class);
+$app->register(\LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider::class);
 
 // $app->register(App\Providers\AppServiceProvider::class);
 // $app->register(App\Providers\AuthServiceProvider::class);
