@@ -19,6 +19,7 @@ $app->get('/', function() use ($app) {
     return "Lumen RESTful API By CoderExample arun";
 });
  
+//Customer API
 
 $app->get('api/v1/customer','CustomerController@index');
  
@@ -33,3 +34,13 @@ $app->post('api/v1/customer','CustomerController@createCustomer');
 $app->put('api/v1/customer/{id}','CustomerController@updateCustomer');
  
 $app->delete('api/v1/customer/{id}','CustomerController@deleteCustomer'); 
+
+//Branch API
+
+$app->get('api/v1/branch','BranchController@index');
+ 
+$app->get('api/v1/branch/{branch_id}','BranchController@getBranch');
+
+$app->get('api/v1/branch/email/{branch_email}','BranchController@getBranchEmail');
+ 
+$app->delete('api/v1/branch/{id}','BranchController@deleteBranch'); 
