@@ -320,6 +320,7 @@ class ComposerStaticInit900bade2382f88957192608442e768a5
         'CreateBizservicestaffTable' => __DIR__ . '/../..' . '/database/migrations/2016_06_29_094315_create_bizservicestaff_table.php',
         'CreateBizstaffworkinghoursTable' => __DIR__ . '/../..' . '/database/migrations/2016_06_29_094315_create_bizstaffworkinghours_table.php',
         'CreateBooksTable' => __DIR__ . '/../..' . '/database/migrations/2016_06_24_094314_create_books_table.php',
+        'CreateBranchworkingsTable' => __DIR__ . '/../..' . '/database/migrations/2016_06_29_094315_create_branchworkings_table.php',
         'CreateCustomerTable' => __DIR__ . '/../..' . '/database/migrations/2016_06_29_094315_create_customer_table.php',
         'CreateCustomerproviderTable' => __DIR__ . '/../..' . '/database/migrations/2016_06_24_094314_create_customerprovider_table.php',
         'CreateOauthAccessTokenScopesTable' => __DIR__ . '/../..' . '/database/migrations/2014_04_24_111657_create_oauth_access_token_scopes_table.php',
@@ -774,6 +775,7 @@ class ComposerStaticInit900bade2382f88957192608442e768a5
         'SebastianBergmann\\RecursionContext\\Exception' => __DIR__ . '/..' . '/sebastian/recursion-context/src/Exception.php',
         'SebastianBergmann\\RecursionContext\\InvalidArgumentException' => __DIR__ . '/..' . '/sebastian/recursion-context/src/InvalidArgumentException.php',
         'SebastianBergmann\\Version' => __DIR__ . '/..' . '/sebastian/version/src/Version.php',
+        'Test' => __DIR__ . '/../..' . '/database/migrations/2016_07_06_102958_test.php',
         'TestCase' => __DIR__ . '/../..' . '/tests/TestCase.php',
         'Text_Template' => __DIR__ . '/..' . '/phpunit/php-text-template/src/Template.php',
     );
