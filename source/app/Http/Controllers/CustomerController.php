@@ -65,34 +65,36 @@ class CustomerController extends Controller{
     } */
 	
 	//For one to one meating check
-	public function getCustomerEmailBooking($email, $bookdate){
+	public function getCustomerEmailBooking($email, $bookdate, $timeinterval, $timezone){
 		
 		$email_explode = explode(',',$email);
 		$bookdate_explode =  explode(',',$bookdate);
+		$timeinterval_explode =  explode(',',$timeinterval);
+		$timezone_explode =  explode(',',$timezone);
 		
 		$start_datetime = date_create($bookdate_explode[0]);
 		$start_date = date_format($start_datetime,"Y-m-d");		
-		$start_time = date_format($start_datetime,"H:i:s");
+		//$start_time = date_format($start_datetime,"H:i:s");
+		$start_time = $timeinterval_explode[0];
 		
-		$end_datetime = date_create($bookdate_explode[1]);
-		$end_date = date_format($end_datetime,"Y-m-d");		
-		$end_time = date_format($end_datetime,"H:i:s");
-		//echo date_default_timezone_get();
+		//$end_datetime = date_create($bookdate_explode[1]);
+		//$end_date = date_format($end_datetime,"Y-m-d");		
+		//$end_time = date_format($end_datetime,"H:i:s");
+		$end_time = $timeinterval_explode[1];
+		
+		$time_zone = $timezone_explode[0];
+		$time_zone_id = DB::table('timezone')->where('timezone_desc', $time_zone)->value('timezone_id');
 
-		$userExists1 = Customer::where('email', $email_explode[0])->count();
-		$userExists2 = Customer::where('email', $email_explode[1])->count();
-		
 		$user1_id = DB::table('customers')->where('email', $email_explode[0])->value('id');	
 		$user2_id = DB::table('customers')->where('email', $email_explode[1])->value('id');
-		
-
-												
+									
 		$slot_available = DB::table('customer_booking_confirmation')
 									 ->where('customer_id', '=', $user1_id)
 									 ->where('vendor_id', '=', $user2_id)
 									 ->where('booking_date', '=', $start_date)
 									 ->where('booking_start_time', '=', $start_time)
 									 ->where('booking_end_time', '=', $end_time)
+									 ->where('booking_timezone', '=', $time_zone_id)
 									 ->value('id');
 									 
 		if($slot_available){
@@ -101,7 +103,7 @@ class CustomerController extends Controller{
 		}else{
 			
 			DB::table('customer_booking_confirmation')->insert(
-					['customer_id' => $user1_id, 'vendor_id' => $user2_id, 'booking_date' => $start_date, 'booking_start_time' => $start_time, 'booking_end_time' => $end_time]
+					['customer_id' => $user1_id, 'vendor_id' => $user2_id, 'booking_date' => $start_date, 'booking_start_time' => $start_time, 'booking_end_time' => $end_time, 'booking_timezone' => $time_zone_id]
 						);
 						
 			return $this->createSuccessResponse("We have confirmed the booking.", 200);
