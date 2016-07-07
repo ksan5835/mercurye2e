@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use DB;
 
 use App\Models\Branch;
 use App\Http\Controllers\Controller;
@@ -65,6 +65,49 @@ class BranchController extends Controller{
         $Branch->save();
   
         return response()->json($Branch);
+    }
+	
+	
+	public function getBranchServiceList($branch_id){
+
+			$branchExists = Branch::where('id', $branch_id)->count();
+
+			if($branchExists) {
+				
+				$servicelist = DB::table('provider_biz_service')
+                     ->select(DB::raw('*'))
+                     ->where('biz_id', '=', $branch_id)
+                     ->get();
+				if($servicelist){
+					return response()->json($servicelist);
+				}else{
+					return response()->json("No services available for this branch ID.");
+				}
+				
+			}else{
+				return response()->json("No branch available for this ID.Please register as new branch");
+			}
+    }
+	
+	public function getBranchService($branch_id, $service_id){
+
+			$branchExists = Branch::where('id', $branch_id)->count();
+
+			if($branchExists) {
+				
+				$service = DB::table('provider_biz_service')
+                     ->select(DB::raw('*'))
+                     ->where('service_id', '=', $service_id)
+                     ->get();
+				if($service){
+					return response()->json($service);
+				}else{
+					return response()->json("No service available for this branch ID and service ID.");
+				}
+				
+			}else{
+				return response()->json("No branch available for this ID.Please register as new branch");
+			}
     }
 	
 }

@@ -29,7 +29,7 @@ $app->get('api/v1/customer/email/{email}','CustomerController@getCustomerEmail')
 
 $app->get('api/v1/customer/emailbook/{email}/{bookdate}/{timeinterval}/{timezone}','CustomerController@getCustomerEmailBooking');
 
-$app->get('api/v1/customer/booking','CustomerController@getConfirmedBooking');
+$app->get('api/v1/customer/booking/{status}','CustomerController@getConfirmedBooking');
 
 $app->post('api/v1/customer','CustomerController@createCustomer');
  
@@ -44,5 +44,10 @@ $app->get('api/v1/branch','BranchController@index');
 $app->get('api/v1/branch/{branch_id}','BranchController@getBranch');
 
 $app->get('api/v1/branch/email/{branch_email}','BranchController@getBranchEmail');
- 
+
+$app->get('api/v1/branch/{branch_id}/service','BranchController@getBranchServiceList');
+
+$app->get('api/v1/branch/{branch_id}/service/{service_id}','BranchController@getBranchService');
+
 $app->delete('api/v1/branch/{id}','BranchController@deleteBranch'); 
+

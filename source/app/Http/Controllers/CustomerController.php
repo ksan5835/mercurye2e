@@ -121,7 +121,7 @@ class CustomerController extends Controller{
 	
     }
 	
-	public function getConfirmedBooking(){
+	public function getConfirmedBooking($id){
 
 			$getConfirmedBooking = DB::table('customer_booking_confirmation')->distinct()->get();
 
