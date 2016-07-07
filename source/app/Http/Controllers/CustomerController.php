@@ -94,7 +94,7 @@ class CustomerController extends Controller{
 									 ->where('booking_date', '=', $start_date)
 									 ->where('booking_start_time', '=', $start_time)
 									 ->where('booking_end_time', '=', $end_time)
-									 ->where('booking_timezone', '=', $time_zone_id)
+									 ->where('booking_timezone_id', '=', $time_zone_id)
 									 ->value('id');
 									 
 		if($user1_id && $user2_id) {
