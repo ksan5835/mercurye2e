@@ -27,7 +27,7 @@ $app->get('api/v1/customer/{id}','CustomerController@getcustomer');
 
 $app->get('api/v1/customer/email/{email}','CustomerController@getCustomerEmail');
 
-$app->get('api/v1/customer/emailbook/{email}/{bookdate}','CustomerController@getCustomerEmailBooking');
+$app->get('api/v1/customer/emailbook/{email}/{bookdate}/{timeinterval}/{timezone}','CustomerController@getCustomerEmailBooking');
 
 $app->post('api/v1/customer','CustomerController@createCustomer');
  
