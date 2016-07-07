@@ -97,20 +97,39 @@ class CustomerController extends Controller{
 									 ->where('booking_timezone', '=', $time_zone_id)
 									 ->value('id');
 									 
-		if($slot_available){
+		if($user1_id && $user2_id) {
+				if($slot_available){
 			
-			return $this->createErrorResponse($email_explode[1]." and ".$email_explode[0]." already booked with the time slot ".$start_date." ".$start_time." - ".$end_time , 404);
+					return $this->createErrorResponse($email_explode[1]." and ".$email_explode[0]." already booked with the time slot ".$start_date." ".$start_time." - ".$end_time , 404);
+				}else{
+					
+					DB::table('customer_booking_confirmation')->insert(
+							['customer_id' => $user1_id, 'vendor_id' => $user2_id, 'booking_date' => $start_date, 'booking_start_time' => $start_time, 'booking_end_time' => $end_time, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $time_zone_id]
+								);
+								
+					return $this->createSuccessResponse("We have confirmed the booking.", 200);
+				}
 		}else{
-			
-			DB::table('customer_booking_confirmation')->insert(
-					['customer_id' => $user1_id, 'vendor_id' => $user2_id, 'booking_date' => $start_date, 'booking_start_time' => $start_time, 'booking_end_time' => $end_time, 'booking_timezone' => $time_zone_id]
-						);
-						
-			return $this->createSuccessResponse("We have confirmed the booking.", 200);
-		}
-
-			
+				if($user1_id){
+					return $this->createErrorResponse($email_explode[1]." is not available.Please register as new user", 404);
+				}else if($user2_id){
+					return $this->createErrorResponse($email_explode[0]." is not available.Please register as new user", 404);
+				}else{
+					return $this->createErrorResponse("Both the user is not available.Please register as new user",404);
+				}				
+		}	
 	
+    }
+	
+	public function getConfirmedBooking(){
+
+			$getConfirmedBooking = DB::table('customer_booking_confirmation')->distinct()->get();
+
+			if($getConfirmedBooking) {
+				return response()->json($getConfirmedBooking,200);
+			}else{
+				return response()->json("No confirmed booking for this list.",403);
+			}
     }
 	
 	public function createCustomer(Request $request){

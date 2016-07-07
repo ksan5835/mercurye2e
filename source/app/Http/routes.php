@@ -29,6 +29,8 @@ $app->get('api/v1/customer/email/{email}','CustomerController@getCustomerEmail')
 
 $app->get('api/v1/customer/emailbook/{email}/{bookdate}/{timeinterval}/{timezone}','CustomerController@getCustomerEmailBooking');
 
+$app->get('api/v1/customer/booking','CustomerController@getConfirmedBooking');
+
 $app->post('api/v1/customer','CustomerController@createCustomer');
  
 $app->put('api/v1/customer/{id}','CustomerController@updateCustomer');
