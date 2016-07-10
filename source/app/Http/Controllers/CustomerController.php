@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 use DB;
-
+use DateTimeZone;
+use DateTime;
 use App\Models\Customer;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -65,50 +66,89 @@ class CustomerController extends Controller{
     } */
 	
 	//For one to one meating check
-	public function getCustomerEmailBooking($email, $bookdate, $timeinterval, $timezone){
+	public function getCustomerEmailBooking($email, $bookdate, $timeinterval, $timezone_id){
 		
 		$email_explode = explode(',',$email);
 		$bookdate_explode =  explode(',',$bookdate);
 		$timeinterval_explode =  explode(',',$timeinterval);
-		$timezone_explode =  explode(',',$timezone);
-		
+				
 		$start_datetime = date_create($bookdate_explode[0]);
 		$start_date = date_format($start_datetime,"Y-m-d");		
-		//$start_time = date_format($start_datetime,"H:i:s");
-		$start_time = $timeinterval_explode[0];
 		
-		//$end_datetime = date_create($bookdate_explode[1]);
-		//$end_date = date_format($end_datetime,"Y-m-d");		
-		//$end_time = date_format($end_datetime,"H:i:s");
+		$start_time = $timeinterval_explode[0];		
 		$end_time = $timeinterval_explode[1];
-		
-		$time_zone = $timezone_explode[0];
-		$time_zone_id = DB::table('timezone')->where('timezone_desc', $time_zone)->value('timezone_id');
 
-		$user1_id = DB::table('customers')->where('email', $email_explode[0])->value('id');	
-		$user2_id = DB::table('customers')->where('email', $email_explode[1])->value('id');
-									
+		$user1_id = DB::table('provider')->where('email', $email_explode[0])->value('user_id');	
+		$user2_id = DB::table('customer')->where('email', $email_explode[1])->value('user_id');
+		
+		$get_customer_timezone_vlaue = DB::table('timezone')->where('timezone_id', $timezone_id)->value('gmt');
+		$get_provider_timezone = DB::table('timezone')
+								->leftJoin('provider_biz_detail', 'timezone.timezone_id', '=', 'provider_biz_detail.timezone_id')
+								->select('timezone.gmt')
+								->where('provider_biz_detail.provider_id', '=', $user1_id)
+								->whereNOTNull('provider_biz_detail.provider_id')
+								->value('timezone.gmt');
+		$get_provider_timezone_id = DB::table('timezone')->where('gmt', $get_provider_timezone)->value('timezone_id');
+							
+		$userTimezone = new DateTimeZone($get_customer_timezone_vlaue);
+		$vendorTimezone = new DateTimeZone($get_provider_timezone);
+		$vendorStartTime = new DateTime($start_date.' '.$start_time, $vendorTimezone);
+		$offset = $userTimezone->getOffset($vendorStartTime);
+		$vendor_starttime_slot = date('Y-m-d H:i', $vendorStartTime->format('U') + $offset);
+		
+		$vendorEndTime = new DateTime($start_date.' '.$end_time, $vendorTimezone);
+		$offset = $userTimezone->getOffset($vendorEndTime);
+		$vendor_endtime_slot = date('Y-m-d H:i', $vendorEndTime->format('U') + $offset);
+		
+		$check_vendor_slot_available = DB::table('biz_staff_workinghours')
+									 ->where('staff_id', '=', $user1_id)
+									 ->where('start_time', '<=', DB::getPdo()->quote($vendor_starttime_slot))
+									 ->where('end_time', '>=', DB::getPdo()->quote($vendor_endtime_slot))
+									 ->value('workinghours_id');  
+									 
+									 
+		//$check_vendor_slot_available = 1;
+
+		$vendor_book_date = date_create($vendor_starttime_slot);
+		$vendor_aval_date = date_format($vendor_book_date,"Y-m-d");
+
+		$vendor_start_time = date_create($vendor_starttime_slot);
+		$vendor_aval_start_time = date_format($vendor_start_time,"H:i");
+
+		$vendor_end_time = date_create($vendor_endtime_slot);
+		$vendor_aval__end_time = date_format($vendor_end_time,"H:i");	
+
+//die;		
+							
 		$slot_available = DB::table('customer_booking_confirmation')
 									 ->where('customer_id', '=', $user1_id)
 									 ->where('vendor_id', '=', $user2_id)
-									 ->where('booking_date', '=', $start_date)
-									 ->where('booking_start_time', '=', $start_time)
-									 ->where('booking_end_time', '=', $end_time)
-									 ->where('booking_timezone_id', '=', $time_zone_id)
+									 ->where('booking_date', '=', $vendor_aval_date)
+									 ->where('booking_start_time', '=', $vendor_aval_start_time)
+									 ->where('booking_end_time', '=', $vendor_aval__end_time)
+									 ->where('booking_timezone_id', '=', $get_provider_timezone_id)
 									 ->value('id');
 									 
+			
+									 
 		if($user1_id && $user2_id) {
+			
+			if($check_vendor_slot_available){
+				
 				if($slot_available){
 			
 					return $this->createErrorResponse($email_explode[1]." and ".$email_explode[0]." already booked with the time slot ".$start_date." ".$start_time." - ".$end_time , 404);
 				}else{
 					
 					DB::table('customer_booking_confirmation')->insert(
-							['customer_id' => $user1_id, 'vendor_id' => $user2_id, 'booking_date' => $start_date, 'booking_start_time' => $start_time, 'booking_end_time' => $end_time, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $time_zone_id]
+							['customer_id' => $user1_id, 'vendor_id' => $user2_id, 'booking_date' => $vendor_aval_date, 'booking_start_time' => $vendor_aval_start_time, 'booking_end_time' => $vendor_aval__end_time, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id]
 								);
 								
 					return $this->createSuccessResponse("We have confirmed the booking.", 200);
 				}
+			}else{
+				return $this->createErrorResponse($email_explode[1]." is not available for your time slot.Please check another time slot.", 404);
+			}
 		}else{
 				if($user1_id){
 					return $this->createErrorResponse($email_explode[1]." is not available.Please register as new user", 404);
