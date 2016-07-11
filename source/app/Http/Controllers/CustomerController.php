@@ -95,25 +95,26 @@ class CustomerController extends Controller{
 		$vendorTimezone = new DateTimeZone($get_provider_timezone);
 		$vendorStartTime = new DateTime($start_date.' '.$start_time, $vendorTimezone);
 		$offset = $userTimezone->getOffset($vendorStartTime);
-		$vendor_starttime_slot = date('Y-m-d H:i', $vendorStartTime->format('U') + $offset);
+		$vendor_starttime_slot = date('Y-m-d H:i:s', $vendorStartTime->format('U') + $offset);
 		
 		$vendorEndTime = new DateTime($start_date.' '.$end_time, $vendorTimezone);
 		$offset = $userTimezone->getOffset($vendorEndTime);
-		$vendor_endtime_slot = date('Y-m-d H:i', $vendorEndTime->format('U') + $offset);
+		$vendor_endtime_slot = date('Y-m-d H:i:s', $vendorEndTime->format('U') + $offset);
 		
 		$check_vendor_slot_available = DB::table('biz_staff_workinghours')
 									 ->where('staff_id', '=', $user1_id)
-									 ->where('start_time', '<=', DB::getPdo()->quote($vendor_starttime_slot))
-									 ->where('end_time', '>=', DB::getPdo()->quote($vendor_endtime_slot))
+									 ->whereDate('start_time', '<=', date('Y-m-d H:i:s', $vendorStartTime->format('U') + $offset))
+									 ->whereDate('end_time', '>=', date('Y-m-d H:i:s', $vendorEndTime->format('U') + $offset))
 									 ->value('workinghours_id');  
 									 
-		$queries    = DB::getQueryLog();
-		$last_query = end($queries);
+		//$queries    = DB::getQueryLog();
+		//$last_query = end($queries);
 
-		echo 'Query<pre>';
-			print_r($last_query);
-		exit;
-		die;
+		//echo 'Query<pre>';
+			//print_r($last_query);
+		//exit;
+		//print_r($check_vendor_slot_available);
+		//die;
 		//$check_vendor_slot_available = 1;
 
 		$vendor_book_date = date_create($vendor_starttime_slot);
