@@ -81,6 +81,7 @@ class CustomerController extends Controller{
 
 		$user1_id = DB::table('provider')->where('email', $email_explode[0])->value('user_id');	
 		$user2_id = DB::table('customer')->where('email', $email_explode[1])->value('user_id');
+		if(!$user2_id){$user2_id = 0;}
 		
 		$get_customer_timezone_vlaue = DB::table('timezone')->where('timezone_id', $timezone_id)->value('gmt');
 		$get_provider_timezone = DB::table('timezone')
@@ -113,7 +114,7 @@ class CustomerController extends Controller{
 		//echo 'Query<pre>';
 			//print_r($last_query);
 		//exit;
-		//print_r($check_vendor_slot_available);
+		//print_r($get_provider_timezone_id);
 		//die;
 		//$check_vendor_slot_available = 1;
 
@@ -129,8 +130,8 @@ class CustomerController extends Controller{
 //die;		
 							
 		$slot_available = DB::table('customer_booking_confirmation')
-									 ->where('customer_id', '=', $user1_id)
-									 ->where('vendor_id', '=', $user2_id)
+									 ->where('customer_id', '=', $user2_id)
+									 ->where('vendor_id', '=', $user1_id)
 									 ->where('booking_date', '=', $vendor_aval_date)
 									 ->where('booking_start_time', '=', $vendor_aval_start_time)
 									 ->where('booking_end_time', '=', $vendor_aval__end_time)
@@ -139,32 +140,31 @@ class CustomerController extends Controller{
 									 
 			
 									 
-		if($user1_id && $user2_id) {
+		if($user1_id) {
 			
-			if($check_vendor_slot_available){
+			if($get_provider_timezone_id){
+			
+				if($check_vendor_slot_available){
+			
+					if($slot_available){
+		
+						return $this->createErrorResponse($email_explode[1]." and ".$email_explode[0]." already booked with the time slot ".$start_date." ".$start_time." - ".$end_time , 404);
+					}else{
 				
-				if($slot_available){
-			
-					return $this->createErrorResponse($email_explode[1]." and ".$email_explode[0]." already booked with the time slot ".$start_date." ".$start_time." - ".$end_time , 404);
+						DB::table('customer_booking_confirmation')->insert(
+						['customer_id' => $user2_id, 'vendor_id' => $user1_id, 'booking_date' => $vendor_aval_date, 'booking_start_time' => $vendor_aval_start_time, 'booking_end_time' => $vendor_aval__end_time, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id]);
+							
+						return $this->createSuccessResponse("We have confirmed the booking.", 200);
+					}
 				}else{
-					
-					DB::table('customer_booking_confirmation')->insert(
-							['customer_id' => $user1_id, 'vendor_id' => $user2_id, 'booking_date' => $vendor_aval_date, 'booking_start_time' => $vendor_aval_start_time, 'booking_end_time' => $vendor_aval__end_time, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id]
-								);
-								
-					return $this->createSuccessResponse("We have confirmed the booking.", 200);
-				}
+					return $this->createErrorResponse($email_explode[1]." is not available for your time slot.Please check another time slot.", 404);
+					}
 			}else{
-				return $this->createErrorResponse($email_explode[1]." is not available for your time slot.Please check another time slot.", 404);
-			}
+				return $this->createErrorResponse($email_explode[1]." user time zone not available.", 404);
+				}
 		}else{
-				if($user1_id){
-					return $this->createErrorResponse($email_explode[1]." is not available.Please register as new user", 404);
-				}else if($user2_id){
-					return $this->createErrorResponse($email_explode[0]." is not available.Please register as new user", 404);
-				}else{
-					return $this->createErrorResponse("Both the user is not available.Please register as new user",404);
-				}				
+				
+					return $this->createErrorResponse($email_explode[1]." is not available.Please register as new user", 404);			
 		}	
 	
     }
