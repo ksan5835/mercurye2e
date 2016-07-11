@@ -68,6 +68,7 @@ class CustomerController extends Controller{
 	//For one to one meating check
 	public function getCustomerEmailBooking($email, $bookdate, $timeinterval, $timezone_id){
 		
+		DB::connection()->enableQueryLog();
 		$email_explode = explode(',',$email);
 		$bookdate_explode =  explode(',',$bookdate);
 		$timeinterval_explode =  explode(',',$timeinterval);
@@ -89,7 +90,7 @@ class CustomerController extends Controller{
 								->whereNOTNull('provider_biz_detail.provider_id')
 								->value('timezone.gmt');
 		$get_provider_timezone_id = DB::table('timezone')->where('gmt', $get_provider_timezone)->value('timezone_id');
-							
+		
 		$userTimezone = new DateTimeZone($get_customer_timezone_vlaue);
 		$vendorTimezone = new DateTimeZone($get_provider_timezone);
 		$vendorStartTime = new DateTime($start_date.' '.$start_time, $vendorTimezone);
@@ -106,7 +107,13 @@ class CustomerController extends Controller{
 									 ->where('end_time', '>=', DB::getPdo()->quote($vendor_endtime_slot))
 									 ->value('workinghours_id');  
 									 
-									 
+		$queries    = DB::getQueryLog();
+		$last_query = end($queries);
+
+		echo 'Query<pre>';
+			print_r($last_query);
+		exit;
+		die;
 		//$check_vendor_slot_available = 1;
 
 		$vendor_book_date = date_create($vendor_starttime_slot);
