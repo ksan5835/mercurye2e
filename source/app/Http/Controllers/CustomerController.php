@@ -131,7 +131,7 @@ class CustomerController extends Controller{
 		//die;		
 									
 				$slot_available = DB::table('customer_booking_confirmation')
-											 ->where('customer_id', '=', $user2_id)
+											 //->where('customer_id', '=', $user2_id)
 											 ->where('vendor_id', '=', $user1_id)
 											 ->where('booking_date', '=', $vendor_aval_date)
 											 ->where('booking_start_time', '=', $vendor_aval_start_time)
