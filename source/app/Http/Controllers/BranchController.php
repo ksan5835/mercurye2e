@@ -71,7 +71,7 @@ class BranchController extends Controller{
 	
 	public function getBranchServiceList($branch_id){
 
-			$branchExists = Branch::where('id', $branch_id)->count();
+			$branchExists = Branch::where('branch_id', $branch_id)->count();
 
 			if($branchExists) {
 				
@@ -92,7 +92,7 @@ class BranchController extends Controller{
 	
 	public function getBranchService($branch_id, $service_id){
 
-			$branchExists = Branch::where('id', $branch_id)->count();
+			$branchExists = Branch::where('branch_id', $branch_id)->count();
 
 			if($branchExists) {
 				
