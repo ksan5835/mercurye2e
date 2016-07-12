@@ -121,7 +121,7 @@ class BranchController extends Controller{
 			//Getting the available date
 			$start_datetime = date_create($bookdate);
 			$start_date = date_format($start_datetime,"Y-m-d");	
-echo env('APP_TIMEZONE') . "\n";
+
 			$check_vendor_slot_available = DB::table('biz_staff_workinghours')
 										 ->select(DB::raw('*'))
 										 ->where('staff_id', '=', $user1_id)
