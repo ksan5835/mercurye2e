@@ -53,6 +53,6 @@ $app->delete('api/v1/branch/{id}','BranchController@deleteBranch');
 
 // Staff API
 
-$app->get('api/v1/staff/slot/{staff_email}/{availdate}/{timezone_id}','BranchController@getStaffSlotEmail');
+$app->get('api/v1/staff/slot/{staff_email}/{availdate}','BranchController@getStaffSlotEmail');
 
 //$app->get('api/v1/staff/slot/{staff_id}/{availdate}/{timezone_id}','BranchController@getStaffSlotByID');
