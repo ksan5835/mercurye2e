@@ -102,19 +102,17 @@ class CustomerController extends Controller{
 		$offset = $userTimezone->getOffset($vendorEndTime);
 		$vendor_endtime_slot = date('Y-m-d H:i:s', $vendorEndTime->format('U') + $offset);
 		
-		$check_vendor_slot_available = DB::table('biz_staff_workinghours')
-									 ->where('staff_id', '=', $user1_id)
-									 ->whereDate('start_time', '<=', date('Y-m-d H:i:s', $vendorStartTime->format('U') + $offset))
-									 ->whereDate('end_time', '>=', date('Y-m-d H:i:s', $vendorEndTime->format('U') + $offset))
-									 ->value('workinghours_id');  
 									 
+		$check_vendor_slot_available = DB::select( DB::raw("SELECT workinghours_id FROM biz_staff_workinghours WHERE staff_id = '$user1_id' and date(start_time) <= date('$vendor_starttime_slot') and date(end_time) >= date('$vendor_endtime_slot')") );
+		$check_vendor_slot_available_id = $check_vendor_slot_available[0]->workinghours_id;
+		
 		//$queries    = DB::getQueryLog();
 		//$last_query = end($queries);
 
 		//echo 'Query<pre>';
 			//print_r($last_query);
 		//exit;
-		//print_r($get_provider_timezone_id);
+		//print_r($results[0]->workinghours_id);
 		//die;
 		//$check_vendor_slot_available = 1;
 
@@ -144,7 +142,7 @@ class CustomerController extends Controller{
 			
 			if($get_provider_timezone_id){
 			
-				if($check_vendor_slot_available){
+				if($check_vendor_slot_available_id){
 			
 					if($slot_available){
 		
@@ -157,14 +155,14 @@ class CustomerController extends Controller{
 						return $this->createSuccessResponse("We have confirmed the booking.", 200);
 					}
 				}else{
-					return $this->createErrorResponse($email_explode[1]." is not available for your time slot.Please check another time slot.", 404);
+					return $this->createErrorResponse($email_explode[0]." is not available for your time slot.Please check another time slot.", 404);
 					}
 			}else{
-				return $this->createErrorResponse($email_explode[1]." user time zone not available.", 404);
+				return $this->createErrorResponse($email_explode[0]." user time zone not available.", 404);
 				}
 		}else{
 				
-					return $this->createErrorResponse($email_explode[1]." is not available.Please register as new user", 404);			
+					return $this->createErrorResponse($email_explode[0]." is not available.Please register as new user", 404);			
 		}	
 	
     }
