@@ -83,63 +83,61 @@ class CustomerController extends Controller{
 		$user2_id = DB::table('customer')->where('email', $email_explode[1])->value('user_id');
 		if(!$user2_id){$user2_id = 0;}
 		
-		$get_customer_timezone_vlaue = DB::table('timezone')->where('timezone_id', $timezone_id)->value('gmt');
-		$get_provider_timezone = DB::table('timezone')
-								->leftJoin('provider_biz_detail', 'timezone.timezone_id', '=', 'provider_biz_detail.timezone_id')
-								->select('timezone.gmt')
-								->where('provider_biz_detail.provider_id', '=', $user1_id)
-								->whereNOTNull('provider_biz_detail.provider_id')
-								->value('timezone.gmt');
-		$get_provider_timezone_id = DB::table('timezone')->where('gmt', $get_provider_timezone)->value('timezone_id');
-		
-		$userTimezone = new DateTimeZone($get_customer_timezone_vlaue);
-		$vendorTimezone = new DateTimeZone($get_provider_timezone);
-		$vendorStartTime = new DateTime($start_date.' '.$start_time, $vendorTimezone);
-		$offset = $userTimezone->getOffset($vendorStartTime);
-		$vendor_starttime_slot = date('Y-m-d H:i:s', $vendorStartTime->format('U') + $offset);
-		
-		$vendorEndTime = new DateTime($start_date.' '.$end_time, $vendorTimezone);
-		$offset = $userTimezone->getOffset($vendorEndTime);
-		$vendor_endtime_slot = date('Y-m-d H:i:s', $vendorEndTime->format('U') + $offset);
-		
-									 
-		$check_vendor_slot_available = DB::select( DB::raw("SELECT workinghours_id FROM biz_staff_workinghours WHERE staff_id = '$user1_id' and date(start_time) <= date('$vendor_starttime_slot') and date(end_time) >= date('$vendor_endtime_slot')") );
-		if($check_vendor_slot_available){$check_vendor_slot_available_id = $check_vendor_slot_available[0]->workinghours_id;;}
-		else{$check_vendor_slot_available_id = '';}
-		
-		//$queries    = DB::getQueryLog();
-		//$last_query = end($queries);
-
-		//echo 'Query<pre>';
-			//print_r($last_query);
-		//exit;
-		//print_r($results[0]->workinghours_id);
-		//die;
-		//$check_vendor_slot_available = 1;
-
-		$vendor_book_date = date_create($vendor_starttime_slot);
-		$vendor_aval_date = date_format($vendor_book_date,"Y-m-d");
-
-		$vendor_start_time = date_create($vendor_starttime_slot);
-		$vendor_aval_start_time = date_format($vendor_start_time,"H:i");
-
-		$vendor_end_time = date_create($vendor_endtime_slot);
-		$vendor_aval__end_time = date_format($vendor_end_time,"H:i");	
-
-//die;		
-							
-		$slot_available = DB::table('customer_booking_confirmation')
-									 ->where('customer_id', '=', $user2_id)
-									 ->where('vendor_id', '=', $user1_id)
-									 ->where('booking_date', '=', $vendor_aval_date)
-									 ->where('booking_start_time', '=', $vendor_aval_start_time)
-									 ->where('booking_end_time', '=', $vendor_aval__end_time)
-									 ->where('booking_timezone_id', '=', $get_provider_timezone_id)
-									 ->value('id');
-									 
-			
-									 
 		if($user1_id) {
+		
+				$get_customer_timezone_vlaue = DB::table('timezone')->where('timezone_id', $timezone_id)->value('gmt');
+				$get_provider_timezone = DB::table('timezone')
+										->leftJoin('provider_biz_detail', 'timezone.timezone_id', '=', 'provider_biz_detail.timezone_id')
+										->select('timezone.gmt')
+										->where('provider_biz_detail.provider_id', '=', $user1_id)
+										->whereNOTNull('provider_biz_detail.provider_id')
+										->value('timezone.gmt');
+				$get_provider_timezone_id = DB::table('timezone')->where('gmt', $get_provider_timezone)->value('timezone_id');
+				
+				$userTimezone = new DateTimeZone($get_customer_timezone_vlaue);
+				$vendorTimezone = new DateTimeZone($get_provider_timezone);
+				$vendorStartTime = new DateTime($start_date.' '.$start_time, $vendorTimezone);
+				$offset = $userTimezone->getOffset($vendorStartTime);
+				$vendor_starttime_slot = date('Y-m-d H:i:s', $vendorStartTime->format('U') + $offset);
+				
+				$vendorEndTime = new DateTime($start_date.' '.$end_time, $vendorTimezone);
+				$offset = $userTimezone->getOffset($vendorEndTime);
+				$vendor_endtime_slot = date('Y-m-d H:i:s', $vendorEndTime->format('U') + $offset);
+				
+											 
+				$check_vendor_slot_available = DB::select( DB::raw("SELECT workinghours_id FROM biz_staff_workinghours WHERE staff_id = '$user1_id' and date(start_time) <= date('$vendor_starttime_slot') and date(end_time) >= date('$vendor_endtime_slot')") );
+				if($check_vendor_slot_available){$check_vendor_slot_available_id = $check_vendor_slot_available[0]->workinghours_id;;}
+				else{$check_vendor_slot_available_id = '';}
+				
+				//$queries    = DB::getQueryLog();
+				//$last_query = end($queries);
+
+				//echo 'Query<pre>';
+					//print_r($last_query);
+				//exit;
+				//print_r($results[0]->workinghours_id);
+				//die;
+				//$check_vendor_slot_available = 1;
+
+				$vendor_book_date = date_create($vendor_starttime_slot);
+				$vendor_aval_date = date_format($vendor_book_date,"Y-m-d");
+
+				$vendor_start_time = date_create($vendor_starttime_slot);
+				$vendor_aval_start_time = date_format($vendor_start_time,"H:i");
+
+				$vendor_end_time = date_create($vendor_endtime_slot);
+				$vendor_aval__end_time = date_format($vendor_end_time,"H:i");	
+
+		//die;		
+									
+				$slot_available = DB::table('customer_booking_confirmation')
+											 ->where('customer_id', '=', $user2_id)
+											 ->where('vendor_id', '=', $user1_id)
+											 ->where('booking_date', '=', $vendor_aval_date)
+											 ->where('booking_start_time', '=', $vendor_aval_start_time)
+											 ->where('booking_end_time', '=', $vendor_aval__end_time)
+											 ->where('booking_timezone_id', '=', $get_provider_timezone_id)
+											 ->value('id');
 			
 			if($get_provider_timezone_id){
 			
