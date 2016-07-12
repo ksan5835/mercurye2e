@@ -104,7 +104,8 @@ class CustomerController extends Controller{
 		
 									 
 		$check_vendor_slot_available = DB::select( DB::raw("SELECT workinghours_id FROM biz_staff_workinghours WHERE staff_id = '$user1_id' and date(start_time) <= date('$vendor_starttime_slot') and date(end_time) >= date('$vendor_endtime_slot')") );
-		$check_vendor_slot_available_id = $check_vendor_slot_available[0]->workinghours_id;
+		if($check_vendor_slot_available){$check_vendor_slot_available_id = $check_vendor_slot_available[0]->workinghours_id;;}
+		else{$check_vendor_slot_available_id = '';}
 		
 		//$queries    = DB::getQueryLog();
 		//$last_query = end($queries);
@@ -151,8 +152,17 @@ class CustomerController extends Controller{
 				
 						DB::table('customer_booking_confirmation')->insert(
 						['customer_id' => $user2_id, 'vendor_id' => $user1_id, 'booking_date' => $vendor_aval_date, 'booking_start_time' => $vendor_aval_start_time, 'booking_end_time' => $vendor_aval__end_time, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id]);
-							
-						return $this->createSuccessResponse("We have confirmed the booking.", 200);
+						
+						$get_confirmation_details = DB::table('customer_booking_confirmation')
+														 ->where('customer_id', '=', $user2_id)
+														 ->where('vendor_id', '=', $user1_id)
+														 ->where('booking_date', '=', $vendor_aval_date)
+														 ->where('booking_start_time', '=', $vendor_aval_start_time)
+														 ->where('booking_end_time', '=', $vendor_aval__end_time)
+														 ->where('booking_timezone_id', '=', $get_provider_timezone_id)
+														 ->get();						
+						return response()->json($get_confirmation_details);
+						
 					}
 				}else{
 					return $this->createErrorResponse($email_explode[0]." is not available for your time slot.Please check another time slot.", 404);
