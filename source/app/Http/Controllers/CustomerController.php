@@ -12,6 +12,20 @@ use Illuminate\Http\Request;
 class CustomerController extends Controller{
   
   
+   /**
+     * @SWG\Get(
+     *     path="/v1/customer",
+     *     tags={"customer"},
+     *     operationId="index",
+     *     summary="get all customer list",
+     *     description="",
+     *     consumes={"application/json", "application/xml"},
+     *     produces={"application/xml", "application/json"},
+
+     * )
+     */
+  
+  
     public function index(){
   
         $Customer  = Customer::all();
@@ -19,6 +33,47 @@ class CustomerController extends Controller{
         return response()->json($Customer);
   
     }
+  
+
+   /**
+     * @SWG\Get(
+     *     path="/v1/customer/{id}",
+     *     tags={"customer"},
+     *     operationId="getCustomer",
+     *     summary="get customer by id",
+     *     description="",
+     *     consumes={"application/json", "application/xml"},
+     *     produces={"application/xml", "application/json"},
+	 	   @SWG\Parameter(
+     *         description="ID of pet to return",
+     *         in="path",
+     *         name="id",
+     *         required=true,
+     *         type="integer",
+     *         format="int64"
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @SWG\Schema(ref="#/definitions/Pet")
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Invalid ID supplied"
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Pet not found"
+     *     ),
+     *     security={
+     *       {"api_key": {}},
+     *       {"petstore_auth": {"write:pets", "read:pets"}}
+     *     }
+	 
+
+     * )
+     */
+ 
   
     public function getCustomer($id){
   
@@ -30,6 +85,9 @@ class CustomerController extends Controller{
 		
 		return $this->createErrorResponse('The given id is not available. Need to register as new user.', 404);
     }
+	
+	
+	
 	
 	public function getCustomerEmail($email){
 

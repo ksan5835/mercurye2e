@@ -1,0 +1,36 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Sample API",
+        "contact": {
+            "name": "Marco Raddatz",
+            "url": "https://www.marcoraddatz.com"
+        },
+        "version": "1.0"
+    },
+    "host": "laravel.localhost",
+    "basePath": "",
+    "schemes": [
+        "http"
+    ],
+    "paths": {},
+    "definitions": {
+        "Error": {
+            "required": [
+                "code",
+                "message"
+            ],
+            "properties": {
+                "code": {
+                    "description": "Class ApiController",
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "message": {
+                    "description": "Class ApiController",
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

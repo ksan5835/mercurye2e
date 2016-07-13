@@ -296,6 +296,7 @@ EOF;
      */
     public function testDumpObjectAsMap($object, $expected)
     {
+
         $yaml = $this->dumper->dump($object, 0, 0, Yaml::DUMP_OBJECT_AS_MAP);
 
         $this->assertEquals($expected, Yaml::parse($yaml, Yaml::PARSE_OBJECT_FOR_MAP));

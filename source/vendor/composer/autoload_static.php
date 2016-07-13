@@ -13,6 +13,7 @@ class ComposerStaticInit900bade2382f88957192608442e768a5
         'bd9634f2d41831496de0d3dfe4c94881' => __DIR__ . '/..' . '/symfony/polyfill-php56/bootstrap.php',
         '253c157292f75eb38082b5acb06f3f01' => __DIR__ . '/..' . '/nikic/fast-route/src/functions.php',
         'bee9632da3ca00a99623b9c35d0c4f8b' => __DIR__ . '/..' . '/laravel/lumen-framework/src/helpers.php',
+        '0ccdf99b8f62f02c52cba55802e0c2e7' => __DIR__ . '/..' . '/zircote/swagger-php/src/functions.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -38,6 +39,8 @@ class ComposerStaticInit900bade2382f88957192608442e768a5
             'Symfony\\Component\\EventDispatcher\\' => 34,
             'Symfony\\Component\\Debug\\' => 24,
             'Symfony\\Component\\Console\\' => 26,
+            'Swagger\\' => 8,
+            'SwaggerLume\\' => 12,
         ),
         'M' => 
         array (
@@ -153,6 +156,14 @@ class ComposerStaticInit900bade2382f88957192608442e768a5
         'Symfony\\Component\\Console\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/console',
+        ),
+        'Swagger\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/zircote/swagger-php/src',
+        ),
+        'SwaggerLume\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/darkaonline/swagger-lume/src',
         ),
         'Monolog\\' => 
         array (
@@ -302,9 +313,17 @@ class ComposerStaticInit900bade2382f88957192608442e768a5
         ),
         'D' => 
         array (
+            'Doctrine\\Common\\Lexer\\' => 
+            array (
+                0 => __DIR__ . '/..' . '/doctrine/lexer/lib',
+            ),
             'Doctrine\\Common\\Inflector\\' => 
             array (
                 0 => __DIR__ . '/..' . '/doctrine/inflector/lib',
+            ),
+            'Doctrine\\Common\\Annotations\\' => 
+            array (
+                0 => __DIR__ . '/..' . '/doctrine/annotations/lib',
             ),
         ),
         'C' => 
@@ -320,6 +339,7 @@ class ComposerStaticInit900bade2382f88957192608442e768a5
         'CreateBizservicestaffTable' => __DIR__ . '/../..' . '/database/migrations/2016_06_29_094315_create_bizservicestaff_table.php',
         'CreateBizstaffworkinghoursTable' => __DIR__ . '/../..' . '/database/migrations/2016_06_29_094315_create_bizstaffworkinghours_table.php',
         'CreateBooksTable' => __DIR__ . '/../..' . '/database/migrations/2016_06_24_094314_create_books_table.php',
+        'CreateBranchsTable' => __DIR__ . '/../..' . '/database/migrations/2016_06_29_094315_create_providerbizbranch_table.php',
         'CreateBranchworkingsTable' => __DIR__ . '/../..' . '/database/migrations/2016_06_29_094315_create_branchworkings_table.php',
         'CreateCustomerTable' => __DIR__ . '/../..' . '/database/migrations/2016_06_29_094315_create_customer_table.php',
         'CreateCustomerproviderTable' => __DIR__ . '/../..' . '/database/migrations/2016_06_24_094314_create_customerprovider_table.php',
@@ -775,7 +795,6 @@ class ComposerStaticInit900bade2382f88957192608442e768a5
         'SebastianBergmann\\RecursionContext\\Exception' => __DIR__ . '/..' . '/sebastian/recursion-context/src/Exception.php',
         'SebastianBergmann\\RecursionContext\\InvalidArgumentException' => __DIR__ . '/..' . '/sebastian/recursion-context/src/InvalidArgumentException.php',
         'SebastianBergmann\\Version' => __DIR__ . '/..' . '/sebastian/version/src/Version.php',
-        'Test' => __DIR__ . '/../..' . '/database/migrations/2016_07_06_102958_test.php',
         'TestCase' => __DIR__ . '/../..' . '/tests/TestCase.php',
         'Text_Template' => __DIR__ . '/..' . '/phpunit/php-text-template/src/Template.php',
     );

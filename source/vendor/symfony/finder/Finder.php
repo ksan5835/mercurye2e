@@ -557,7 +557,7 @@ class Finder implements \IteratorAggregate, \Countable
      *
      * This method implements the IteratorAggregate interface.
      *
-     * @return \Iterator|SplFileInfo[] An iterator
+     * @return \Iterator An iterator
      *
      * @throws \LogicException if the in() method has not been called
      */

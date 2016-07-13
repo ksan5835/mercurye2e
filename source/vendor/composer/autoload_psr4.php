@@ -20,6 +20,8 @@ return array(
     'Symfony\\Component\\EventDispatcher\\' => array($vendorDir . '/symfony/event-dispatcher'),
     'Symfony\\Component\\Debug\\' => array($vendorDir . '/symfony/debug'),
     'Symfony\\Component\\Console\\' => array($vendorDir . '/symfony/console'),
+    'Swagger\\' => array($vendorDir . '/zircote/swagger-php/src'),
+    'SwaggerLume\\' => array($vendorDir . '/darkaonline/swagger-lume/src'),
     'Monolog\\' => array($vendorDir . '/monolog/monolog/src/Monolog'),
     'LucaDegasperi\\OAuth2Server\\' => array($vendorDir . '/lucadegasperi/oauth2-server-laravel/src'),
     'League\\OAuth2\\Server\\' => array($vendorDir . '/league/oauth2-server/src'),

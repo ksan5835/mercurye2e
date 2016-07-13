@@ -12,6 +12,19 @@ use Illuminate\Http\Request;
 class BranchController extends Controller{
   
   
+   /**
+     * @SWG\Get(
+     *     path="/v1/branch",
+     *     tags={"branch"},
+     *     operationId="index",
+     *     summary="get all branch list",
+     *     description="",
+     *     consumes={"application/json", "application/xml"},
+     *     produces={"application/xml", "application/json"},
+
+     * )
+     */
+  
     public function index(){
   
         $Branch  = Branch::all();

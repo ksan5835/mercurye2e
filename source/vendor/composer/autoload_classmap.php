@@ -9,6 +9,7 @@ return array(
     'CreateBizservicestaffTable' => $baseDir . '/database/migrations/2016_06_29_094315_create_bizservicestaff_table.php',
     'CreateBizstaffworkinghoursTable' => $baseDir . '/database/migrations/2016_06_29_094315_create_bizstaffworkinghours_table.php',
     'CreateBooksTable' => $baseDir . '/database/migrations/2016_06_24_094314_create_books_table.php',
+    'CreateBranchsTable' => $baseDir . '/database/migrations/2016_06_29_094315_create_providerbizbranch_table.php',
     'CreateBranchworkingsTable' => $baseDir . '/database/migrations/2016_06_29_094315_create_branchworkings_table.php',
     'CreateCustomerTable' => $baseDir . '/database/migrations/2016_06_29_094315_create_customer_table.php',
     'CreateCustomerproviderTable' => $baseDir . '/database/migrations/2016_06_24_094314_create_customerprovider_table.php',
@@ -464,7 +465,6 @@ return array(
     'SebastianBergmann\\RecursionContext\\Exception' => $vendorDir . '/sebastian/recursion-context/src/Exception.php',
     'SebastianBergmann\\RecursionContext\\InvalidArgumentException' => $vendorDir . '/sebastian/recursion-context/src/InvalidArgumentException.php',
     'SebastianBergmann\\Version' => $vendorDir . '/sebastian/version/src/Version.php',
-    'Test' => $baseDir . '/database/migrations/2016_07_06_102958_test.php',
     'TestCase' => $baseDir . '/tests/TestCase.php',
     'Text_Template' => $vendorDir . '/phpunit/php-text-template/src/Template.php',
 );
