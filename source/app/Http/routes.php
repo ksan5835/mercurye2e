@@ -29,7 +29,7 @@ $app->get('api/v1/customer/email/{email}','CustomerController@getCustomerEmail')
 
 $app->get('api/v1/customer/emailbook/{email}/{bookdate}/{timeinterval}/{timezone_id}','CustomerController@getCustomerEmailBooking');
 
-$app->get('api/v1/customer/booking/{status}','CustomerController@getConfirmedBooking');
+$app->get('api/v1/customer/booking/list','CustomerController@getConfirmedBooking');
 
 $app->post('api/v1/customer','CustomerController@createCustomer');
  

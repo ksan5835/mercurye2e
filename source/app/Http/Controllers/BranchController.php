@@ -35,10 +35,13 @@ class BranchController extends Controller{
   
     public function getBranch($id){
   
-        $Branch  = Branch::find($id);
+        $branchExists = DB::table('branches')
+                     ->select(DB::raw('*'))
+                     ->where('branch_id', '=', $id)
+                     ->get();
 		
-		if(!empty($Branch)){
-			return $this->createSuccessResponse($Branch, 200);
+		if(!empty($branchExists)){
+			return $this->createSuccessResponse($branchExists, 200);
 		}
 		
 		return $this->createErrorResponse('The given id is not available. Need to register as new branch.', 404);
