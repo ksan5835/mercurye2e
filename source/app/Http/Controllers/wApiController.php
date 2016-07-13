@@ -13,8 +13,8 @@ namespace App\Http\Controllers;
  *     schemes={"http"},
  *     @SWG\Info(
  *         version="1.0",
- *         title="Sample API",
- *         @SWG\Contact(name="Marco Raddatz", url="https://www.marcoraddatz.com"),
+ *         title="Appointment e2e",
+ *         @SWG\Contact(name="Mercuryminds", url="https://www.mercuryminds.com"),
  *     ),
  *     @SWG\Definition(
  *         definition="Error",
