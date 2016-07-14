@@ -168,7 +168,7 @@ class BranchController extends Controller{
 
 				while($startTime <= $endTime) {
 					$time_slot[] = $startTime->format('H:i:s') . ' ';
-					$startTime->add(new DateInterval('PT30M'));
+					$startTime->add(new DateInterval('PT60M'));
 				}
 
 				return response()->json($time_slot);
