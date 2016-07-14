@@ -22,6 +22,19 @@ class BranchController extends Controller{
      *     description="",
      *     consumes={"application/json", "application/xml"},
      *     produces={"application/xml", "application/json"},
+	 
+	  *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation"
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Invalid ID supplied"
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Service list not found"
+     *     )
 
      * )
      */

@@ -51,8 +51,8 @@ namespace App\Http\Controllers;
      *     ),
      *     @SWG\Response(
      *         response=200,
-     *         description="successful operation",
-     *         @SWG\Schema(ref="#/definitions/Pet")
+     *         description="successful operation"
+
      *     ),
      *     @SWG\Response(
      *         response="400",
@@ -84,8 +84,7 @@ namespace App\Http\Controllers;
      *     ),
      *     @SWG\Response(
      *         response=200,
-     *         description="successful operation",
-     *         @SWG\Schema(ref="#/definitions/Pet")
+     *         description="successful operation"
      *     ),
      *     @SWG\Response(
      *         response="400",
@@ -118,8 +117,7 @@ namespace App\Http\Controllers;
      *     ),
      *     @SWG\Response(
      *         response=200,
-     *         description="successful operation",
-     *         @SWG\Schema(ref="#/definitions/Pet")
+     *         description="successful operation"
      *     ),
      *     @SWG\Response(
      *         response="400",
@@ -160,8 +158,7 @@ namespace App\Http\Controllers;
      *     ),
      *     @SWG\Response(
      *         response=200,
-     *         description="successful operation",
-     *         @SWG\Schema(ref="#/definitions/Pet")
+     *         description="successful operation"
      *     ),
      *     @SWG\Response(
      *         response="400",
@@ -194,8 +191,7 @@ namespace App\Http\Controllers;
      *     ),
      *     @SWG\Response(
      *         response=200,
-     *         description="successful operation",
-     *         @SWG\Schema(ref="#/definitions/Pet")
+     *         description="successful operation"
      *     ),
      *     @SWG\Response(
      *         response="400",
@@ -227,8 +223,7 @@ namespace App\Http\Controllers;
      *     ),
      *     @SWG\Response(
      *         response=200,
-     *         description="successful operation",
-     *         @SWG\Schema(ref="#/definitions/Pet")
+     *         description="successful operation"
      *     ),
      *     @SWG\Response(
      *         response="400",
@@ -251,6 +246,19 @@ namespace App\Http\Controllers;
      *     description="",
      *     consumes={"application/json", "application/xml"},
      *     produces={"application/xml", "application/json"},
+	 ,
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation"
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Invalid ID supplied"
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Service list not found"
+     *     )	 
 
      * )
      */
@@ -274,8 +282,7 @@ namespace App\Http\Controllers;
      *     ),
      *     @SWG\Response(
      *         response=200,
-     *         description="successful operation",
-     *         @SWG\Schema(ref="#/definitions/Pet")
+     *         description="successful operation"
      *     ),
      *     @SWG\Response(
      *         response="400",
@@ -307,8 +314,7 @@ namespace App\Http\Controllers;
      *     ),
      *     @SWG\Response(
      *         response=200,
-     *         description="successful operation",
-     *         @SWG\Schema(ref="#/definitions/Pet")
+     *         description="successful operation"
      *     ),
      *     @SWG\Response(
      *         response="400",
