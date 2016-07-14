@@ -55,4 +55,12 @@ $app->delete('api/v1/branch/{id}','BranchController@deleteBranch');
 
 $app->get('api/v1/staff/slot/{staff_email}/{availdate}','BranchController@getStaffSlotEmail');
 
+//Provider API
+$app->get('api/v1/provider','ProviderController@index');
+
+$app->get('api/v1/provider/{provider_id}','ProviderController@getProvider');
+
+$app->get('api/v1/provider/email/{provider_email}','ProviderController@getProviderEmail');
+
+
 //$app->get('api/v1/staff/slot/{staff_id}/{availdate}/{timezone_id}','BranchController@getStaffSlotByID');

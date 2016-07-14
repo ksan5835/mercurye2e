@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use DB;
 use DateTimeZone;
 use DateTime;
+use DateInterval;
 use App\Models\Branch;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -138,14 +139,18 @@ class BranchController extends Controller{
 			$start_datetime = date_create($bookdate);
 			$start_date = date_format($start_datetime,"Y-m-d");	
 
-			$check_vendor_slot_available = DB::table('biz_staff_workinghours')
+			/* $check_vendor_slot_available = DB::table('biz_staff_workinghours')
 										 ->select(DB::raw('*'))
 										 ->where('staff_id', '=', $user1_id)
-										 ->whereDate('start_time', '=', date($start_date))
-										 ->get();
+										 ->whereDate('start_time', '=', 'Date('.DB::getPdo()->quote($start_date))
+										 ->get(); */
+			$check_vendor_slot_available = DB::select( DB::raw("SELECT start_time,end_time FROM biz_staff_workinghours WHERE staff_id = '$user1_id' and date(start_time) = date('$start_date') ") );
+
+			//print_r($check_vendor_slot_available);die;
+						
 			if(!empty($check_vendor_slot_available)){
-				print_r($check_vendor_slot_available);	
-				$start = date_create ( $check_vendor_slot_available[0]->start_time);
+				
+				/* $start = date_create ( $check_vendor_slot_available[0]->start_time);
 				$end = date_create ( $check_vendor_slot_available[0]->end_time );
 				$diff = date_diff($end,$start);
 				echo $diff->h;
@@ -155,11 +160,18 @@ class BranchController extends Controller{
 				
 				$datetime = DateTime::createFromFormat('g:i:s', $ex_stime[1]);
 				$datetime->modify('+60 minutes');
-				echo $datetime->format('g:i:s');
+				echo $datetime->format('g:i:s'); */
 				
 				
+				$startTime = new DateTime($check_vendor_slot_available[0]->start_time);
+				$endTime = new DateTime($check_vendor_slot_available[0]->end_time );
 
-				
+				while($startTime <= $endTime) {
+					$time_slot[] = $startTime->format('H:i:s') . ' ';
+					$startTime->add(new DateInterval('PT30M'));
+				}
+
+				return response()->json($time_slot);
 
 			}else{
 				return $this->createErrorResponse($start_date." Slot closed for this date", 404);	
