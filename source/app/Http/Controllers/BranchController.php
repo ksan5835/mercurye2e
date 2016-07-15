@@ -43,7 +43,7 @@ class BranchController extends Controller{
   
         $Branch  = Branch::all();
   
-        return response()->json($Branch);
+        return $this->createSuccessResponse($Branch,200);
   
     }
   
@@ -69,7 +69,7 @@ class BranchController extends Controller{
 			if($userExists) {
 				return $this->createSuccessResponse("Email ID is available.", 200);
 			}else{
-				return response()->json("No user available for this ID.Please register as new branch");
+				return $this->createErrorResponse("No user available for this ID.Please register as new branch",404);
 			}
     }
 	
@@ -77,7 +77,7 @@ class BranchController extends Controller{
   
         $Custom = Branch::create($request->all());
   
-        return response()->json($Custom);
+        return $this->createSuccessResponse($Custom,200);
   
     }
 	
@@ -96,7 +96,7 @@ class BranchController extends Controller{
 		$Branch->mobile = $request->input('mobile');
         $Branch->save();
   
-        return response()->json($Branch);
+        return $this->createSuccessResponse($Branch,200);
     }
 	
 	
@@ -111,13 +111,13 @@ class BranchController extends Controller{
                      ->where('biz_id', '=', $branch_id)
                      ->get();
 				if($servicelist){
-					return response()->json($servicelist);
+					return $this->createSuccessResponse($servicelist,200);
 				}else{
-					return response()->json("No services available for this branch ID.");
+					return $this->createErrorResponse("No services available for this branch ID.",404);
 				}
 				
 			}else{
-				return response()->json("No branch available for this ID.Please register as new branch");
+				return $this->createErrorResponse("No branch available for this ID.Please register as new branch",404);
 			}
     }
 	
@@ -132,13 +132,13 @@ class BranchController extends Controller{
                      ->where('service_id', '=', $service_id)
                      ->get();
 				if($service){
-					return response()->json($service);
+					return $this->createSuccessResponse($service,200);
 				}else{
-					return response()->json("No service available for this branch ID and service ID.");
+					return $this->createErrorResponse("No service available for this branch ID and service ID.",404);
 				}
 				
 			}else{
-				return response()->json("No branch available for this ID.Please register as new branch");
+				return $this->createErrorResponse("No branch available for this ID.Please register as new branch",404);
 			}
     }
 	
@@ -179,13 +179,14 @@ class BranchController extends Controller{
 				
 				$startTime = new DateTime($check_vendor_slot_available[0]->start_time);
 				$endTime = new DateTime($check_vendor_slot_available[0]->end_time );
-
+				$i=1;
 				while($startTime <= $endTime) {
-					$time_slot[] = $startTime->format('H:i:s') . ' ';
+					$time_slot['slot'.$i] = $startTime->format('H:i:s') . ' ';
 					$startTime->add(new DateInterval('PT60M'));
+					$i++;
 				}
 
-				return response()->json($time_slot);
+				return $this->createSuccessResponse($time_slot,200);
 
 			}else{
 				return $this->createErrorResponse($start_date." Slot closed for this date", 404);	
