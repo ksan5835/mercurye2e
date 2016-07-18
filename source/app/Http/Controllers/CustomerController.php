@@ -153,6 +153,8 @@ class CustomerController extends Controller{
 		$user2_id = DB::table('customer')->where('email', $email_explode[1])->value('user_id');
 		if(!$user2_id){$user2_id = 0;}
 		
+		//$test = $this->test();die;
+		
 		if($user1_id) {
 		
 				$get_customer_timezone_vlaue = DB::table('timezone')->where('timezone_id', $timezone_id)->value('gmt');
@@ -174,10 +176,7 @@ class CustomerController extends Controller{
 				$offset = $userTimezone->getOffset($vendorEndTime);
 				$vendor_endtime_slot = date('Y-m-d H:i:s', $vendorEndTime->format('U') + $offset);
 				
-											 
-				$check_vendor_slot_available = DB::select( DB::raw("SELECT workinghours_id FROM biz_staff_workinghours WHERE staff_id = '$user1_id' and date(start_time) <= date('$vendor_starttime_slot') and date(end_time) >= date('$vendor_endtime_slot')") );
-				if($check_vendor_slot_available){$check_vendor_slot_available_id = $check_vendor_slot_available[0]->workinghours_id;;}
-				else{$check_vendor_slot_available_id = '';}
+				$check_vendor_slot_available = $this->getProviderTimeSlots($user1_id,$vendor_starttime_slot,$vendor_endtime_slot);							 
 				
 				//$queries    = DB::getQueryLog();
 				//$last_query = end($queries);
@@ -188,6 +187,7 @@ class CustomerController extends Controller{
 				//print_r($results[0]->workinghours_id);
 				//die;
 				//$check_vendor_slot_available = 1;
+				
 
 				$vendor_book_date = date_create($vendor_starttime_slot);
 				$vendor_aval_date = date_format($vendor_book_date,"Y-m-d");
@@ -196,39 +196,22 @@ class CustomerController extends Controller{
 				$vendor_aval_start_time = date_format($vendor_start_time,"H:i");
 
 				$vendor_end_time = date_create($vendor_endtime_slot);
-				$vendor_aval__end_time = date_format($vendor_end_time,"H:i");	
+				$vendor_aval_end_time = date_format($vendor_end_time,"H:i");	
 
-		//die;		
-									
-				$slot_available = DB::table('customer_booking_confirmation')
-											 //->where('customer_id', '=', $user2_id)
-											 ->where('vendor_id', '=', $user1_id)
-											 ->where('booking_date', '=', $vendor_aval_date)
-											 ->where('booking_start_time', '=', $vendor_aval_start_time)
-											 ->where('booking_end_time', '=', $vendor_aval__end_time)
-											 ->where('booking_timezone_id', '=', $get_provider_timezone_id)
-											 ->value('id');
-			
+				$slot_available = $this->checkBookedSlots($user1_id,$vendor_aval_date,$vendor_aval_start_time,$vendor_aval_end_time,$get_provider_timezone_id);					
+
 			if($get_provider_timezone_id){
 			
-				if($check_vendor_slot_available_id){
+				if($check_vendor_slot_available){
 			
 					if($slot_available){
 		
 						return $this->createErrorResponse($email_explode[1]." and ".$email_explode[0]." already booked with the time slot ".$start_date." ".$start_time." - ".$end_time , 404);
 					}else{
 				
-						DB::table('customer_booking_confirmation')->insert(
-						['customer_id' => $user2_id, 'vendor_id' => $user1_id, 'booking_date' => $vendor_aval_date, 'booking_start_time' => $vendor_aval_start_time, 'booking_end_time' => $vendor_aval__end_time, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id]);
-						
-						$get_confirmation_details = DB::table('customer_booking_confirmation')
-														 ->where('customer_id', '=', $user2_id)
-														 ->where('vendor_id', '=', $user1_id)
-														 ->where('booking_date', '=', $vendor_aval_date)
-														 ->where('booking_start_time', '=', $vendor_aval_start_time)
-														 ->where('booking_end_time', '=', $vendor_aval__end_time)
-														 ->where('booking_timezone_id', '=', $get_provider_timezone_id)
-														 ->get();						
+						$input_array = array('customer_id' => $user2_id, 'vendor_id' => $user1_id, 'booking_date' => $vendor_aval_date, 'booking_start_time' => $vendor_aval_start_time, 'booking_end_time' => $vendor_aval_end_time, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
+						$get_confirmation_details = $this->putConfirmationEntry($input_array);
+			
 						return response()->json($get_confirmation_details);
 						
 					}
@@ -281,5 +264,49 @@ class CustomerController extends Controller{
   
         return response()->json($Customer);
     }
+	
+	public function getProviderTimeSlots($provider_id,$start_time,$end_time){
+		
+		$check_vendor_slot_available = DB::select( DB::raw("SELECT workinghours_id FROM biz_staff_workinghours WHERE staff_id = '$provider_id' and date(start_time) <= date('$start_time') and date(end_time) >= date('$end_time')") );
+		if($check_vendor_slot_available){
+			$check_vendor_slot_available_id = $check_vendor_slot_available[0]->workinghours_id;
+			}else{
+				$check_vendor_slot_available_id = '';
+				}
+		
+		return $check_vendor_slot_available_id;
+		
+	}
+	
+	public function checkBookedSlots($provider_id,$vendor_aval_date,$vendor_aval_start_time,$vendor_aval_end_time,$get_provider_timezone_id){
+		
+		$slot_available = DB::table('customer_booking_confirmation')
+							 ->where('vendor_id', '=', $provider_id)
+							 ->where('booking_date', '=', $vendor_aval_date)
+							 ->where('booking_start_time', '=', $vendor_aval_start_time)
+							 ->where('booking_end_time', '=', $vendor_aval_end_time)
+							 ->where('booking_timezone_id', '=', $get_provider_timezone_id)
+							 ->value('id');
+		
+		return $slot_available;
+		
+	}
+	
+	public function putConfirmationEntry($input_array){
+		
+		DB::table('customer_booking_confirmation')->insert([$input_array]);
+						
+		$get_confirmation_details = DB::table('customer_booking_confirmation')
+										 ->where('customer_id', '=', $input_array['customer_id'])
+										 ->where('vendor_id', '=', $input_array['vendor_id'])
+										 ->where('booking_date', '=', $input_array['booking_date'])
+										 ->where('booking_start_time', '=', $input_array['booking_start_time'])
+										 ->where('booking_end_time', '=', $input_array['booking_end_time'])
+										 ->where('booking_timezone_id', '=', $input_array['booking_timezone_id'])
+										 ->get();
+		
+		return $get_confirmation_details;
+		
+	}
 	
 }
