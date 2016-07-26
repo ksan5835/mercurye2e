@@ -153,7 +153,7 @@ class CustomerController extends Controller{
 		$service1_id = $service_explode[0];
 		$service2_id = (!isset($service_explode[1]))? "" : $service_explode[1];
 		
-		$staff1_id = $staff_explode[0];
+		$staff1_id = (!isset($staff_explode[0]))? "" : $staff_explode[0];
 		$staff2_id = (!isset($staff_explode[1]))? "" : $staff_explode[1];
 				
 		$start_datetime = date_create($bookdate_explode[0]);
@@ -189,16 +189,16 @@ class CustomerController extends Controller{
 					return response()->json($get_matrix3);
 				}
 				//Matrix 5
-				else if($provider_id && $branch1_id && $branch2_id){ 
+				else if($provider_id && $branch1_id && $branch2_id && $staff2_id == ""){ 
 					echo "Matrix 5";
 					$get_matrix5 = $this->getmatrix5_Result($provider_id, $user_id, $branch1_id, $service1_id, $start_date, $start_time1, $end_time1, $branch2_id, $service2_id, $start_time2, $end_time2, $timezone_id, $type );
 					return response()->json($get_matrix5);
 				}
 				//Matrix 7
-				else if($provider_id && $branch1_id && $branch2_id && $staff_id1){ 
+				else if($provider_id && $branch1_id && $branch2_id && $staff1_id){ 
 					echo "Matrix 7";
-					$get_matrix7 = $this->getmatrix5_Result($provider_id, $user_id, $branch1_id, $service1_id, $staff_id1, $start_date, $start_time1, $end_time1, $branch2_id, $service2_id, $staff_id2, $start_time2, $end_time2, $timezone_id, $type );
-					return response()->json($get_matrix5);
+					$get_matrix7 = $this->getmatrix7_Result($provider_id, $user_id, $branch1_id, $service1_id, $staff1_id, $start_date, $start_time1, $end_time1, $branch2_id, $service2_id, $staff2_id, $start_time2, $end_time2, $timezone_id, $type );
+					return response()->json($get_matrix7);
 				}
 				else{
 					echo "test";
@@ -331,12 +331,22 @@ class CustomerController extends Controller{
 	
 	public function getServiceWithBranch($service_id, $branch_id){
 		
-		$service_name = DB::table('provider_biz_service')
-                     ->select('service_name')
+		$service_branch_id = DB::table('biz_service_branch')
+                     ->select('service_branch_id')
                      ->where('service_id', '=', $service_id)
-					 ->where('biz_id', '=', $branch_id)
-                     ->value('service_name');
-		return $service_name;
+					 ->where('branch_id', '=', $branch_id)
+                     ->value('service_branch_id');
+		return $service_branch_id;
+	} 
+	
+	public function getStaffWithService($service_id, $staff_id){
+		
+		$service_staff_id = DB::table('biz_service_staff')
+                     ->select('service_staff_id')
+                     ->where('service_id', '=', $service_id)
+					 ->where('staff_id', '=', $staff_id)
+                     ->value('service_staff_id');
+		return $service_staff_id;
 	} 
 	
 	public function getGmtWithProviderid($provider_id){
@@ -658,7 +668,7 @@ class CustomerController extends Controller{
 	}
 	
 	
-	public function getMatrix7_Result($provider_id, $user_id, $branch1_id, $service1_id, $start_date, $start_time1, $end_time1, $branch2_id, $service2_id, $start_time2, $end_time2, $timezone_id, $type){
+	public function getMatrix7_Result($provider_id, $user_id, $branch1_id, $service1_id, $staff1_id, $start_date, $start_time1, $end_time1, $branch2_id, $service2_id, $staff2_id, $start_time2, $end_time2, $timezone_id, $type){
 			
 			$get_branch1 = $this->getProviderWithBranch($provider_id,$branch1_id);
 			$get_branch2 = $this->getProviderWithBranch($provider_id,$branch2_id);
@@ -678,11 +688,14 @@ class CustomerController extends Controller{
 					
 			$get_service1 = $this->getServiceWithBranch($service1_id, $branch1_id);
 			$get_service2 = $this->getServiceWithBranch($service2_id, $branch2_id);
+			
+			$get_staff1 = $this->getStaffWithService($service1_id, $staff1_id);
+			$get_staff2 = $this->getStaffWithService($service2_id, $staff2_id);
 				
 		if($get_provider_timezone_id){
 			
-			//For Branch 1
-			if($get_branch1 && $get_service1){
+			//For Staff 1
+			if($get_branch1 && $get_service1 && $get_staff1){
 				
 				$slot_available1 = $this->checkBookedSlots($provider_id,$vendor_starttime_slot1,$vendor_endtime_slot1,$get_provider_timezone_id);
 					
@@ -708,14 +721,18 @@ class CustomerController extends Controller{
 				
 				$matrix7_Result[]= "The given service1 is not available in the branch1.";
 				
+			}else if($get_service1 && $get_staff1 == ""){
+				
+				$matrix7_Result[]= "The given staff1 is not available in the service1.";
+				
 			}else if($get_branch1 == ""){
 				
 				$matrix7_Result[]= "The given branch1 is not available.";
 			}
 			
 			
-			//For Branch 2
-			if($get_branch2 && $get_service2){
+			//For Staff 2
+			if($get_branch2 && $get_service2 && $get_staff2){
 				
 				$slot_available2 = $this->checkBookedSlots($provider_id,$vendor_starttime_slot2,$vendor_endtime_slot2,$get_provider_timezone_id);
 					
@@ -740,6 +757,10 @@ class CustomerController extends Controller{
 			}else if($get_branch2 && $get_service2 == ""){
 				
 				$matrix7_Result[]= "The given service2 is not available in the branch2.";
+				
+			}else if($get_service2 && $get_staff2 == ""){
+				
+				$matrix7_Result[]= "The given staff2 is not available in the service2.";
 				
 			}else if($get_branch1 == ""){
 				

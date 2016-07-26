@@ -27,7 +27,7 @@ $app->get('api/v1/customer/{id}','CustomerController@getcustomer');
 
 $app->get('api/v1/customer/email/{email}','CustomerController@getCustomerEmail');
 
-$app->get('api/v1/customer/emailbook/{email}/{branch_id}/{service_id}/{bookdate}/{timeinterval1}/{timeinterval2}/{staff_id}/{timezone_id}/{type}','CustomerController@getCustomerEmailBooking');
+$app->get('api/v1/customer/emailbook/{email}/{branch_id}/{service_id}/{staff_id}/{bookdate}/{timeinterval1}/{timeinterval2}/{timezone_id}/{type}','CustomerController@getCustomerEmailBooking');
 
 $app->get('api/v1/customer/booking/list','CustomerController@getConfirmedBooking');
 
