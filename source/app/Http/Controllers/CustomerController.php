@@ -89,10 +89,14 @@ class CustomerController extends Controller{
   
     public function getCustomer($id){
   
-        $Customer  = Customer::find($id);
+		$Customer  = DB::table('customer')->where('user_id', $id)->count();	
 		
 		if(!empty($Customer)){
-			return $this->createSuccessResponse($Customer, 200);
+			$customerDatas = DB::table('customer')
+                     ->select(DB::raw('*'))
+                     ->where('user_id', '=', $id)
+                     ->get();
+			return $this->createSuccessResponse($customerDatas, 200);
 		}
 		
 		return $this->createErrorResponse('The given id is not available. Need to register as new user.', 404);

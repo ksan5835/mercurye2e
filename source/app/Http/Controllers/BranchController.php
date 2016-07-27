@@ -49,10 +49,10 @@ class BranchController extends Controller{
   
     public function getBranch($id){
   
-        $branchExists = DB::table('branches')->where('branch_id', $id)->count();	
+        $branchExists = DB::table('provider_biz_branch')->where('branch_id', $id)->count();	
 		
 		if(!empty($branchExists)){
-			$branchDatas = DB::table('branches')
+			$branchDatas = DB::table('provider_biz_branch')
                      ->select(DB::raw('*'))
                      ->where('branch_id', '=', $id)
                      ->get();
