@@ -265,6 +265,25 @@ class CustomerController extends Controller{
 		
 	}
 	
+	public function getProviderAvaliableTimeSlots($provider_id,$start_date){
+		
+		$check_vendor_slot_available = DB::select( DB::raw("SELECT start_time,end_time FROM biz_staff_workinghours WHERE staff_id = '$provider_id' and date(start_time) = date('$start_date') ") );
+						
+			if(!empty($check_vendor_slot_available)){	
+				
+				$startTime = new DateTime($check_vendor_slot_available[0]->start_time);
+				$endTime = new DateTime($check_vendor_slot_available[0]->end_time );
+				$i=1;
+				while($startTime <= $endTime) {
+					$time_slot['slot'.$i] = $startTime->format('H:i:s') . ' ';
+					$startTime->add(new DateInterval('PT60M'));
+					$i++;
+				}
+		print_r($time_slot);die;
+		return $time_slot;
+			}
+	}
+	
 	public function checkBookedSlots($provider_id,$vendor_starttime_slot,$vendor_endtime_slot,$get_provider_timezone_id){
 		
 		
@@ -402,6 +421,8 @@ class CustomerController extends Controller{
 					if($get_provider_timezone_id){
 					
 						if($check_vendor_slot_available){
+							
+							$provider_aval_slots = $this->getProviderAvaliableTimeSlots($provider_id,$vendor_starttime_slot);
 					
 							if($slot_available){
 				
