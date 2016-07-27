@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use DB;
 use DateTimeZone;
 use DateTime;
+use DateInterval;
 use App\Models\Customer;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -265,7 +266,10 @@ class CustomerController extends Controller{
 		
 	}
 	
-	public function getProviderAvaliableTimeSlots($provider_id,$start_date){
+	public function getProviderAvaliableTimeSlots($provider_id,$bookdate){
+		
+		$start_datetime = date_create($bookdate);
+		$start_date = date_format($start_datetime,"Y-m-d");	
 		
 		$check_vendor_slot_available = DB::select( DB::raw("SELECT start_time,end_time FROM biz_staff_workinghours WHERE staff_id = '$provider_id' and date(start_time) = date('$start_date') ") );
 						
@@ -279,9 +283,10 @@ class CustomerController extends Controller{
 					$startTime->add(new DateInterval('PT60M'));
 					$i++;
 				}
-		print_r($time_slot);die;
-		return $time_slot;
+		
 			}
+			
+		return $time_slot;
 	}
 	
 	public function checkBookedSlots($provider_id,$vendor_starttime_slot,$vendor_endtime_slot,$get_provider_timezone_id){
@@ -421,13 +426,14 @@ class CustomerController extends Controller{
 					if($get_provider_timezone_id){
 					
 						if($check_vendor_slot_available){
-							
-							$provider_aval_slots = $this->getProviderAvaliableTimeSlots($provider_id,$vendor_starttime_slot);
 					
 							if($slot_available){
 				
 								$matrix1_Result[]= "The User and Provider are already booked the given time slot ";
 							}else{
+								
+								$provider_aval_slots = $this->getProviderAvaliableTimeSlots($provider_id,$start_date);
+								$matrix1_Result[] = $provider_aval_slots;
 						
 								$input_array = array('customer_id' => $user_id, 'vendor_id' => $provider_id, 'booking_date' => $vendor_starttime_slot, 'booking_start_time' => $vendor_starttime_slot, 'booking_end_time' => $vendor_endtime_slot, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
 								$get_confirmation_details = $this->putConfirmationEntry($input_array);
@@ -492,7 +498,9 @@ class CustomerController extends Controller{
 				
 								$matrix3_Result[]= "The given User and Provider are already booked the given time slot.";
 							}else{
-						
+								$provider_aval_slots = $this->getProviderAvaliableTimeSlots($provider_id,$start_date);
+								$matrix3_Result[] = $provider_aval_slots;
+								
 								$input_array1 = array('customer_id' => $user_id, 'vendor_id' => $provider_id, 'booking_date' => $vendor_starttime_slot1, 'booking_start_time' => $vendor_starttime_slot1, 'booking_end_time' => $vendor_endtime_slot1, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
 								$get_confirmation_details1 = $this->putConfirmationEntry($input_array1);
 					
@@ -513,7 +521,9 @@ class CustomerController extends Controller{
 				
 								$matrix3_Result[]= "The given User and Provider are already booked the given time slot.";
 							}else{
-						
+								$provider_aval_slots = $this->getProviderAvaliableTimeSlots($provider_id,$start_date);
+								$matrix3_Result[] = $provider_aval_slots;
+								
 								$input_array2 = array('customer_id' => $user_id, 'vendor_id' => $provider_id, 'booking_date' => $vendor_starttime_slot2, 'booking_start_time' => $vendor_starttime_slot2, 'booking_end_time' => $vendor_endtime_slot2, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
 								$get_confirmation_details2 = $this->putConfirmationEntry($input_array2);
 					
@@ -629,7 +639,10 @@ class CustomerController extends Controller{
 				
 								$matrix5_Result[]= "The given User and Provider are already booked the given time slot.";
 							}else{
-						
+								
+								$provider_aval_slots = $this->getProviderAvaliableTimeSlots($provider_id,$start_date);
+								$matrix5_Result[] = $provider_aval_slots;
+								
 								$input_array = array('customer_id' => $user_id, 'vendor_id' => $provider_id, 'booking_date' => $vendor_starttime_slot1, 'booking_start_time' => $vendor_starttime_slot1, 'booking_end_time' => $vendor_endtime_slot1, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
 								$get_confirmation_details1 = $this->putConfirmationEntry($input_array);
 					
@@ -662,7 +675,10 @@ class CustomerController extends Controller{
 				
 								$matrix5_Result[]= "The given User and Provider are already booked the given time slot.";
 							}else{
-						
+								
+								$provider_aval_slots = $this->getProviderAvaliableTimeSlots($provider_id,$start_date);
+								$matrix5_Result[] = $provider_aval_slots;
+								
 								$input_array = array('customer_id' => $user_id, 'vendor_id' => $provider_id, 'booking_date' => $vendor_starttime_slot2, 'booking_start_time' => $vendor_starttime_slot2, 'booking_end_time' => $vendor_endtime_slot2, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
 								$get_confirmation_details2 = $this->putConfirmationEntry($input_array);
 					
@@ -731,6 +747,9 @@ class CustomerController extends Controller{
 								$matrix7_Result[]= "The given User and Provider are already booked the given time slot.";
 							}else{
 						
+								$provider_aval_slots = $this->getProviderAvaliableTimeSlots($provider_id,$start_date);
+								$matrix7_Result[] = $provider_aval_slots;
+								
 								$input_array = array('customer_id' => $user_id, 'vendor_id' => $provider_id, 'booking_date' => $vendor_starttime_slot1, 'booking_start_time' => $vendor_starttime_slot1, 'booking_end_time' => $vendor_endtime_slot1, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
 								$get_confirmation_details1 = $this->putConfirmationEntry($input_array);
 					
@@ -768,6 +787,9 @@ class CustomerController extends Controller{
 								$matrix7_Result[]= "The given User and Provider are already booked the given time slot.";
 							}else{
 						
+								$provider_aval_slots = $this->getProviderAvaliableTimeSlots($provider_id,$start_date);
+								$matrix7_Result[] = $provider_aval_slots;
+								
 								$input_array = array('customer_id' => $user_id, 'vendor_id' => $provider_id, 'booking_date' => $vendor_starttime_slot2, 'booking_start_time' => $vendor_starttime_slot2, 'booking_end_time' => $vendor_endtime_slot2, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
 								$get_confirmation_details2 = $this->putConfirmationEntry($input_array);
 					
