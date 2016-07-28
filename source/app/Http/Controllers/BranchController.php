@@ -143,6 +143,7 @@ class BranchController extends Controller{
 				$service = DB::table('provider_biz_service')
                      ->select(DB::raw('*'))
                      ->where('service_id', '=', $service_id)
+					 ->where('biz_id', '=', $branch_id)
                      ->get();
 				if($service){
 					return $this->createSuccessResponse($service,200);
