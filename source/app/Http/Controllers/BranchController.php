@@ -121,6 +121,19 @@ class BranchController extends Controller{
 			}
     }
 	
+	public function getServiceBranchList($service_id){
+		
+				$servicelist = DB::table('biz_service_branch')
+                     ->select(DB::raw('*'))
+                     ->where('service_id', '=', $service_id)
+                     ->get();
+				if($servicelist){
+					return $this->createSuccessResponse($servicelist,200);
+				}else{
+					return $this->createErrorResponse("The given service is not available in any branch.",404);
+				}
+    }
+	
 	public function getBranchService($branch_id, $service_id){
 
 			$branchExists = Branch::where('branch_id', $branch_id)->count();

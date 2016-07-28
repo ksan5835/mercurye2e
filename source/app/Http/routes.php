@@ -47,6 +47,8 @@ $app->get('api/v1/branch/email/{branch_email}','BranchController@getBranchEmail'
 
 $app->get('api/v1/branch/{branch_id}/service','BranchController@getBranchServiceList');
 
+$app->get('api/v1/service/{service_id}','BranchController@getServiceBranchList');
+
 $app->get('api/v1/branch/{branch_id}/service/{service_id}','BranchController@getBranchService');
 
 $app->delete('api/v1/branch/{id}','BranchController@deleteBranch'); 
