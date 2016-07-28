@@ -372,12 +372,18 @@ class CustomerController extends Controller{
 	
 	public function getStaffWithService($service_id, $staff_id){
 		
-		$service_staff_id = DB::table('biz_service_staff')
+		/* $service_staff_id = DB::table('biz_service_staff')
                      ->select('service_staff_id')
                      ->where('service_id', '=', $service_id)
 					 ->where('staff_id', '=', $staff_id)
-                     ->value('service_staff_id');
-		return $service_staff_id;
+                     ->value('service_staff_id'); */
+					 
+		$service_staff_name = DB::table('provider_biz_staff')
+								->leftJoin('biz_service_staff', 'provider_biz_staff.staff_id', '=', 'biz_service_staff.staff_id')
+								->select('provider_biz_staff.staff_email')
+								->where('biz_service_staff.staff_id', '=', $staff_id)
+								->value('provider_biz_staff.staff_email');
+		return $service_staff_name;
 	} 
 	
 	public function getGmtWithProviderid($provider_id){
@@ -727,8 +733,8 @@ class CustomerController extends Controller{
 			$vendor_starttime_slot2 = $this->getTimeSlotWithTimezone($start_date, $start_time2, $get_customer_timezone_vlaue, $get_provider_timezone);
 			$vendor_endtime_slot2 = $this->getTimeSlotWithTimezone($start_date, $end_time2, $get_customer_timezone_vlaue, $get_provider_timezone);
 			
-			$check_vendor_slot_available1 = $this->getProviderTimeSlots($provider_id,$vendor_starttime_slot1,$vendor_endtime_slot1);	
-			$check_vendor_slot_available2 = $this->getProviderTimeSlots($provider_id,$vendor_starttime_slot2,$vendor_endtime_slot2);				
+			$check_vendor_slot_available1 = $this->getProviderTimeSlots($staff1_id,$vendor_starttime_slot1,$vendor_endtime_slot1);	
+			$check_vendor_slot_available2 = $this->getProviderTimeSlots($staff2_id,$vendor_starttime_slot2,$vendor_endtime_slot2);				
 					
 			$get_service1 = $this->getServiceWithBranch($service1_id, $branch1_id);
 			$get_service2 = $this->getServiceWithBranch($service2_id, $branch2_id);
@@ -747,7 +753,7 @@ class CustomerController extends Controller{
 					
 							if($slot_available1){
 				
-								$matrix7_Result[]= "The ".$provider_email." and ".$user_email." are already booked the given time slot.";
+								$matrix7_Result[]= "The ".$get_staff1." and ".$user_email." are already booked the given time slot.";
 							}else{
 						
 								$provider_aval_slots = $this->getProviderAvaliableTimeSlots($provider_id,$start_date);
@@ -761,7 +767,7 @@ class CustomerController extends Controller{
 							}
 						}else{
 							
-							$matrix7_Result[]= "The ".$provider_email." is not available for your time slot.Please check another time slot.";
+							$matrix7_Result[]= "The ".$get_staff1." is not available for your time slot.Please check another time slot.";
 						}
 						
 			}else if($get_branch1 && $get_service1 == ""){
@@ -770,7 +776,7 @@ class CustomerController extends Controller{
 				
 			}else if($get_service1 && $get_staff1 == ""){
 				
-				$matrix7_Result[]= "The given staff1 is not available in the service1.";
+				$matrix7_Result[]= "The ".$get_staff1." is not available in the service1.";
 				
 			}else if($get_branch1 == ""){
 				
@@ -787,7 +793,7 @@ class CustomerController extends Controller{
 					
 							if($slot_available2){
 				
-								$matrix7_Result[]= "The ".$provider_email." and ".$user_email." are already booked the given time slot.";
+								$matrix7_Result[]= "The ".$get_staff2." and ".$user_email." are already booked the given time slot.";
 							}else{
 						
 								$provider_aval_slots = $this->getProviderAvaliableTimeSlots($provider_id,$start_date);
@@ -801,7 +807,7 @@ class CustomerController extends Controller{
 							}
 						}else{
 							
-							$matrix7_Result[]= "The ".$provider_email." is not available for your time slot.Please check another time slot.";
+							$matrix7_Result[]= "The ".$get_staff2." is not available for your time slot.Please check another time slot.";
 						}
 						
 			}else if($get_branch2 && $get_service2 == ""){
@@ -810,7 +816,7 @@ class CustomerController extends Controller{
 				
 			}else if($get_service2 && $get_staff2 == ""){
 				
-				$matrix7_Result[]= "The given staff2 is not available in the service2.";
+				$matrix7_Result[]= "The ".$get_staff2." is not available in the service2.";
 				
 			}else if($get_branch1 == ""){
 				
