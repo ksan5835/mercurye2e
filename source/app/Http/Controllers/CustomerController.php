@@ -269,6 +269,19 @@ class CustomerController extends Controller{
 		
 	}
 	
+	public function getBranchTimeSlots($branch_id,$start_time,$end_time){
+		
+		$check_branch_slot_available = DB::select( DB::raw("SELECT workinghours_id FROM biz_branch_workinghours WHERE branch_id = '$branch_id' and date(start_time) <= date('$start_time') and date(end_time) >= date('$end_time')") );
+		if($check_branch_slot_available){
+			$check_branch_slot_available_id = $check_branch_slot_available[0]->workinghours_id;
+		}else{
+			$check_branch_slot_available_id = '';
+			}
+		
+		return $check_branch_slot_available_id;
+		
+	}
+	
 	public function getProviderAvaliableTimeSlots($provider_id,$bookdate){
 		
 		$start_datetime = date_create($bookdate);
@@ -292,7 +305,30 @@ class CustomerController extends Controller{
 		return $time_slot;
 	}
 	
-	public function checkBookedSlots($provider_id,$vendor_starttime_slot,$vendor_endtime_slot,$get_provider_timezone_id){
+	public function getBranchAvaliableTimeSlots($branch_id,$bookdate){
+		
+		$start_datetime = date_create($bookdate);
+		$start_date = date_format($start_datetime,"Y-m-d");	
+		
+		$check_branch_slot_available = DB::select( DB::raw("SELECT start_time,end_time FROM biz_branch_workinghours WHERE branch_id = '$branch_id' and date(start_time) = date('$start_date') ") );
+						
+			if(!empty($check_branch_slot_available)){	
+				
+				$startTime = new DateTime($check_branch_slot_available[0]->start_time);
+				$endTime = new DateTime($check_branch_slot_available[0]->end_time );
+				$i=1;
+				while($startTime <= $endTime) {
+					$time_slot['slot'.$i] = $startTime->format('H:i:s') . ' ';
+					$startTime->add(new DateInterval('PT60M'));
+					$i++;
+				}
+		
+			}
+			
+		return $time_slot;
+	}
+	
+	public function checkBookedSlots($provider_id,$branch_id,$staff_id,$vendor_starttime_slot,$vendor_endtime_slot,$get_provider_timezone_id){
 		
 		
 		$vendor_book_date = date_create($vendor_starttime_slot);
@@ -304,7 +340,7 @@ class CustomerController extends Controller{
 		$vendor_end_time = date_create($vendor_endtime_slot);
 		$vendor_aval_end_time = date_format($vendor_end_time,"H:i");
 		
-		$slot_available = DB::select( DB::raw("SELECT id FROM customer_booking_confirmation WHERE vendor_id = '$provider_id' and booking_timezone_id = '$get_provider_timezone_id' and booking_date = '$vendor_aval_date' and booking_start_time >= '$vendor_aval_start_time' and booking_end_time <= '$vendor_aval_end_time'") );
+		$slot_available = DB::select( DB::raw("SELECT id FROM customer_booking_confirmation WHERE provider_id = '$provider_id' and branch_id = '$branch_id' and staff_id = '$staff_id' and booking_timezone_id = '$get_provider_timezone_id' and booking_date = '$vendor_aval_date' and booking_start_time >= '$vendor_aval_start_time' and booking_end_time <= '$vendor_aval_end_time'") );
 
 							 
 		if($slot_available){
@@ -338,7 +374,9 @@ class CustomerController extends Controller{
 						
 		$get_confirmation_details = DB::table('customer_booking_confirmation')
 										 ->where('customer_id', '=', $input_array['customer_id'])
-										 ->where('vendor_id', '=', $input_array['vendor_id'])
+										 ->where('provider_id', '=', $input_array['provider_id'])
+										 ->orwhere('branch_id', '=', $input_array['branch_id'])
+										 ->orwhere('staff_id', '=', $input_array['staff_id'])
 										 ->where('booking_date', '=', $input_array['booking_date'])
 										 ->where('booking_start_time', '=', $input_array['booking_start_time'])
 										 ->where('booking_end_time', '=', $input_array['booking_end_time'])
@@ -428,23 +466,23 @@ class CustomerController extends Controller{
 						$vendor_starttime_slot = $this->getTimeSlotWithTimezone($start_date, $start_time1, $get_customer_timezone_vlaue, $get_provider_timezone);
 						$vendor_endtime_slot = $this->getTimeSlotWithTimezone($start_date, $end_time1, $get_customer_timezone_vlaue, $get_provider_timezone);
 		
-						$check_vendor_slot_available = $this->getProviderTimeSlots($provider_id,$vendor_starttime_slot,$vendor_endtime_slot);							 
-						
-						$slot_available = $this->checkBookedSlots($provider_id,$vendor_starttime_slot,$vendor_endtime_slot,$get_provider_timezone_id);					
+						$check_branch_slot_available = $this->getBranchTimeSlots($branch1_id,$vendor_starttime_slot,$vendor_endtime_slot);							 
+
+						$slot_available = $this->checkBookedSlots($provider_id,$branch1_id,0,$vendor_starttime_slot,$vendor_endtime_slot,$get_provider_timezone_id);					
 
 					if($get_provider_timezone_id){
 					
-						if($check_vendor_slot_available){
+						if($check_branch_slot_available){
 					
 							if($slot_available){
 				
 								$matrix1_Result[]= "The ".$provider_email." and ".$user_email." are already booked the given time slot ";
 							}else{
 								
-								$provider_aval_slots = $this->getProviderAvaliableTimeSlots($provider_id,$start_date);
-								$matrix1_Result[] = $provider_aval_slots;
+								$branch_aval_slots = $this->getBranchAvaliableTimeSlots($branch1_id,$vendor_starttime_slot);
+								$matrix1_Result[] = $branch_aval_slots;
 						
-								$input_array = array('customer_id' => $user_id, 'vendor_id' => $provider_id, 'booking_date' => $vendor_starttime_slot, 'booking_start_time' => $vendor_starttime_slot, 'booking_end_time' => $vendor_endtime_slot, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
+								$input_array = array('customer_id' => $user_id, 'provider_id' => $provider_id, 'branch_id' => $branch1_id, 'staff_id' => '',  'booking_date' => $vendor_starttime_slot, 'booking_start_time' => $vendor_starttime_slot, 'booking_end_time' => $vendor_endtime_slot, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
 								$get_confirmation_details = $this->putConfirmationEntry($input_array);
 					
 								$matrix1_Result[]= $get_confirmation_details;
@@ -488,8 +526,8 @@ class CustomerController extends Controller{
 				$vendor_starttime_slot2 = $this->getTimeSlotWithTimezone($start_date, $start_time2, $get_customer_timezone_vlaue, $get_provider_timezone);
 				$vendor_endtime_slot2 = $this->getTimeSlotWithTimezone($start_date, $end_time2, $get_customer_timezone_vlaue, $get_provider_timezone);
 				
-				$check_vendor_slot_available1 = $this->getProviderTimeSlots($provider_id,$vendor_starttime_slot1,$vendor_endtime_slot1);	
-				$check_vendor_slot_available2 = $this->getProviderTimeSlots($provider_id,$vendor_starttime_slot2,$vendor_endtime_slot2);				
+				$check_branch_slot_available1 = $this->getBranchTimeSlots($branch1_id,$vendor_starttime_slot1,$vendor_endtime_slot1);	
+				$check_branch_slot_available2 = $this->getBranchTimeSlots($branch1_id,$vendor_starttime_slot2,$vendor_endtime_slot2);				
 						
 				$get_service1 = $this->getServiceWithBranch($service1_id, $branch1_id);
 				$get_service2 = $this->getServiceWithBranch($service2_id, $branch1_id);
@@ -499,18 +537,18 @@ class CustomerController extends Controller{
 				if($get_service1 && $get_service2){
 					
 					//For Service 1
-					 $slot_available1 = $this->checkBookedSlots($provider_id,$vendor_starttime_slot1,$vendor_endtime_slot1,$get_provider_timezone_id);
+					 $slot_available1 = $this->checkBookedSlots($provider_id,$branch1_id,0,$vendor_starttime_slot1,$vendor_endtime_slot1,$get_provider_timezone_id);
 					
-						if($check_vendor_slot_available1){
+						if($check_branch_slot_available1){
 					
 							if($slot_available1){
 				
 								$matrix3_Result[]= "The ".$provider_email." and ".$user_email." are already booked the given time slot.";
 							}else{
-								$provider_aval_slots = $this->getProviderAvaliableTimeSlots($provider_id,$start_date);
-								$matrix3_Result[] = $provider_aval_slots;
+								$branch_aval_slots = $this->getBranchAvaliableTimeSlots($branch1_id,$vendor_starttime_slot1);
+								$matrix3_Result[] = $branch_aval_slots;
 								
-								$input_array1 = array('customer_id' => $user_id, 'vendor_id' => $provider_id, 'booking_date' => $vendor_starttime_slot1, 'booking_start_time' => $vendor_starttime_slot1, 'booking_end_time' => $vendor_endtime_slot1, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
+								$input_array1 = array('customer_id' => $user_id, 'provider_id' => $provider_id, 'branch_id' => $branch1_id, 'staff_id' => '', 'booking_date' => $vendor_starttime_slot1, 'booking_start_time' => $vendor_starttime_slot1, 'booking_end_time' => $vendor_endtime_slot1, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
 								$get_confirmation_details1 = $this->putConfirmationEntry($input_array1);
 					
 								$matrix3_Result[]= $get_confirmation_details1;
@@ -522,18 +560,18 @@ class CustomerController extends Controller{
 						}
 						
 					//For Service 2	
-					$slot_available2 = $this->checkBookedSlots($provider_id,$vendor_starttime_slot2,$vendor_endtime_slot2,$get_provider_timezone_id);
+					$slot_available2 = $this->checkBookedSlots($provider_id,$branch1_id,0,$vendor_starttime_slot2,$vendor_endtime_slot2,$get_provider_timezone_id);
 					
-						if($check_vendor_slot_available2){
+						if($check_branch_slot_available2){
 					
 							if($slot_available2){
 				
 								$matrix3_Result[]= "The ".$provider_email." and ".$user_email." are already booked the given time slot.";
 							}else{
-								$provider_aval_slots = $this->getProviderAvaliableTimeSlots($provider_id,$start_date);
-								$matrix3_Result[] = $provider_aval_slots;
+								$branch_aval_slots = $this->getBranchAvaliableTimeSlots($branch1_id,$vendor_starttime_slot2);
+								$matrix3_Result[] = $branch_aval_slots;
 								
-								$input_array2 = array('customer_id' => $user_id, 'vendor_id' => $provider_id, 'booking_date' => $vendor_starttime_slot2, 'booking_start_time' => $vendor_starttime_slot2, 'booking_end_time' => $vendor_endtime_slot2, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
+								$input_array2 = array('customer_id' => $user_id, 'provider_id' => $provider_id, 'branch_id' => $branch1_id, 'staff_id' => '', 'booking_date' => $vendor_starttime_slot2, 'booking_start_time' => $vendor_starttime_slot2, 'booking_end_time' => $vendor_endtime_slot2, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
 								$get_confirmation_details2 = $this->putConfirmationEntry($input_array2);
 					
 								$matrix3_Result[]= $get_confirmation_details2;
@@ -548,16 +586,18 @@ class CustomerController extends Controller{
 				}else if($get_service1 && $get_service2 == ""){
 					
 					//For Service 1 only booked	
-					 $slot_available1 = $this->checkBookedSlots($provider_id,$vendor_starttime_slot1,$vendor_endtime_slot1,$get_provider_timezone_id);
+					 $slot_available1 = $this->checkBookedSlots($provider_id,$branch1_id,0,$vendor_starttime_slot1,$vendor_endtime_slot1,$get_provider_timezone_id);
 					
-						if($check_vendor_slot_available1){
+						if($check_branch_slot_available1){
 					
 							if($slot_available1){
 				
 								$matrix3_Result[]= "The ".$provider_email." and ".$user_email." are already booked the given time slot.";
 							}else{
-						
-								$input_array1 = array('customer_id' => $user_id, 'vendor_id' => $provider_id, 'booking_date' => $vendor_starttime_slot1, 'booking_start_time' => $vendor_starttime_slot1, 'booking_end_time' => $vendor_endtime_slot1, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
+								$branch_aval_slots = $this->getBranchAvaliableTimeSlots($branch1_id,$vendor_starttime_slot1);
+								$matrix3_Result[] = $branch_aval_slots;
+								
+								$input_array1 = array('customer_id' => $user_id, 'provider_id' => $provider_id, 'branch_id' => $branch1_id, 'staff_id' => '', 'booking_date' => $vendor_starttime_slot1, 'booking_start_time' => $vendor_starttime_slot1, 'booking_end_time' => $vendor_endtime_slot1, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
 								$get_confirmation_details1 = $this->putConfirmationEntry($input_array1);
 					
 								$matrix3_Result[]= $get_confirmation_details1;
@@ -582,7 +622,10 @@ class CustomerController extends Controller{
 								$matrix3_Result[]= "The ".$provider_email." and ".$user_email." are already booked the given time slot.";
 							}else{
 						
-								$input_array2 = array('customer_id' => $user_id, 'vendor_id' => $provider_id, 'booking_date' => $vendor_starttime_slot2, 'booking_start_time' => $vendor_starttime_slot2, 'booking_end_time' => $vendor_endtime_slot2, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
+								$branch_aval_slots = $this->getBranchAvaliableTimeSlots($branch1_id,$vendor_endtime_slot2);
+								$matrix3_Result[] = $branch_aval_slots;
+								
+								$input_array2 = array('customer_id' => $user_id, 'provider_id' => $provider_id, 'branch_id' => $branch1_id, 'staff_id' => '', 'booking_date' => $vendor_starttime_slot2, 'booking_start_time' => $vendor_starttime_slot2, 'booking_end_time' => $vendor_endtime_slot2, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
 								$get_confirmation_details2 = $this->putConfirmationEntry($input_array2);
 					
 								$matrix3_Result[]= $get_confirmation_details2;
@@ -629,8 +672,8 @@ class CustomerController extends Controller{
 			$vendor_starttime_slot2 = $this->getTimeSlotWithTimezone($start_date, $start_time2, $get_customer_timezone_vlaue, $get_provider_timezone);
 			$vendor_endtime_slot2 = $this->getTimeSlotWithTimezone($start_date, $end_time2, $get_customer_timezone_vlaue, $get_provider_timezone);
 			
-			$check_vendor_slot_available1 = $this->getProviderTimeSlots($provider_id,$vendor_starttime_slot1,$vendor_endtime_slot1);	
-			$check_vendor_slot_available2 = $this->getProviderTimeSlots($provider_id,$vendor_starttime_slot2,$vendor_endtime_slot2);				
+			$check_vendor_slot_available1 = $this->getBranchTimeSlots($branch1_id,$vendor_starttime_slot1,$vendor_endtime_slot1);	
+			$check_vendor_slot_available2 = $this->getBranchTimeSlots($branch2_id,$vendor_starttime_slot2,$vendor_endtime_slot2);				
 					
 			$get_service1 = $this->getServiceWithBranch($service1_id, $branch1_id);
 			$get_service2 = $this->getServiceWithBranch($service2_id, $branch2_id);
@@ -640,7 +683,7 @@ class CustomerController extends Controller{
 			//For Branch 1
 			if($get_branch1 && $get_service1){
 				
-				$slot_available1 = $this->checkBookedSlots($provider_id,$vendor_starttime_slot1,$vendor_endtime_slot1,$get_provider_timezone_id);
+				$slot_available1 = $this->checkBookedSlots($provider_id,$branch1_id,0,$vendor_starttime_slot1,$vendor_endtime_slot1,$get_provider_timezone_id);
 					
 						if($check_vendor_slot_available1){
 					
@@ -649,10 +692,10 @@ class CustomerController extends Controller{
 								$matrix5_Result[]= "The ".$provider_email." and ".$user_email." are already booked the given time slot.";
 							}else{
 								
-								$provider_aval_slots = $this->getProviderAvaliableTimeSlots($provider_id,$start_date);
+								$provider_aval_slots = $this->getBranchAvaliableTimeSlots($branch1_id,$start_date);
 								$matrix5_Result[] = $provider_aval_slots;
 								
-								$input_array = array('customer_id' => $user_id, 'vendor_id' => $provider_id, 'booking_date' => $vendor_starttime_slot1, 'booking_start_time' => $vendor_starttime_slot1, 'booking_end_time' => $vendor_endtime_slot1, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
+								$input_array = array('customer_id' => $user_id, 'provider_id' => $provider_id, 'branch_id' => $branch1_id, 'staff_id' => '', 'booking_date' => $vendor_starttime_slot1, 'booking_start_time' => $vendor_starttime_slot1, 'booking_end_time' => $vendor_endtime_slot1, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
 								$get_confirmation_details1 = $this->putConfirmationEntry($input_array);
 					
 								$matrix5_Result[]= $get_confirmation_details1;
@@ -676,7 +719,7 @@ class CustomerController extends Controller{
 			//For Branch 2
 			if($get_branch2 && $get_service2){
 				
-				$slot_available2 = $this->checkBookedSlots($provider_id,$vendor_starttime_slot2,$vendor_endtime_slot2,$get_provider_timezone_id);
+				$slot_available2 = $this->checkBookedSlots($provider_id,$branch2_id,0,$vendor_starttime_slot2,$vendor_endtime_slot2,$get_provider_timezone_id);
 					
 						if($check_vendor_slot_available2){
 					
@@ -685,10 +728,10 @@ class CustomerController extends Controller{
 								$matrix5_Result[]= "The ".$provider_email." and ".$user_email." are already booked the given time slot.";
 							}else{
 								
-								$provider_aval_slots = $this->getProviderAvaliableTimeSlots($provider_id,$start_date);
+								$provider_aval_slots = $this->getBranchAvaliableTimeSlots($branch2_id,$start_date);
 								$matrix5_Result[] = $provider_aval_slots;
 								
-								$input_array = array('customer_id' => $user_id, 'vendor_id' => $provider_id, 'booking_date' => $vendor_starttime_slot2, 'booking_start_time' => $vendor_starttime_slot2, 'booking_end_time' => $vendor_endtime_slot2, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
+								$input_array = array('customer_id' => $user_id, 'provider_id' => $provider_id, 'branch_id' => $branch2_id, 'staff_id' => '', 'booking_date' => $vendor_starttime_slot2, 'booking_start_time' => $vendor_starttime_slot2, 'booking_end_time' => $vendor_endtime_slot2, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
 								$get_confirmation_details2 = $this->putConfirmationEntry($input_array);
 					
 								$matrix5_Result[]= $get_confirmation_details2;
@@ -747,7 +790,7 @@ class CustomerController extends Controller{
 			//For Staff 1
 			if($get_branch1 && $get_service1 && $get_staff1){
 				
-				$slot_available1 = $this->checkBookedSlots($provider_id,$vendor_starttime_slot1,$vendor_endtime_slot1,$get_provider_timezone_id);
+				$slot_available1 = $this->checkBookedSlots($provider_id,$branch1_id,$staff1_id,$vendor_starttime_slot1,$vendor_endtime_slot1,$get_provider_timezone_id);
 					
 						if($check_vendor_slot_available1){
 					
@@ -756,10 +799,10 @@ class CustomerController extends Controller{
 								$matrix7_Result[]= "The ".$get_staff1." and ".$user_email." are already booked the given time slot.";
 							}else{
 						
-								$provider_aval_slots = $this->getProviderAvaliableTimeSlots($provider_id,$start_date);
+								$provider_aval_slots = $this->getProviderAvaliableTimeSlots($staff1_id,$start_date);
 								$matrix7_Result[] = $provider_aval_slots;
 								
-								$input_array = array('customer_id' => $user_id, 'vendor_id' => $provider_id, 'booking_date' => $vendor_starttime_slot1, 'booking_start_time' => $vendor_starttime_slot1, 'booking_end_time' => $vendor_endtime_slot1, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
+								$input_array = array('customer_id' => $user_id, 'provider_id' => $provider_id, 'branch_id' => $branch1_id, 'staff_id' => $staff1_id, 'booking_date' => $vendor_starttime_slot1, 'booking_start_time' => $vendor_starttime_slot1, 'booking_end_time' => $vendor_endtime_slot1, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
 								$get_confirmation_details1 = $this->putConfirmationEntry($input_array);
 					
 								$matrix7_Result[]= $get_confirmation_details1;
@@ -781,13 +824,15 @@ class CustomerController extends Controller{
 			}else if($get_branch1 == ""){
 				
 				$matrix7_Result[]= "The given branch1 is not available.";
+			}else{
+				$matrix7_Result[]= "The given service1 and ".$get_staff1." is not available in the given branch1.";
 			}
 			
 			
 			//For Staff 2
 			if($get_branch2 && $get_service2 && $get_staff2){
 				
-				$slot_available2 = $this->checkBookedSlots($provider_id,$vendor_starttime_slot2,$vendor_endtime_slot2,$get_provider_timezone_id);
+				$slot_available2 = $this->checkBookedSlots($provider_id,$branch2_id,$staff2_id,$vendor_starttime_slot2,$vendor_endtime_slot2,$get_provider_timezone_id);
 					
 						if($check_vendor_slot_available2){
 					
@@ -796,10 +841,10 @@ class CustomerController extends Controller{
 								$matrix7_Result[]= "The ".$get_staff2." and ".$user_email." are already booked the given time slot.";
 							}else{
 						
-								$provider_aval_slots = $this->getProviderAvaliableTimeSlots($provider_id,$start_date);
+								$provider_aval_slots = $this->getProviderAvaliableTimeSlots($staff2_id,$start_date);
 								$matrix7_Result[] = $provider_aval_slots;
 								
-								$input_array = array('customer_id' => $user_id, 'vendor_id' => $provider_id, 'booking_date' => $vendor_starttime_slot2, 'booking_start_time' => $vendor_starttime_slot2, 'booking_end_time' => $vendor_endtime_slot2, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
+								$input_array = array('customer_id' => $user_id, 'provider_id' => $provider_id, 'branch_id' => $branch2_id, 'staff_id' => $staff2_id, 'booking_date' => $vendor_starttime_slot2, 'booking_start_time' => $vendor_starttime_slot2, 'booking_end_time' => $vendor_endtime_slot2, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
 								$get_confirmation_details2 = $this->putConfirmationEntry($input_array);
 					
 								$matrix7_Result[]= $get_confirmation_details2;
@@ -821,6 +866,8 @@ class CustomerController extends Controller{
 			}else if($get_branch1 == ""){
 				
 				$matrix7_Result[]= "The given branch2 is not available.";
+			}else{
+				$matrix7_Result[]= "The given service2 and ".$get_staff2." is not available in the given branch2.";
 			}
 
 		}else{
