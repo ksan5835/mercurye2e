@@ -34,6 +34,24 @@ $app->get('api/v1/customer/booking/list','CustomerController@getConfirmedBooking
 $app->post('api/v1/customer','CustomerController@createCustomer');
  
 $app->put('api/v1/customer/{id}','CustomerController@updateCustomer');
+
+$app->get('api/v1/customer/provider/{provider_id}/branch/{branch_id}/staff/{staff_id}/vstart/{vstart_time}/vend/{vend_time}/timezoneid/{timezone_id}','BranchController@checkBookedSlots');
+
+$app->get('api/v1/provider/{provider_id}/branch/{branch_id}','CustomerController@getProviderWithBranch');
+
+$app->get('api/v1/timezone/date/{tz_date}/time/{tz_time}/customert/{customer_tz}/providertz/{provider_tz}','CustomerController@getTimeSlotWithTimezone');
+
+$app->get('api/v1/service/{service_id}/branch/{branch_id}','CustomerController@getServiceWithBranch');
+
+$app->get('api/v1/service/{service_id}/staff/{staff_id}','CustomerController@getStaffWithService');
+
+$app->get('api/v1/branch/{branch_id}/availdate/{availdate}/timezoneid/{timezone_id}','CustomerController@getBranchTimeSlots');
+
+$app->get('api/v1/branch/{branch_id}/bookdate/{bookdate}','CustomerController@getBranchAvaliableTimeSlots');
+
+$app->get('api/v1/provider/{provider_id}/availdate/{availdate}/timezoneid/{timezone_id}','CustomerController@getProviderTimeSlots');
+
+$app->get('api/v1/provider/{provider_id}/bookdate/{bookdate}','CustomerController@getProviderAvaliableTimeSlots');
  
 $app->delete('api/v1/customer/{id}','CustomerController@deleteCustomer'); 
 
@@ -47,7 +65,7 @@ $app->get('api/v1/branch/email/{branch_email}','BranchController@getBranchEmail'
 
 $app->get('api/v1/branch/{branch_id}/service','BranchController@getBranchServiceList');
 
-$app->get('api/v1/service/{service_id}','BranchController@getServiceBranchList');
+$app->get('api/v1/branchlist/{service_id}','BranchController@getServiceBranchList');
 
 $app->get('api/v1/branch/{branch_id}/service/{service_id}','BranchController@getBranchService');
 
@@ -64,5 +82,8 @@ $app->get('api/v1/provider/{provider_id}','ProviderController@getProvider');
 
 $app->get('api/v1/provider/email/{provider_email}','ProviderController@getProviderEmail');
 
-
 //$app->get('api/v1/staff/slot/{staff_id}/{availdate}/{timezone_id}','BranchController@getStaffSlotByID');
+
+
+
+
