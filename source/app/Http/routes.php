@@ -57,7 +57,7 @@ $app->delete('api/v1/customer/{id}','CustomerController@deleteCustomer');
 
 //Branch API
 
-$app->get('api/v1/branch','BranchController@index');
+$app->get('api/v1/branch','BranchController@index'); 
  
 $app->get('api/v1/branch/{branch_id}','BranchController@getBranch');
 
