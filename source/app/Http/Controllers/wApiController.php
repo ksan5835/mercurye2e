@@ -8,8 +8,8 @@ namespace App\Http\Controllers;
  * @package App\Http\Controllers
  *
  * @SWG\Swagger(
- *     basePath="/lumene2e/api",
- *     host="localhost",
+ *     basePath="/ae2e-io/e2eapidemo/public/api",
+ *     host="dev104.mercuryminds.com",
  *     schemes={"http"},
  *     @SWG\Info(
  *         version="1.0",
@@ -327,6 +327,558 @@ namespace App\Http\Controllers;
 
      * )
      */
+	 
+	 /**
+     * @SWG\Get(
+     *     path="/v1/customer/email/{email}",
+     *     tags={"customer"},
+     *     operationId="getCustomerEmail",
+     *     summary="get customer by email",
+     *     description="",
+     *     consumes={"application/json", "application/xml"},
+     *     produces={"application/xml", "application/json"},
+	 	   @SWG\Parameter(
+     *         description="customer details to return",
+     *         in="path",
+     *         name="email",
+     *         required=true,
+     *         type="string"
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @SWG\Schema(ref="#/definitions/Pet")
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Invalid email supplied"
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Customer not found"
+     *     ),
+     *     security={
+     *       {"api_key": {}},
+     *       {"petstore_auth": {"write:pets", "read:pets"}}
+     *     }
+	 
+
+     * )
+     */
+	 
+	 /**
+     * @SWG\Get(
+     *     path="/v1/customer/emailbook/{email}/{branch_id}/{service_id}/{staff_id}/{bookdate}/{timeinterval1}/{timeinterval2}/{timezone_id}/{type}",
+     *     tags={"customer"},
+     *     operationId="getCustomerEmailBooking",
+     *     summary="getCustomerEmailBooking",
+     *     description="",
+     *     consumes={"application/json", "application/xml"},
+     *     produces={"application/xml", "application/json"},
+	 	   @SWG\Parameter(
+     *         description="customer details to return",
+     *         in="path",
+     *         name="email",
+     *         required=true,
+     *         type="string"
+     *     ),
+	 	   @SWG\Parameter(
+     *         description="branch_id details to return",
+     *         in="path",
+     *         name="branch_id",
+     *         required=true,
+     *         type="integer"
+     *     ),
+	 	   @SWG\Parameter(
+     *         description="service_id details to return",
+     *         in="path",
+     *         name="service_id",
+     *         required=true,
+     *         type="integer"
+     *     ),
+	 	   @SWG\Parameter(
+     *         description="staff_id details to return",
+     *         in="path",
+     *         name="staff_id",
+     *         required=true,
+     *         type="integer"
+     *     ),
+	 	   @SWG\Parameter(
+     *         description="bookdate details to return",
+     *         in="path",
+     *         name="bookdate",
+     *         required=true,
+     *         type="string",
+	 *         format="date"    
+     *     ),
+	 	   @SWG\Parameter(
+     *         description="timeinterval1 details to return",
+     *         in="path",
+     *         name="timeinterval1",
+     *         required=true,
+     *         type="string"   
+     *     ),
+	 	   @SWG\Parameter(
+     *         description="timeinterval2 details to return",
+     *         in="path",
+     *         name="timeinterval2",
+     *         required=true,
+     *         type="string"   
+     *     ),
+	 	   @SWG\Parameter(
+     *         description="timezone_id details to return",
+     *         in="path",
+     *         name="timezone_id",
+     *         required=true,
+     *         type="integer"   
+     *     ),
+	 	   @SWG\Parameter(
+     *         description="type details to return",
+     *         in="path",
+     *         name="type",
+     *         required=true,
+     *         type="integer"   
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation"
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Invalid email supplied"
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Customer not found"
+     *     ),
+     *     security={
+     *       {"api_key": {}},
+     *       {"petstore_auth": {"write:pets", "read:pets"}}
+     *     }
+	 
+
+     * )
+     */
+	 
+	 
+	 /**
+     * @SWG\Get(
+     *     path="/v1/customer/booking/list",
+     *     tags={"customer"},
+     *     operationId="getConfirmedBooking",
+     *     summary="get confirmed booking list",
+     *     description="",
+     *     consumes={"application/json", "application/xml"},
+     *     produces={"application/xml", "application/json"},
+	  *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation"
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Invalid data supplied"
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="booking list not found"
+     *     )
+
+     * )
+     */
+	 
+	 /**
+     * @SWG\Get(
+     *     path="/v1/branchlist/{service_id}",
+     *     tags={"branch"},
+     *     operationId="getServiceBranchList ",
+     *     summary="get branch list by service id",
+     *     description="",
+     *     consumes={"application/json", "application/xml"},
+     *     produces={"application/xml", "application/json"},
+	 	   @SWG\Parameter(
+     *         description="service_id service list to return",
+     *         in="path",
+     *         name="service_id",
+     *         required=true,
+     *         type="integer",
+     *         format="int64"      
+     *     ),	 	   
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation"
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Invalid ID supplied"
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Service not found"
+     *     )	 
+
+     * )
+     */
+	 
+	 /**
+     * @SWG\Get(
+     *     path="/v1/provider/{provider_id}/availdate/{availdate}/timezoneid/{timezone_id}",
+     *     tags={"Provider"},
+     *     operationId="getProviderTimeSlots",
+     *     summary="get provider Time slotes",
+     *     description="",
+     *     consumes={"application/json", "application/xml"},
+     *     produces={"application/xml", "application/json"},
+	 	   @SWG\Parameter(
+     *         description="provider_id service list to return",
+     *         in="path",
+     *         name="provider_id",
+     *         required=true,
+     *         type="integer",
+     *         format="int64"      
+     *     ),
+	 	   @SWG\Parameter(
+     *         description="availdate service list to return",
+     *         in="path",
+     *         name="availdate",
+     *         required=true,
+     *         type="string",
+     *         format="date"      
+     *     ),	
+	 	   @SWG\Parameter(
+     *         description="timezone_id service list to return",
+     *         in="path",
+     *         name="timezone_id",
+     *         required=true,
+     *         type="integer",
+     *         format="int64"      
+     *     ), 		 	   
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation"
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Invalid ID supplied"
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Service not found"
+     *     )	 
+
+     * )
+     */
+	 
+	 
+	 /**
+     * @SWG\Get(
+     *     path="/v1/branch/{branch_id}/availdate/{availdate}/timezoneid/{timezone_id}",
+     *     tags={"branch"},
+     *     operationId="getBranchTimeSlots",
+     *     summary="getBranchTimeSlots",
+     *     description="",
+     *     consumes={"application/json", "application/xml"},
+     *     produces={"application/xml", "application/json"},
+	 	   @SWG\Parameter(
+     *         description="branch_id service list to return",
+     *         in="path",
+     *         name="branch_id",
+     *         required=true,
+     *         type="integer",
+     *         format="int64"      
+     *     ),
+	 	   @SWG\Parameter(
+     *         description="availdate service list to return",
+     *         in="path",
+     *         name="availdate",
+     *         required=true,
+     *         type="string",
+     *         format="date"      
+     *     ),	
+	 	   @SWG\Parameter(
+     *         description="timezone_id service list to return",
+     *         in="path",
+     *         name="timezone_id",
+     *         required=true,
+     *         type="integer",
+     *         format="int64"      
+     *     ), 		 	   
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation"
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Invalid ID supplied"
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Service not found"
+     *     )	 
+
+     * )
+     */
+	 
+	 /**
+     * @SWG\Get(
+     *     path="/v1/provider/{provider_id}/bookdate/{bookdate}",
+     *     tags={"Provider"},
+     *     operationId="getProviderAvaliableTimeSlots",
+     *     summary="getProviderAvaliableTimeSlots",
+     *     description="",
+     *     consumes={"application/json", "application/xml"},
+     *     produces={"application/xml", "application/json"},
+	 	   @SWG\Parameter(
+     *         description="provider_id service list to return",
+     *         in="path",
+     *         name="provider_id",
+     *         required=true,
+     *         type="integer",
+     *         format="int64"      
+     *     ),
+	 	   @SWG\Parameter(
+     *         description="bookdate service list to return",
+     *         in="path",
+     *         name="bookdate",
+     *         required=true,
+     *         type="string",
+     *         format="date"      
+     *     ),	 		 	   
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation"
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Invalid ID supplied"
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Service not found"
+     *     )	 
+
+     * )
+     */
+	 
+	  /**
+     * @SWG\Get(
+     *     path="/v1/timezone/date/{tz_date}/time/{tz_time}/customertz/{customer_tz}/providertz/{provider_tz}",
+     *     tags={"customer"},
+     *     operationId="getTimeSlotWithTimezone",
+     *     summary="getTimeSlotWithTimezone",
+     *     description="",
+     *     consumes={"application/json", "application/xml"},
+     *     produces={"application/xml", "application/json"},
+	 	   @SWG\Parameter(
+     *         description="tz_date service list to return",
+     *         in="path",
+     *         name="tz_date",
+     *         required=true,
+     *         type="string",
+     *         format="date"      
+     *     ),
+	 	   @SWG\Parameter(
+     *         description="tz_time service list to return",
+     *         in="path",
+     *         name="tz_time",
+     *         required=true,
+     *         type="string"     
+     *     ),	
+	 	   @SWG\Parameter(
+     *         description="customer_tz service list to return",
+     *         in="path",
+     *         name="customer_tz",
+     *         required=true,
+     *         type="string"     
+     *     ), 	
+	 	   @SWG\Parameter(
+     *         description="provider_tz service list to return",
+     *         in="path",
+     *         name="provider_tz",
+     *         required=true,
+     *         type="string"     
+     *     ),	 	   
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation"
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Invalid ID supplied"
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Service not found"
+     *     )	 
+
+     * )
+     */
+	 
+	 
+	 /**
+     * @SWG\Get(
+     *     path="/v1/branch/{branch_id}/bookdate/{bookdate}",
+     *     tags={"branch"},
+     *     operationId="getBranchAvaliableTimeSlots",
+     *     summary="getBranchAvaliableTimeSlots",
+     *     description="",
+     *     consumes={"application/json", "application/xml"},
+     *     produces={"application/xml", "application/json"},
+	 	   @SWG\Parameter(
+     *         description="branch_id service list to return",
+     *         in="path",
+     *         name="branch_id",
+     *         required=true,
+     *         type="integer",
+     *         format="int64"      
+     *     ),
+	 	   @SWG\Parameter(
+     *         description="bookdate service list to return",
+     *         in="path",
+     *         name="bookdate",
+     *         required=true,
+     *         type="string",
+     *         format="date"      
+     *     ),		 	 	   
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation"
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Invalid ID supplied"
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Service not found"
+     *     )	 
+
+     * )
+     */
+	 
+	 /**
+     * @SWG\Get(
+     *     path="/v1/provider/{provider_id}/branch/{branch_id}",
+     *     tags={"Provider"},
+     *     operationId="getProviderWithBranch",
+     *     summary="getProviderWithBranch",
+     *     description="",
+     *     consumes={"application/json", "application/xml"},
+     *     produces={"application/xml", "application/json"},
+	 	   @SWG\Parameter(
+     *         description="provider_id service list to return",
+     *         in="path",
+     *         name="provider_id",
+     *         required=true,
+     *         type="integer",
+     *         format="int64"      
+     *     ),
+	 	   @SWG\Parameter(
+     *         description="branch_id service list to return",
+     *         in="path",
+     *         name="branch_id",
+     *         required=true,
+     *         type="integer",
+     *         format="int64"      
+     *     ),	 		 	   
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation"
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Invalid ID supplied"
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Service not found"
+     *     )	 
+
+     * )
+     */
+	 
+	 
+	 /**
+     * @SWG\Get(
+     *     path="/v1/service/{service_id}/branch/{branch_id}",
+     *     tags={"customer"},
+     *     operationId="getServiceWithBranch",
+     *     summary="getServiceWithBranch",
+     *     description="",
+     *     consumes={"application/json", "application/xml"},
+     *     produces={"application/xml", "application/json"},
+	 	   @SWG\Parameter(
+     *         description="service_id list to return",
+     *         in="path",
+     *         name="service_id",
+     *         required=true,
+     *         type="integer",
+     *         format="int64"      
+     *     ),
+	 	   @SWG\Parameter(
+     *         description="branch_id to return",
+     *         in="path",
+     *         name="branch_id",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ),		 	 	   
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation"
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Invalid ID supplied"
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Service not found"
+     *     )	 
+
+     * )
+     */
+	 
+	  /**
+     * @SWG\Get(
+     *     path="/v1/service/{service_id}/staff/{staff_id}",
+     *     tags={"customer"},
+     *     operationId="getStaffWithService",
+     *     summary="getStaffWithService",
+     *     description="",
+     *     consumes={"application/json", "application/xml"},
+     *     produces={"application/xml", "application/json"},
+	 	   @SWG\Parameter(
+     *         description="service_id list to return",
+     *         in="path",
+     *         name="service_id",
+     *         required=true,
+     *         type="integer",
+     *         format="int64"      
+     *     ),
+	 	   @SWG\Parameter(
+     *         description="staff_id to return",
+     *         in="path",
+     *         name="staff_id",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ),		 	 	   
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation"
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Invalid ID supplied"
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Service not found"
+     *     )	 
+
+     * )
+     */	 
+	 
  
 class ApiController extends Controller
 {
