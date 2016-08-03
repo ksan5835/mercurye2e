@@ -53,7 +53,7 @@ $app->get('api/v1/provider/{provider_id}/availdate/{availdate}/timezoneid/{timez
 
 $app->get('api/v1/provider/{provider_id}/bookdate/{bookdate}','CustomerController@getProviderAvaliableTimeSlots');
  
-$app->delete('api/v1/customer/{id}','CustomerController@deleteCustomer'); 
+$app->delete('api/v1/customer/{id}','CustomerController@deleteCustomer');  
 
 //Branch API
 
