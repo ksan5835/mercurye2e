@@ -39,7 +39,7 @@ $app->get('api/v1/customer/provider/{provider_id}/branch/{branch_id}/staff/{staf
 
 $app->get('api/v1/provider/{provider_id}/branch/{branch_id}','CustomerController@getProviderWithBranch');
 
-$app->get('api/v1/timezone/date/{tz_date}/time/{tz_time}/customert/{customer_tz}/providertz/{provider_tz}','CustomerController@getTimeSlotWithTimezone');
+$app->get('api/v1/timezone/date/{tz_date}/time/{tz_time}/customertz/{customer_tz}/providertz/{provider_tz}','CustomerController@getTimeSlotWithTimezone');
 
 $app->get('api/v1/service/{service_id}/branch/{branch_id}','CustomerController@getServiceWithBranch');
 
