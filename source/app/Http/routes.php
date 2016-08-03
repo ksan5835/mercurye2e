@@ -55,6 +55,19 @@ $app->get('api/v1/provider/{provider_id}/bookdate/{bookdate}','CustomerControlle
  
 $app->delete('api/v1/customer/{id}','CustomerController@deleteCustomer');  
 
+//Matrix API
+
+$app->get('api/v1/matrix1/{provider_email}/{email}/{provider_id}/{user_id}/{branch_id}/{service_id}/{bookdate}/{start_time1}/{end_time1}/{timezone_id}','CustomerController@getMatrix1_Result');
+
+$app->get('api/v1/matrix3/{provider_email}/{email}/{provider_id}/{user_id}/{branch_id}/{service_id}/{bookdate}/{start_time1}/{end_time1}/{service_id1}/{start_time2}/{end_time2}/{timezone_id}','CustomerController@getMatrix3_Result');
+
+$app->get('api/v1/matrix5/{provider_email}/{email}/{provider_id}/{user_id}/{branch_id}/{service_id}/{bookdate}/{start_time1}/{end_time1}/{branch_id1}/{service_id1}/{start_time2}/{end_time2}/{timezone_id}/{type}','CustomerController@getMatrix5_Result');
+
+$app->get('api/v1/matrix7/{provider_email}/{email}/{provider_id}/{user_id}/{branch_id}/{service_id}/{staff_id}/{bookdate}/{start_time1}/{end_time1}/{branch_id1}/{service_id1}/{staff_id1}/{start_time2}/{end_time2}/{timezone_id}/{type}','CustomerController@getMatrix7_Result');
+
+$app->get('api/v1/matrix9/{provider_email}/{email}/{provider_id}/{user_id}/{branch_id}/{service_id}/{staff_id}/{bookdate}/{start_time1}/{end_time1}/{branch_id1}/{service_id1}/{staff_id1}/{start_time2}/{end_time2}/{timezone_id}/{type}','CustomerController@getMatrix9_Result');
+
+
 //Branch API
 
 $app->get('api/v1/branch','BranchController@index'); 
