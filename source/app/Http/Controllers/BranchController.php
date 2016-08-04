@@ -82,8 +82,10 @@ class BranchController extends Controller{
     }
 	
 	public function deleteBranch($id){
-        $Custom  = Branch::find($id);
-        $Custom->delete();
+        //$Custom  = Branch::find($id);
+        //$Custom->delete();
+		
+		DB::table('provider_biz_branch')->where('branch_id', '=', $id)->delete();
  
         return response()->json('deleted');
     }

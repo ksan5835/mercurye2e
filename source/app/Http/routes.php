@@ -45,7 +45,9 @@ $app->get('api/v1/service/{service_id}/branch/{branch_id}','CustomerController@g
 
 $app->get('api/v1/service/{service_id}/staff/{staff_id}','CustomerController@getStaffWithService');
 
-$app->get('api/v1/branch/{branch_id}/availdate/{availdate}/timezoneid/{timezone_id}','CustomerController@getBranchTimeSlots');
+//$app->get('api/v1/branch/{branch_id}/availdate/{availdate}/timezoneid/{timezone_id}','CustomerController@getBranchTimeSlots');
+
+$app->get('api/v1/branch/{branch_id}/availstartdate/{availstartdate}/availenddate/{availenddate}','CustomerController@getBranchTimeSlots');
 
 $app->get('api/v1/branch/{branch_id}/bookdate/{bookdate}','CustomerController@getBranchAvaliableTimeSlots');
 
