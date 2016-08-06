@@ -81,13 +81,19 @@ class BranchController extends Controller{
   
     }
 	
-	public function deleteBranch($id){
-        //$Custom  = Branch::find($id);
-        //$Custom->delete();
+	public function deleteBranch($branch_id){
+        $branch_work = DB::table('biz_branch_workinghours')
+                     ->select(DB::raw('branch_id'))
+                     ->where('branch_id', '=', $branch_id)
+                     ->get();
+				if($branch_work){
+					return $this->createErrorResponse("Branch working hours entry is available, so record will not be deleted.",404);
+				}else{
+					DB::table('provider_biz_branch')->where('branch_id', '=', $branch_id)->delete();
+ 					return response()->json('deleted');
+				}
 		
-		DB::table('provider_biz_branch')->where('branch_id', '=', $id)->delete();
- 
-        return response()->json('deleted');
+
     }
   
     public function updateBranch(Request $request,$id){
