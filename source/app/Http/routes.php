@@ -84,7 +84,7 @@ $app->get('api/v1/branchlist/{service_id}','BranchController@getServiceBranchLis
 
 $app->get('api/v1/branch/{branch_id}/service/{service_id}','BranchController@getBranchService');
 
-$app->delete('api/v1/branch/{id}','BranchController@deleteBranch'); 
+$app->get('api/v1/branch/delete/{branch_id}','BranchController@deleteBranch'); 
 
 // Staff API
 
