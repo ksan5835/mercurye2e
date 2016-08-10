@@ -108,7 +108,7 @@ class CustomerController extends Controller{
 	
 	public function getCustomerEmail($email){
 
-			$userExists = Customer::where('email', $email)->count();
+			$userExists = Customer::where('email', urldecode($email))->count();
 
 			if($userExists) {
 				return $this->createSuccessResponse("Email ID is available.", 200);
@@ -144,7 +144,7 @@ class CustomerController extends Controller{
 	public function getCustomerEmailBooking($email, $branch_id, $service_id, $staff_id, $bookdate, $timeinterval1, $timeinterval2, $timezone_id, $type){
 		
 		DB::connection()->enableQueryLog();
-		$email_explode = explode(',',$email);
+		$email_explode = explode(',',urldecode($email));
 		$branch_explode = explode(',',$branch_id);
 		$service_explode = explode(',',$service_id);
 		$staff_explode = explode(',',$staff_id);
@@ -455,6 +455,10 @@ class CustomerController extends Controller{
 	
 	public function getMatrix1_Result($provider_email,$user_email,$provider_id, $user_id, $branch1_id, $service1_id, $start_date, $start_time1, $end_time1, $timezone_id){
 		
+		$provider_email = urldecode($provider_email);
+		$user_email = urldecode($user_email);
+		$start_time1 = urldecode($start_time1);
+		$end_time1 = urldecode($end_time1);
 		
 		$get_branch1 = $this->getProviderWithBranch($provider_id,$branch1_id);
 			if($get_branch1){
@@ -516,6 +520,13 @@ class CustomerController extends Controller{
 	}
 	
 	public function getMatrix3_Result($provider_email,$user_email,$provider_id, $user_id, $branch1_id, $service1_id, $start_date, $start_time1, $end_time1, $service2_id, $start_time2, $end_time2, $timezone_id){
+			
+			$provider_email = urldecode($provider_email);
+			$user_email = urldecode($user_email);
+			$start_time1 = urldecode($start_time1);
+			$end_time1 = urldecode($end_time1);
+			$start_time2 = urldecode($start_time2);
+			$end_time2 = urldecode($end_time2);
 			
 			$get_branch1 = $this->getProviderWithBranch($provider_id,$branch1_id);
 		
@@ -664,6 +675,13 @@ class CustomerController extends Controller{
 	
 	public function getMatrix5_Result($provider_email,$user_email,$provider_id, $user_id, $branch1_id, $service1_id, $start_date, $start_time1, $end_time1, $branch2_id, $service2_id, $start_time2, $end_time2, $timezone_id, $type){
 			
+			$provider_email = urldecode($provider_email);
+			$user_email = urldecode($user_email);
+			$start_time1 = urldecode($start_time1);
+			$end_time1 = urldecode($end_time1);
+			$start_time2 = urldecode($start_time2);
+			$end_time2 = urldecode($end_time2);
+			
 			$get_branch1 = $this->getProviderWithBranch($provider_id,$branch1_id);
 			$get_branch2 = $this->getProviderWithBranch($provider_id,$branch2_id);
 
@@ -774,6 +792,13 @@ class CustomerController extends Controller{
 	
 	
 	public function getMatrix7_Result($provider_email,$user_email,$provider_id, $user_id, $branch1_id, $service1_id, $staff1_id, $start_date, $start_time1, $end_time1, $branch2_id, $service2_id, $staff2_id, $start_time2, $end_time2, $timezone_id, $type){
+			
+			$provider_email = urldecode($provider_email);
+			$user_email = urldecode($user_email);
+			$start_time1 = urldecode($start_time1);
+			$end_time1 = urldecode($end_time1);
+			$start_time2 = urldecode($start_time2);
+			$end_time2 = urldecode($end_time2);
 			
 			$get_branch1 = $this->getProviderWithBranch($provider_id,$branch1_id);
 			$get_branch2 = $this->getProviderWithBranch($provider_id,$branch2_id);
@@ -893,6 +918,13 @@ class CustomerController extends Controller{
 	
 	
 	public function getMatrix9_Result($provider_email,$user_email,$provider_id, $user_id, $branch1_id, $service1_id, $staff1_id, $start_date, $start_time1, $end_time1, $branch2_id, $service2_id, $staff2_id, $start_time2, $end_time2, $timezone_id, $type){
+			
+			$provider_email = urldecode($provider_email);
+			$user_email = urldecode($user_email);
+			$start_time1 = urldecode($start_time1);
+			$end_time1 = urldecode($end_time1);
+			$start_time2 = urldecode($start_time2);
+			$end_time2 = urldecode($end_time2);
 			
 			$get_branch1 = $this->getProviderWithBranch($provider_id,$branch1_id);
 			$get_branch2 = $this->getProviderWithBranch($provider_id,$branch2_id);
