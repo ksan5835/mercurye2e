@@ -80,7 +80,8 @@ namespace App\Http\Controllers;
      *         in="path",
      *         name="branch_email",
      *         required=true,
-     *         type="string"     *         
+     *         type="string",
+     *         format="email"    	 
      *     ),
      *     @SWG\Response(
      *         response=200,
@@ -174,7 +175,7 @@ namespace App\Http\Controllers;
 	 
 	 /**
      * @SWG\Delete(
-     *     path="/v1/branch/{id}",
+     *     path="/v1/branch/delete/{id}",
      *     tags={"branch"},
      *     operationId="deleteBranch",
      *     summary="delete branch by id",
@@ -219,7 +220,8 @@ namespace App\Http\Controllers;
      *         in="path",
      *         name="staff_email",
      *         required=true,
-     *         type="string"   
+     *         type="string",
+     *         format="email"  	 
      *     ),
      *     @SWG\Response(
      *         response=200,
@@ -310,7 +312,8 @@ namespace App\Http\Controllers;
      *         in="path",
      *         name="provider_email",
      *         required=true,   
-	 *         type="string"  
+	 *         type="string",
+     *         format="email"  	 
      *     ),
      *     @SWG\Response(
      *         response=200,
@@ -342,7 +345,8 @@ namespace App\Http\Controllers;
      *         in="path",
      *         name="email",
      *         required=true,
-     *         type="string"
+     *         type="string",
+	 *         format="email"  
      *     ),
      *     @SWG\Response(
      *         response=200,
@@ -380,7 +384,8 @@ namespace App\Http\Controllers;
      *         in="path",
      *         name="email",
      *         required=true,
-     *         type="string"
+     *         type="string",
+     *         format="email"  
      *     ),
 	 	   @SWG\Parameter(
      *         description="branch_id details to return",
@@ -879,6 +884,810 @@ namespace App\Http\Controllers;
      * )
      */	 
 	 
+	  /**
+     * @SWG\Get(
+     *     path="/v1/matrix1/{provider_email}/{user_email}/{provider_id}/{user_id}/{branch1_id}/{service1_id}/{start_date}/{start_time1}/{end_time1}/{timezone_id}",
+     *     tags={"customer"},
+     *     operationId="getMatrix1_Result",
+     *     summary="getMatrix1_Result",
+     *     description="",
+     *     consumes={"application/json", "application/xml"},
+     *     produces={"application/xml", "application/json"},
+	 	   @SWG\Parameter(
+     *         description="provider_email list to return",
+     *         in="path",
+     *         name="provider_email",
+     *         required=true,
+     *         type="string"    
+     *     ),
+	 	   @SWG\Parameter(
+     *         description="user_email to return",
+     *         in="path",
+     *         name="user_email",
+     *         required=true,
+     *         type="string"
+     *     ),	
+	  	   @SWG\Parameter(
+     *         description="provider_id to return",
+     *         in="path",
+     *         name="provider_id",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ),
+	  	   @SWG\Parameter(
+     *         description="user_id to return",
+     *         in="path",
+     *         name="user_id",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ),	
+	 	   @SWG\Parameter(
+     *         description="branch1_id to return",
+     *         in="path",
+     *         name="branch1_id",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ),	
+	  	   @SWG\Parameter(
+     *         description="service1_id to return",
+     *         in="path",
+     *         name="service1_id",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ), 
+	  	   @SWG\Parameter(
+     *         description="start_date to return",
+     *         in="path",
+     *         name="start_date",
+     *         required=true,
+     *         type="string",
+	 *         format="date"   
+     *     ),
+	   	   @SWG\Parameter(
+     *         description="start_time1 to return",
+     *         in="path",
+     *         name="start_time1",
+     *         required=true,
+     *         type="string"
+	 *		   format="time"
+     *     ),	
+	  	   @SWG\Parameter(
+     *         description="end_time1 to return",
+     *         in="path",
+     *         name="end_time1",
+     *         required=true,
+     *         type="string"
+     *     ),
+	  	   @SWG\Parameter(
+     *         description="timezone_id to return",
+     *         in="path",
+     *         name="timezone_id",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ),		 	   
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation"
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Invalid ID supplied"
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Service not found"
+     *     )	 
+
+     * )
+     */	
+	 
+	  /**
+     * @SWG\Get(
+     *     path="/v1/matrix3/{provider_email}/{user_email}/{provider_id}/{user_id}/{branch1_id}/{service1_id}/{start_date}/{start_time1}/{end_time1}/{service2_id}/{start_time2}/{end_time2}/{timezone_id}",
+     *     tags={"customer"},
+     *     operationId="getMatrix3_Result",
+     *     summary="getMatrix3_Result",
+     *     description="",
+     *     consumes={"application/json", "application/xml"},
+     *     produces={"application/xml", "application/json"},
+	 	   @SWG\Parameter(
+     *         description="provider_email list to return",
+     *         in="path",
+     *         name="provider_email",
+     *         required=true,
+     *         type="string"    
+     *     ),
+	 	   @SWG\Parameter(
+     *         description="user_email to return",
+     *         in="path",
+     *         name="user_email",
+     *         required=true,
+     *         type="string"
+     *     ),	
+	  	   @SWG\Parameter(
+     *         description="provider_id to return",
+     *         in="path",
+     *         name="provider_id",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ),
+	  	   @SWG\Parameter(
+     *         description="user_id to return",
+     *         in="path",
+     *         name="user_id",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ),	
+	 	   @SWG\Parameter(
+     *         description="branch1_id to return",
+     *         in="path",
+     *         name="branch1_id",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ),	
+	  	   @SWG\Parameter(
+     *         description="service1_id to return",
+     *         in="path",
+     *         name="service1_id",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ), 
+	  	   @SWG\Parameter(
+     *         description="start_date to return",
+     *         in="path",
+     *         name="start_date",
+     *         required=true,
+     *         type="string",
+	 *         format="date"   
+     *     ),
+	   	   @SWG\Parameter(
+     *         description="start_time1 to return",
+     *         in="path",
+     *         name="start_time1",
+     *         required=true,
+     *         type="string"
+     *     ),	
+	  	   @SWG\Parameter(
+     *         description="end_time1 to return",
+     *         in="path",
+     *         name="end_time1",
+     *         required=true,
+     *         type="string"
+     *     ),
+	  	   @SWG\Parameter(
+     *         description="service2_id to return",
+     *         in="path",
+     *         name="service2_id",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ),	
+	  	   @SWG\Parameter(
+     *         description="start_time2 to return",
+     *         in="path",
+     *         name="start_time2",
+     *         required=true,
+     *         type="string"  
+     *     ),	
+	  	   @SWG\Parameter(
+     *         description="end_time2 to return",
+     *         in="path",
+     *         name="end_time2",
+     *         required=true,
+     *         type="string"  
+     *     ),
+	  	   @SWG\Parameter(
+     *         description="timezone_id to return",
+     *         in="path",
+     *         name="timezone_id",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ),	 	   
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation"
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Invalid ID supplied"
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Service not found"
+     *     )	 
+
+     * )
+     */	
+	 
+	 
+	  /**
+     * @SWG\Get(
+     *     path="/v1/matrix5/{provider_email}/{user_email}/{provider_id}/{user_id}/{branch1_id}/{service1_id}/{start_date}/{start_time1}/{end_time1}/{branch2_id}/{service2_id}/{start_time2}/{end_time2}/{timezone_id}/{type}",
+     *     tags={"customer"},
+     *     operationId="getMatrix5_Result",
+     *     summary="getMatrix5_Result",
+     *     description="",
+     *     consumes={"application/json", "application/xml"},
+     *     produces={"application/xml", "application/json"},
+	 	   @SWG\Parameter(
+     *         description="provider_email list to return",
+     *         in="path",
+     *         name="provider_email",
+     *         required=true,
+     *         type="string"    
+     *     ),
+	 	   @SWG\Parameter(
+     *         description="user_email to return",
+     *         in="path",
+     *         name="user_email",
+     *         required=true,
+     *         type="string"
+     *     ),	
+	  	   @SWG\Parameter(
+     *         description="provider_id to return",
+     *         in="path",
+     *         name="provider_id",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ),
+	  	   @SWG\Parameter(
+     *         description="user_id to return",
+     *         in="path",
+     *         name="user_id",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ),	
+	 	   @SWG\Parameter(
+     *         description="branch1_id to return",
+     *         in="path",
+     *         name="branch1_id",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ),	
+	  	   @SWG\Parameter(
+     *         description="service1_id to return",
+     *         in="path",
+     *         name="service1_id",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ), 
+	  	   @SWG\Parameter(
+     *         description="start_date to return",
+     *         in="path",
+     *         name="start_date",
+     *         required=true,
+     *         type="string",
+	 *         format="date"   
+     *     ),
+	   	   @SWG\Parameter(
+     *         description="start_time1 to return",
+     *         in="path",
+     *         name="start_time1",
+     *         required=true,
+     *         type="string"
+     *     ),	
+	  	   @SWG\Parameter(
+     *         description="end_time1 to return",
+     *         in="path",
+     *         name="end_time1",
+     *         required=true,
+     *         type="string"
+     *     ),
+	  	   @SWG\Parameter(
+     *         description="branch2_id to return",
+     *         in="path",
+     *         name="branch_id1",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ),	
+	  	   @SWG\Parameter(
+     *         description="service2_id to return",
+     *         in="path",
+     *         name="service2_id",
+     *         required=true,
+     *         type="string"  
+     *     ),	
+	  	   @SWG\Parameter(
+     *         description="start_time2 to return",
+     *         in="path",
+     *         name="start_time2",
+     *         required=true,
+     *         type="string"  
+     *     ),
+	  	   @SWG\Parameter(
+     *         description="end_time2 to return",
+     *         in="path",
+     *         name="end_time2",
+     *         required=true,
+     *         type="string"  
+     *     ),
+	  	   @SWG\Parameter(
+     *         description="timezone_id to return",
+     *         in="path",
+     *         name="timezone_id",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ),	
+	  	   @SWG\Parameter(
+     *         description="type to return",
+     *         in="path",
+     *         name="type",
+     *         required=true,
+     *         type="string"  
+     *     ), 	   
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation"
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Invalid ID supplied"
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Service not found"
+     *     )	 
+
+     * )
+     */	
+	 
+	 
+	 /**
+     * @SWG\Get(
+     *     path="/v1/matrix5/{provider_email}/{email}/{provider_id}/{user_id}/{branch_id}/{service_id}/{bookdate}/{start_time1}/{end_time1}/{branch_id1}/{service_id1}/{start_time2}/{end_time2}/{timezone_id}/{type}",
+     *     tags={"customer"},
+     *     operationId="getMatrix5_Result",
+     *     summary="getMatrix5_Result",
+     *     description="",
+     *     consumes={"application/json", "application/xml"},
+     *     produces={"application/xml", "application/json"},
+	 	   @SWG\Parameter(
+     *         description="provider_email list to return",
+     *         in="path",
+     *         name="provider_email",
+     *         required=true,
+     *         type="string"    
+     *     ),
+	 	   @SWG\Parameter(
+     *         description="email to return",
+     *         in="path",
+     *         name="email",
+     *         required=true,
+     *         type="string"
+     *     ),	
+	  	   @SWG\Parameter(
+     *         description="provider_id to return",
+     *         in="path",
+     *         name="provider_id",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ),
+	  	   @SWG\Parameter(
+     *         description="user_id to return",
+     *         in="path",
+     *         name="user_id",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ),	
+	 	   @SWG\Parameter(
+     *         description="branch_id to return",
+     *         in="path",
+     *         name="branch_id",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ),	
+	  	   @SWG\Parameter(
+     *         description="service_id to return",
+     *         in="path",
+     *         name="service_id",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ), 
+	  	   @SWG\Parameter(
+     *         description="bookdate to return",
+     *         in="path",
+     *         name="bookdate",
+     *         required=true,
+     *         type="string",
+	 *         format="date"   
+     *     ),
+	   	   @SWG\Parameter(
+     *         description="start_time1 to return",
+     *         in="path",
+     *         name="start_time1",
+     *         required=true,
+     *         type="string"
+     *     ),	
+	  	   @SWG\Parameter(
+     *         description="end_time1 to return",
+     *         in="path",
+     *         name="end_time1",
+     *         required=true,
+     *         type="string"
+     *     ),
+	  	   @SWG\Parameter(
+     *         description="branch_id1 to return",
+     *         in="path",
+     *         name="branch_id1",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ),	
+	  	   @SWG\Parameter(
+     *         description="service_id1 to return",
+     *         in="path",
+     *         name="service_id1",
+     *         required=true,
+     *         type="string"  
+     *     ),	
+	  	   @SWG\Parameter(
+     *         description="start_time2 to return",
+     *         in="path",
+     *         name="start_time2",
+     *         required=true,
+     *         type="string"  
+     *     ),
+	  	   @SWG\Parameter(
+     *         description="end_time2 to return",
+     *         in="path",
+     *         name="end_time2",
+     *         required=true,
+     *         type="string"  
+     *     ),
+	  	   @SWG\Parameter(
+     *         description="timezone_id to return",
+     *         in="path",
+     *         name="timezone_id",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ),	
+	  	   @SWG\Parameter(
+     *         description="type to return",
+     *         in="path",
+     *         name="type",
+     *         required=true,
+     *         type="string"  
+     *     ), 	   
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation"
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Invalid ID supplied"
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Service not found"
+     *     )	 
+
+     * )
+     */	
+	 
+	  /**
+     * @SWG\Get(
+     *     path="/v1/matrix7/{provider_email}/{user_email}/{provider_id}/{user_id}/{branch1_id}/{service1_id}/{staff1_id}/{start_date}/{start_time1}/{end_time1}/{branch2_id}/{service2_id}/{staff2_id}/{start_time2}/{end_time2}/{timezone_id}/{type}",
+     *     tags={"customer"},
+     *     operationId="getMatrix7_Result",
+     *     summary="getMatrix7_Result",
+     *     description="",
+     *     consumes={"application/json", "application/xml"},
+     *     produces={"application/xml", "application/json"},
+	 	   @SWG\Parameter(
+     *         description="provider_email list to return",
+     *         in="path",
+     *         name="provider_email",
+     *         required=true,
+     *         type="string"    
+     *     ),
+	 	   @SWG\Parameter(
+     *         description="user_email to return",
+     *         in="path",
+     *         name="user_email",
+     *         required=true,
+     *         type="string"
+     *     ),	
+	  	   @SWG\Parameter(
+     *         description="provider_id to return",
+     *         in="path",
+     *         name="provider_id",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ),
+	  	   @SWG\Parameter(
+     *         description="user_id to return",
+     *         in="path",
+     *         name="user_id",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ),	
+	 	   @SWG\Parameter(
+     *         description="branch1_id to return",
+     *         in="path",
+     *         name="branch1_id",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ),	
+	  	   @SWG\Parameter(
+     *         description="service1_id to return",
+     *         in="path",
+     *         name="service_id",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ), 
+	   	   @SWG\Parameter(
+     *         description="staff1_id to return",
+     *         in="path",
+     *         name="staff1_id",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ), 
+	  	   @SWG\Parameter(
+     *         description="start_date to return",
+     *         in="path",
+     *         name="start_date",
+     *         required=true,
+     *         type="string",
+	 *         format="date"   
+     *     ),
+	   	   @SWG\Parameter(
+     *         description="start_time1 to return",
+     *         in="path",
+     *         name="start_time1",
+     *         required=true,
+     *         type="string"
+     *     ),	
+	  	   @SWG\Parameter(
+     *         description="end_time1 to return",
+     *         in="path",
+     *         name="end_time1",
+     *         required=true,
+     *         type="string"
+     *     ),
+	  	   @SWG\Parameter(
+     *         description="branch2_id to return",
+     *         in="path",
+     *         name="branch2_id",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ),	
+	  	   @SWG\Parameter(
+     *         description="service2_id to return",
+     *         in="path",
+     *         name="service2_id",
+     *         required=true,
+     *         type="string"  
+     *     ),	
+	  	   @SWG\Parameter(
+     *         description="staff2_id to return",
+     *         in="path",
+     *         name="staff2_id",
+     *         required=true,
+     *         type="string"  
+     *     ),
+	  	   @SWG\Parameter(
+     *         description="start_time2 to return",
+     *         in="path",
+     *         name="start_time2",
+     *         required=true,
+     *         type="string"  
+     *     ),
+	  	   @SWG\Parameter(
+     *         description="end_time2 to return",
+     *         in="path",
+     *         name="end_time2",
+     *         required=true,
+     *         type="string"  
+     *     ),
+	  	   @SWG\Parameter(
+     *         description="timezone_id to return",
+     *         in="path",
+     *         name="timezone_id",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ),	
+	  	   @SWG\Parameter(
+     *         description="type to return",
+     *         in="path",
+     *         name="type",
+     *         required=true,
+     *         type="string"  
+     *     ), 	   
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation"
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Invalid ID supplied"
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Service not found"
+     *     )	 
+
+     * )
+     */	
+	 
+	 /**
+     * @SWG\Get(
+     *     path="/v1/matrix9/{provider_email}/{user_email}/{provider_id}/{user_id}/{branch1_id}/{service1_id}/{staff1_id}/{start_date}/{start_time1}/{end_time1}/{branch2_id}/{service2_id}/{staff2_id}/{start_time2}/{end_time2}/{timezone_id}/{type}",
+     *     tags={"customer"},
+     *     operationId="getMatrix9_Result",
+     *     summary="getMatrix9_Result",
+     *     description="",
+     *     consumes={"application/json", "application/xml"},
+     *     produces={"application/xml", "application/json"},
+	 	   @SWG\Parameter(
+     *         description="provider_email list to return",
+     *         in="path",
+     *         name="provider_email",
+     *         required=true,
+     *         type="string"    
+     *     ),
+	 	   @SWG\Parameter(
+     *         description="user_email to return",
+     *         in="path",
+     *         name="user_email",
+     *         required=true,
+     *         type="string"
+     *     ),	
+	  	   @SWG\Parameter(
+     *         description="provider_id to return",
+     *         in="path",
+     *         name="provider_id",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ),
+	  	   @SWG\Parameter(
+     *         description="user_id to return",
+     *         in="path",
+     *         name="user_id",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ),	
+	 	   @SWG\Parameter(
+     *         description="branch1_id to return",
+     *         in="path",
+     *         name="branch1_id",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ),	
+	  	   @SWG\Parameter(
+     *         description="service1_id to return",
+     *         in="path",
+     *         name="service1_id",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ), 
+	   	   @SWG\Parameter(
+     *         description="staff1_id to return",
+     *         in="path",
+     *         name="staff1_id",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ), 
+	  	   @SWG\Parameter(
+     *         description="start_date to return",
+     *         in="path",
+     *         name="start_date",
+     *         required=true,
+     *         type="string",
+	 *         format="date"   
+     *     ),
+	   	   @SWG\Parameter(
+     *         description="start_time1 to return",
+     *         in="path",
+     *         name="start_time1",
+     *         required=true,
+     *         type="string"
+     *     ),	
+	  	   @SWG\Parameter(
+     *         description="end_time1 to return",
+     *         in="path",
+     *         name="end_time1",
+     *         required=true,
+     *         type="string"
+     *     ),
+	  	   @SWG\Parameter(
+     *         description="branch2_id to return",
+     *         in="path",
+     *         name="branch2_id",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ),	
+	  	   @SWG\Parameter(
+     *         description="service2_id to return",
+     *         in="path",
+     *         name="service2_id",
+     *         required=true,
+     *         type="string"  
+     *     ),	
+	  	   @SWG\Parameter(
+     *         description="staff2_id to return",
+     *         in="path",
+     *         name="staff2_id",
+     *         required=true,
+     *         type="string"  
+     *     ),
+	  	   @SWG\Parameter(
+     *         description="start_time2 to return",
+     *         in="path",
+     *         name="start_time2",
+     *         required=true,
+     *         type="string"  
+     *     ),
+	  	   @SWG\Parameter(
+     *         description="end_time2 to return",
+     *         in="path",
+     *         name="end_time2",
+     *         required=true,
+     *         type="string"  
+     *     ),
+	  	   @SWG\Parameter(
+     *         description="timezone_id to return",
+     *         in="path",
+     *         name="timezone_id",
+     *         required=true,
+     *         type="integer",
+	 *         format="int64"   
+     *     ),	
+	  	   @SWG\Parameter(
+     *         description="type to return",
+     *         in="path",
+     *         name="type",
+     *         required=true,
+     *         type="string"  
+     *     ), 	   
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation"
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Invalid ID supplied"
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Service not found"
+     *     )	 
+
+     * )
+     */	
  
 class ApiController extends Controller
 {
