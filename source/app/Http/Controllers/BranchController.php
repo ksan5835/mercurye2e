@@ -168,7 +168,7 @@ class BranchController extends Controller{
 	public function getStaffSlotEmail($email, $bookdate){
 		
 		//Getting the provider information
-		$user1_id = DB::table('provider')->where('email', urldecode($email)->value('user_id');	
+		$user1_id = DB::table('provider')->where('email', $email)->value('user_id');	
 		
 		if(!empty($user1_id)){
 			//Getting the available date
