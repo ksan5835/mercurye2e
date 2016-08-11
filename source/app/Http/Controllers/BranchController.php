@@ -64,7 +64,7 @@ class BranchController extends Controller{
 	
 	public function getBranchEmail($branch_email){
 
-			$userExists = Branch::where('branch_email', $branch_email)->count();
+			$userExists = Branch::where('branch_email', urldecode($branch_email))->count();
 
 			if($userExists) {
 				return $this->createSuccessResponse("Email ID is available.", 200);
@@ -168,7 +168,7 @@ class BranchController extends Controller{
 	public function getStaffSlotEmail($email, $bookdate){
 		
 		//Getting the provider information
-		$user1_id = DB::table('provider')->where('email', $email)->value('user_id');	
+		$user1_id = DB::table('provider')->where('email', urldecode($email)->value('user_id');	
 		
 		if(!empty($user1_id)){
 			//Getting the available date
