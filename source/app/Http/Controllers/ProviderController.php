@@ -28,8 +28,8 @@ class ProviderController extends Controller{
     public function index(){
   
         $Provider  = Provider::all();
-  
-        return response()->json($Provider);
+		$Provider_result = array('status' => 'true','message' =>null,'content'=>$Provider);
+		return json_encode($Provider_result);
   
     }
   
@@ -41,10 +41,11 @@ class ProviderController extends Controller{
                      ->get();
 		
 		if(!empty($ProviderExists)){
-			return $this->createSuccessResponse($ProviderExists, 200);
+			$ProviderExists_result = array('status' => 'true','message' =>null,'content'=>$ProviderExists);
+			return json_encode($ProviderExists_result);
 		}
-		
-		return $this->createErrorResponse('The given id is not available. Need to register as new Provider.', 404);
+		$ProviderExists_result = array('status' => 'false','message' =>'The given id is not available. Need to register as new Provider.','content'=>null);
+		return json_encode($ProviderExists_result);
     }
 	
 	public function getProviderEmail($Provider_email){
@@ -55,9 +56,11 @@ class ProviderController extends Controller{
                      ->get();
 
 			if($ProviderExists) {
-				return $this->createSuccessResponse($ProviderExists, 200);
+				$ProviderExists_result = array('status' => 'true','message' =>'Email ID is available.','content'=>$ProviderExists);
+				return json_encode($ProviderExists_result);
 			}else{
-				return response()->json("No user available for this ID.Please register as new Provider");
+				$ProviderExists_result = array('status' => 'false','message' =>'No user available for this ID.Please register as new Provider.','content'=>null);
+				return json_encode($ProviderExists_result);
 			}
     }
 	

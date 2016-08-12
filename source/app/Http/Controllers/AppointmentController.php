@@ -14,8 +14,8 @@ class AppointmentController extends Controller{
     public function index(){
   
         $CustomersList  = Appointment::all();
-  
-        return response()->json($CustomersList);
+		$CustomersList_result = array('status' => 'true','message' =>null,'content'=>$CustomersList);
+		return json_encode($CustomersList_result);
   
     }
   

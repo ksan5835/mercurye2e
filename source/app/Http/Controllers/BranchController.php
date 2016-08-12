@@ -42,9 +42,9 @@ class BranchController extends Controller{
     public function index(){
   
         $Branch  = Branch::all();
-  
-        return $this->createSuccessResponse($Branch,200);
-  
+		$Branch_result = array('status' => 'true','message' =>null,'content'=>$Branch);
+		return json_encode($Branch_result);
+ 
     }
   
     public function getBranch($id){
@@ -56,10 +56,11 @@ class BranchController extends Controller{
                      ->select(DB::raw('*'))
                      ->where('branch_id', '=', $id)
                      ->get();
-			return $this->createSuccessResponse($branchDatas, 200);
+			$branchDatas_result = array('status' => 'true','message' =>null,'content'=>$branchDatas);
+			return json_encode($branchDatas_result);
 		}
-		
-		return $this->createErrorResponse('The given id is not available. Need to register as new branch.', 404);
+		$branchDatas_result = array('status' => 'false','message' =>'The given id is not available. Need to register as new branch.','content'=>null);
+		return json_encode($branchDatas_result);
     }
 	
 	public function getBranchEmail($branch_email){
@@ -67,18 +68,20 @@ class BranchController extends Controller{
 			$userExists = Branch::where('branch_email', urldecode($branch_email))->count();
 
 			if($userExists) {
-				return $this->createSuccessResponse("Email ID is available.", 200);
+				$userExists_result = array('status' => 'true','message' =>'Email ID is available.','content'=>null);
+				return json_encode($userExists_result);
 			}else{
-				return $this->createErrorResponse("No user available for this ID.Please register as new branch",404);
+				$userExists_result = array('status' => 'false','message' =>'No user available for this ID.Please register as new branch.','content'=>null);
+				return json_encode($userExists_result);
 			}
     }
 	
 	public function createBranch(Request $request){
   
         $Custom = Branch::create($request->all());
-  
-        return $this->createSuccessResponse($Custom,200);
-  
+		$Custom_result = array('status' => 'true','message' =>null,'content'=>$Custom);
+		return json_encode($Custom_result);
+ 
     }
 	
 	public function deleteBranch($branch_id){
@@ -87,10 +90,12 @@ class BranchController extends Controller{
                      ->where('branch_id', '=', $branch_id)
                      ->get();
 				if($branch_work){
-					return $this->createErrorResponse("Branch working hours entry is available, so record will not be deleted.",404);
+					$Branch_delete_result = array('status' => 'false','message' =>'Branch working hours entry is available, so record will not be deleted.','content'=>$branch_work);
+					return json_encode($Branch_delete_result);
 				}else{
 					DB::table('provider_biz_branch')->where('branch_id', '=', $branch_id)->delete();
- 					return response()->json('deleted');
+ 					$Branch_delete_result = array('status' => 'true','message' =>'deleted','content'=>null);
+					return json_encode($Branch_delete_result);
 				}
 		
 
@@ -103,9 +108,10 @@ class BranchController extends Controller{
         $Branch->email = $request->input('email');
 		$Branch->mobile = $request->input('mobile');
         $Branch->save();
-  
-        return $this->createSuccessResponse($Branch,200);
-    }
+		
+		$Branch_result = array('status' => 'true','message' =>null,'content'=>$Branch);
+		return json_encode($Branch_result);
+      }
 	
 	
 	public function getBranchServiceList($branch_id){
@@ -119,13 +125,16 @@ class BranchController extends Controller{
                      ->where('biz_id', '=', $branch_id)
                      ->get();
 				if($servicelist){
-					return $this->createSuccessResponse($servicelist,200);
+					$servicelist_result = array('status' => 'true','message' =>null,'content'=>$servicelist);
+					return json_encode($servicelist_result);
 				}else{
-					return $this->createErrorResponse("No services available for this branch ID.",404);
+					$servicelist_result = array('status' => 'false','message' =>'No services available for this branch ID.','content'=>null);
+					return json_encode($servicelist_result);
 				}
 				
 			}else{
-				return $this->createErrorResponse("No branch available for this ID.Please register as new branch",404);
+				$branchExists_result = array('status' => 'false','message' =>'No branch available for this ID.Please register as new branch.','content'=>null);
+				return json_encode($branchExists_result);
 			}
     }
 	
@@ -136,9 +145,11 @@ class BranchController extends Controller{
                      ->where('service_id', '=', $service_id)
                      ->get();
 				if($servicelist){
-					return $this->createSuccessResponse($servicelist,200);
+					$servicelist_result = array('status' => 'true','message' =>null,'content'=>$servicelist);
+					return json_encode($servicelist_result);
 				}else{
-					return $this->createErrorResponse("The given service is not available in any branch.",404);
+					$servicelist_result = array('status' => 'false','message' =>'The given service is not available in any branch.','content'=>null);
+					return json_encode($servicelist_result);
 				}
     }
 	
@@ -154,13 +165,16 @@ class BranchController extends Controller{
 					 ->where('biz_id', '=', $branch_id)
                      ->get();
 				if($service){
-					return $this->createSuccessResponse($service,200);
+					$service_result = array('status' => 'true','message' =>null,'content'=>$service);
+					return json_encode($service_result);
 				}else{
-					return $this->createErrorResponse("No service available for this branch ID and service ID.",404);
+					$service_result = array('status' => 'false','message' =>'No service available for this branch ID and service ID.','content'=>null);
+					return json_encode($service_result);
 				}
 				
 			}else{
-				return $this->createErrorResponse("No branch available for this ID.Please register as new branch",404);
+				$branchExists_result = array('status' => 'false','message' =>'No branch available for this ID.Please register as new branch.','content'=>null);
+				return json_encode($branchExists_result);
 			}
     }
 	
@@ -175,30 +189,11 @@ class BranchController extends Controller{
 			$start_datetime = date_create($bookdate);
 			$start_date = date_format($start_datetime,"Y-m-d");	
 
-			/* $check_vendor_slot_available = DB::table('biz_staff_workinghours')
-										 ->select(DB::raw('*'))
-										 ->where('staff_id', '=', $user1_id)
-										 ->whereDate('start_time', '=', 'Date('.DB::getPdo()->quote($start_date))
-										 ->get(); */
 			$check_vendor_slot_available = DB::select( DB::raw("SELECT start_time,end_time FROM biz_staff_workinghours WHERE staff_id = '$user1_id' and date(start_time) = date('$start_date') ") );
 
-			//print_r($check_vendor_slot_available);die;
-						
+					
 			if(!empty($check_vendor_slot_available)){
-				
-				/* $start = date_create ( $check_vendor_slot_available[0]->start_time);
-				$end = date_create ( $check_vendor_slot_available[0]->end_time );
-				$diff = date_diff($end,$start);
-				echo $diff->h;
-				
-				$ex_stime = explode(' ',$check_vendor_slot_available[0]->start_time);
-				$ex_etime = explode(' ',$check_vendor_slot_available[0]->end_time);
-				
-				$datetime = DateTime::createFromFormat('g:i:s', $ex_stime[1]);
-				$datetime->modify('+60 minutes');
-				echo $datetime->format('g:i:s'); */
-				
-				
+							
 				$startTime = new DateTime($check_vendor_slot_available[0]->start_time);
 				$endTime = new DateTime($check_vendor_slot_available[0]->end_time );
 				$i=1;
@@ -207,15 +202,17 @@ class BranchController extends Controller{
 					$startTime->add(new DateInterval('PT60M'));
 					$i++;
 				}
-
-				return $this->createSuccessResponse($time_slot,200);
-
+					$time_slot_result = array('status' => 'true','message' =>null,'content'=>$time_slot);
+					return json_encode($time_slot_result);
+				
 			}else{
-				return $this->createErrorResponse($start_date." Slot closed for this date", 404);	
+				$check_vendor_slot_available_result = array('status' => 'false','message' =>$start_date.' Slot closed for this date.','content'=>null);
+				return json_encode($check_vendor_slot_available_result);
 			}
 		
-		}else{			
-			return $this->createErrorResponse($email." is not available.Please register as new provider", 404);	
+		}else{
+				$check_vendor_slot_available_result = array('status' => 'false','message' =>$email.' is not available.Please register as new provider.','content'=>null);
+				return json_encode($check_vendor_slot_available_result);			
 		}							 
 		
 									 
