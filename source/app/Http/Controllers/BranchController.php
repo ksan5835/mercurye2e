@@ -42,7 +42,7 @@ class BranchController extends Controller{
     public function index(){
   
         $Branch  = Branch::all();
-		$Branch_result = array('status' => 'true','message' =>null,'content'=>$Branch);
+		$Branch_result = array('status' => 'true','message' =>'The List of the Branches.','content'=>array('invitations'=>$Branch));
 		return json_encode($Branch_result);
  
     }
@@ -56,7 +56,7 @@ class BranchController extends Controller{
                      ->select(DB::raw('*'))
                      ->where('branch_id', '=', $id)
                      ->get();
-			$branchDatas_result = array('status' => 'true','message' =>null,'content'=>$branchDatas);
+			$branchDatas_result = array('status' => 'true','message' =>'The given Branch Details.','content'=>array('invitations'=>$branchDatas));
 			return json_encode($branchDatas_result);
 		}
 		$branchDatas_result = array('status' => 'false','message' =>'The given id is not available. Need to register as new branch.','content'=>null);
@@ -79,7 +79,7 @@ class BranchController extends Controller{
 	public function createBranch(Request $request){
   
         $Custom = Branch::create($request->all());
-		$Custom_result = array('status' => 'true','message' =>null,'content'=>$Custom);
+		$Custom_result = array('status' => 'true','message' =>'The branch created successfully.','content'=>array('invitations'=>$Custom));
 		return json_encode($Custom_result);
  
     }
@@ -90,7 +90,7 @@ class BranchController extends Controller{
                      ->where('branch_id', '=', $branch_id)
                      ->get();
 				if($branch_work){
-					$Branch_delete_result = array('status' => 'false','message' =>'Branch working hours entry is available, so record will not be deleted.','content'=>$branch_work);
+					$Branch_delete_result = array('status' => 'false','message' =>'Branch working hours entry is available, so record will not be deleted.','content'=>array('invitations'=>$branch_work));
 					return json_encode($Branch_delete_result);
 				}else{
 					DB::table('provider_biz_branch')->where('branch_id', '=', $branch_id)->delete();
@@ -109,7 +109,7 @@ class BranchController extends Controller{
 		$Branch->mobile = $request->input('mobile');
         $Branch->save();
 		
-		$Branch_result = array('status' => 'true','message' =>null,'content'=>$Branch);
+		$Branch_result = array('status' => 'true','message' =>'The Branch Updated Successfully.','content'=>array('invitations'=>$Branch));
 		return json_encode($Branch_result);
       }
 	
@@ -125,7 +125,7 @@ class BranchController extends Controller{
                      ->where('biz_id', '=', $branch_id)
                      ->get();
 				if($servicelist){
-					$servicelist_result = array('status' => 'true','message' =>null,'content'=>$servicelist);
+					$servicelist_result = array('status' => 'true','message' =>'The service List for the given branch id.','content'=>array('invitations'=>$servicelist));
 					return json_encode($servicelist_result);
 				}else{
 					$servicelist_result = array('status' => 'false','message' =>'No services available for this branch ID.','content'=>null);
@@ -145,7 +145,7 @@ class BranchController extends Controller{
                      ->where('service_id', '=', $service_id)
                      ->get();
 				if($servicelist){
-					$servicelist_result = array('status' => 'true','message' =>null,'content'=>$servicelist);
+					$servicelist_result = array('status' => 'true','message' =>'The service List for the given branch id.','content'=>array('invitations'=>$servicelist));
 					return json_encode($servicelist_result);
 				}else{
 					$servicelist_result = array('status' => 'false','message' =>'The given service is not available in any branch.','content'=>null);
@@ -165,7 +165,7 @@ class BranchController extends Controller{
 					 ->where('biz_id', '=', $branch_id)
                      ->get();
 				if($service){
-					$service_result = array('status' => 'true','message' =>null,'content'=>$service);
+					$service_result = array('status' => 'true','message' =>'The service for the given branch.','content'=>array('invitations'=>$service));
 					return json_encode($service_result);
 				}else{
 					$service_result = array('status' => 'false','message' =>'No service available for this branch ID and service ID.','content'=>null);
@@ -202,7 +202,7 @@ class BranchController extends Controller{
 					$startTime->add(new DateInterval('PT60M'));
 					$i++;
 				}
-					$time_slot_result = array('status' => 'true','message' =>null,'content'=>$time_slot);
+					$time_slot_result = array('status' => 'true','message' =>'The available time slot for the given staff.','content'=>array('invitations'=>$time_slot));
 					return json_encode($time_slot_result);
 				
 			}else{

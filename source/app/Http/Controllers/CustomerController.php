@@ -43,7 +43,7 @@ class CustomerController extends Controller{
   
         $Customer  = Customer::all();
 		
-		$Customer_result = array('status' => 'true','message' =>null,'content'=>$Customer);
+		$Customer_result = array('status' => 'true','message' =>'The List of the customers.','content'=>array('invitations'=>$Customer));
 		return json_encode($Customer_result);
           
     }
@@ -99,7 +99,7 @@ class CustomerController extends Controller{
                      ->where('user_id', '=', $id)
                      ->get();
 					 
-			$customerDatas_result = array('status' => 'true','message' =>null,'content'=>$customerDatas);
+			$customerDatas_result = array('status' => 'true','message' =>'The given customer detail.','content'=>array('invitations'=>$customerDatas));
 			return json_encode($customerDatas_result);
 		}
 		
@@ -239,7 +239,7 @@ class CustomerController extends Controller{
 			$getConfirmedBooking = DB::table('customer_booking_confirmation')->distinct()->get();
 
 			if($getConfirmedBooking) {
-				$getConfirmedBooking_result = array('status' => 'true','message' =>null,'content'=>$getConfirmedBooking);
+				$getConfirmedBooking_result = array('status' => 'true','message' =>'The Booking details.','content'=>array('invitations'=>$getConfirmedBooking));
 				return json_encode($getConfirmedBooking_result);
 			}else{
 				$getConfirmedBooking_result = array('status' => 'false','message' =>'No confirmed booking for this list.','content'=>null);
@@ -251,7 +251,7 @@ class CustomerController extends Controller{
   
         $Custom = Customer::create($request->all());
 		
-		$Custom_result = array('status' => 'true','message' =>null,'content'=>$Custom);
+		$Custom_result = array('status' => 'true','message' =>'The customer created.','content'=>array('invitations'=>$Custom));
 		return json_encode($Custom_result);
    
     }
@@ -272,7 +272,7 @@ class CustomerController extends Controller{
 		$Customer->mobile = $request->input('mobile');
         $Customer->save();
   
-		$Customer_result = array('status' => 'true','message' =>null,'content'=>$Customer);
+		$Customer_result = array('status' => 'true','message' =>'The customer Updated successfully.','content'=>array('invitations'=>$Customer));
 		return json_encode($Customer_result);
     }
 	
@@ -502,12 +502,12 @@ class CustomerController extends Controller{
 							}else{
 								
 								$branch_aval_slots = $this->getBranchAvaliableTimeSlots($branch1_id,$vendor_starttime_slot);
-								$matrix1_Result = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.' , 'content'=>$branch_aval_slots);
+								$matrix1_Result = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.' , 'content'=>array('invitations'=>$branch_aval_slots));
 						
 								$input_array = array('customer_id' => $user_id, 'provider_id' => $provider_id, 'branch_id' => $branch1_id, 'staff_id' => '',  'booking_date' => $vendor_starttime_slot, 'booking_start_time' => $vendor_starttime_slot, 'booking_end_time' => $vendor_endtime_slot, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
 								$get_confirmation_details = $this->putConfirmationEntry($input_array);
 					
-								$matrix1_Result=  array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.' , 'content'=>$get_confirmation_details);
+								$matrix1_Result=  array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.' , 'content'=>array('invitations'=>$get_confirmation_details));
 								
 							}
 							}else{
@@ -576,12 +576,12 @@ class CustomerController extends Controller{
 								$matrix3_Result= array('status' => 'false','message' => 'The '.$provider_email.' and '.$user_email.' are already booked the given time slot.','content'=>null);
 							}else{
 								$branch_aval_slots = $this->getBranchAvaliableTimeSlots($branch1_id,$vendor_starttime_slot1);
-								$matrix3_Result = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>$branch_aval_slots);
+								$matrix3_Result = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>array('invitations'=>$branch_aval_slots));
 								
 								$input_array1 = array('customer_id' => $user_id, 'provider_id' => $provider_id, 'branch_id' => $branch1_id, 'staff_id' => '', 'booking_date' => $vendor_starttime_slot1, 'booking_start_time' => $vendor_starttime_slot1, 'booking_end_time' => $vendor_endtime_slot1, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
 								$get_confirmation_details1 = $this->putConfirmationEntry($input_array1);
 					
-								$matrix3_Result = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>$get_confirmation_details1);
+								$matrix3_Result = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>array('invitations'=>$get_confirmation_details1));
 								
 							}
 						}else{
@@ -599,12 +599,12 @@ class CustomerController extends Controller{
 								$matrix3_Result = array('status' => 'false','message' => 'The '.$provider_email.' and '.$user_email.' are already booked the given time slot.','content'=>null);
 							}else{
 								$branch_aval_slots = $this->getBranchAvaliableTimeSlots($branch1_id,$vendor_starttime_slot2);
-								$matrix3_Result = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>$branch_aval_slots);
+								$matrix3_Result = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>array('invitations'=>$branch_aval_slots));
 								
 								$input_array2 = array('customer_id' => $user_id, 'provider_id' => $provider_id, 'branch_id' => $branch1_id, 'staff_id' => '', 'booking_date' => $vendor_starttime_slot2, 'booking_start_time' => $vendor_starttime_slot2, 'booking_end_time' => $vendor_endtime_slot2, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
 								$get_confirmation_details2 = $this->putConfirmationEntry($input_array2);
 					
-								$matrix3_Result = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>$get_confirmation_details2);
+								$matrix3_Result = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>array('invitations'=>$get_confirmation_details2));
 								
 							}
 						}else{
@@ -625,12 +625,12 @@ class CustomerController extends Controller{
 								$matrix3_Result = array('status' => 'false','message' => 'The '.$provider_email.' and '.$user_email.' are already booked the given time slot.','content'=>null);
 							}else{
 								$branch_aval_slots = $this->getBranchAvaliableTimeSlots($branch1_id,$vendor_starttime_slot1);
-								$matrix3_Result = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>$branch_aval_slots);
+								$matrix3_Result = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>array('invitations'=>$branch_aval_slots));
 								
 								$input_array1 = array('customer_id' => $user_id, 'provider_id' => $provider_id, 'branch_id' => $branch1_id, 'staff_id' => '', 'booking_date' => $vendor_starttime_slot1, 'booking_start_time' => $vendor_starttime_slot1, 'booking_end_time' => $vendor_endtime_slot1, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
 								$get_confirmation_details1 = $this->putConfirmationEntry($input_array1);
 					
-								$matrix3_Result = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>$get_confirmation_details1);
+								$matrix3_Result = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>array('invitations'=>$get_confirmation_details1));
 								
 							}
 						}else{
@@ -653,12 +653,12 @@ class CustomerController extends Controller{
 							}else{
 						
 								$branch_aval_slots = $this->getBranchAvaliableTimeSlots($branch1_id,$vendor_endtime_slot2);
-								$matrix3_Result = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>$branch_aval_slots);
+								$matrix3_Result = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>array('invitations'=>$branch_aval_slots));
 								
 								$input_array2 = array('customer_id' => $user_id, 'provider_id' => $provider_id, 'branch_id' => $branch1_id, 'staff_id' => '', 'booking_date' => $vendor_starttime_slot2, 'booking_start_time' => $vendor_starttime_slot2, 'booking_end_time' => $vendor_endtime_slot2, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
 								$get_confirmation_details2 = $this->putConfirmationEntry($input_array2);
 					
-								$matrix3_Result = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>$get_confirmation_details2);
+								$matrix3_Result = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>array('invitations'=>$get_confirmation_details2));
 								
 							}
 						}else{
@@ -731,12 +731,12 @@ class CustomerController extends Controller{
 							}else{
 								
 								$provider_aval_slots = $this->getBranchAvaliableTimeSlots($branch1_id,$start_date);
-								$matrix5_Result = array('status' => 'true','message' =>null,'content'=>$provider_aval_slots);
+								$matrix5_Result = array('status' => 'true','message' =>null,'content'=>array('invitations'=>$provider_aval_slots));
 								
 								$input_array = array('customer_id' => $user_id, 'provider_id' => $provider_id, 'branch_id' => $branch1_id, 'staff_id' => '', 'booking_date' => $vendor_starttime_slot1, 'booking_start_time' => $vendor_starttime_slot1, 'booking_end_time' => $vendor_endtime_slot1, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
 								$get_confirmation_details1 = $this->putConfirmationEntry($input_array);
 					
-								$matrix5_Result = array('status' => 'true','message' =>null,'content'=>$get_confirmation_details1);
+								$matrix5_Result = array('status' => 'true','message' =>null,'content'=>array('invitations'=>$get_confirmation_details1));
 								
 							}
 						}else{
@@ -770,12 +770,12 @@ class CustomerController extends Controller{
 							}else{
 								
 								$provider_aval_slots = $this->getBranchAvaliableTimeSlots($branch2_id,$start_date);
-								$matrix5_Result = array('status' => 'true','message' =>null,'content'=>$provider_aval_slots);
+								$matrix5_Result = array('status' => 'true','message' =>null,'content'=>array('invitations'=>$provider_aval_slots));
 								
 								$input_array = array('customer_id' => $user_id, 'provider_id' => $provider_id, 'branch_id' => $branch2_id, 'staff_id' => '', 'booking_date' => $vendor_starttime_slot2, 'booking_start_time' => $vendor_starttime_slot2, 'booking_end_time' => $vendor_endtime_slot2, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
 								$get_confirmation_details2 = $this->putConfirmationEntry($input_array);
 					
-								$matrix5_Result = array('status' => 'true','message' =>null,'content'=>$get_confirmation_details2);
+								$matrix5_Result = array('status' => 'true','message' =>null,'content'=>array('invitations'=>$get_confirmation_details2));
 								
 							}
 						}else{
@@ -851,12 +851,12 @@ class CustomerController extends Controller{
 							}else{
 						
 								$provider_aval_slots = $this->getProviderAvaliableTimeSlots($staff1_id,$vendor_starttime_slot1);
-								$matrix7_Result = array('status' => 'true','message' =>null,'content'=>$provider_aval_slots);
+								$matrix7_Result = array('status' => 'true','message' =>null,'content'=>array('invitations'=>$provider_aval_slots));
 								
 								$input_array = array('customer_id' => $user_id, 'provider_id' => $provider_id, 'branch_id' => $branch1_id, 'staff_id' => $staff1_id, 'booking_date' => $vendor_starttime_slot1, 'booking_start_time' => $vendor_starttime_slot1, 'booking_end_time' => $vendor_endtime_slot1, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
 								$get_confirmation_details1 = $this->putConfirmationEntry($input_array);
 					
-								$matrix7_Result = array('status' => 'true','message' =>null,'content'=>$get_confirmation_details1);
+								$matrix7_Result = array('status' => 'true','message' =>null,'content'=>array('invitations'=>$get_confirmation_details1));
 								
 							}
 						}else{
@@ -893,12 +893,12 @@ class CustomerController extends Controller{
 							}else{
 						
 								$provider_aval_slots = $this->getProviderAvaliableTimeSlots($staff2_id,$vendor_starttime_slot2);
-								$matrix7_Result = array('status' => 'true','message' =>null,'content'=>$provider_aval_slots);
+								$matrix7_Result = array('status' => 'true','message' =>null,'content'=>array('invitations'=>$provider_aval_slots));
 								
 								$input_array = array('customer_id' => $user_id, 'provider_id' => $provider_id, 'branch_id' => $branch2_id, 'staff_id' => $staff2_id, 'booking_date' => $vendor_starttime_slot2, 'booking_start_time' => $vendor_starttime_slot2, 'booking_end_time' => $vendor_endtime_slot2, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
 								$get_confirmation_details2 = $this->putConfirmationEntry($input_array);
 					
-								$matrix7_Result = array('status' => 'true','message' =>null,'content'=>$get_confirmation_details2);
+								$matrix7_Result = array('status' => 'true','message' =>null,'content'=>array('invitations'=>$get_confirmation_details2));
 								
 							}
 						}else{
@@ -977,12 +977,12 @@ class CustomerController extends Controller{
 							}else{
 						
 								$provider_aval_slots = $this->getProviderAvaliableTimeSlots($staff1_id,$vendor_starttime_slot1);
-								$matrix9_Result = array('status' => 'true','message' =>null,'content'=>$provider_aval_slots);
+								$matrix9_Result = array('status' => 'true','message' =>null,'content'=>array('invitations'=>$provider_aval_slots));
 								
 								$input_array = array('customer_id' => $user_id, 'provider_id' => $provider_id, 'branch_id' => $branch1_id, 'staff_id' => $staff1_id, 'booking_date' => $vendor_starttime_slot1, 'booking_start_time' => $vendor_starttime_slot1, 'booking_end_time' => $vendor_endtime_slot1, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
 								$get_confirmation_details1 = $this->putConfirmationEntry($input_array);
 					
-								$matrix9_Result = array('status' => 'true','message' =>null,'content'=>$get_confirmation_details1);
+								$matrix9_Result = array('status' => 'true','message' =>null,'content'=>array('invitations'=>$get_confirmation_details1));
 								
 							}
 						}else{
@@ -1019,12 +1019,12 @@ class CustomerController extends Controller{
 							}else{
 						
 								$provider_aval_slots = $this->getProviderAvaliableTimeSlots($staff2_id,$vendor_starttime_slot2);
-								$matrix9_Result = array('status' => 'true','message' =>null,'content'=>$provider_aval_slots);
+								$matrix9_Result = array('status' => 'true','message' =>null,'content'=>array('invitations'=>$provider_aval_slots));
 								
 								$input_array = array('customer_id' => $user_id, 'provider_id' => $provider_id, 'branch_id' => $branch2_id, 'staff_id' => $staff2_id, 'booking_date' => $vendor_starttime_slot2, 'booking_start_time' => $vendor_starttime_slot2, 'booking_end_time' => $vendor_endtime_slot2, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
 								$get_confirmation_details2 = $this->putConfirmationEntry($input_array);
 					
-								$matrix9_Result = array('status' => 'true','message' =>null,'content'=>$get_confirmation_details2);
+								$matrix9_Result = array('status' => 'true','message' =>null,'content'=>array('invitations'=>$get_confirmation_details2));
 								
 							}
 						}else{

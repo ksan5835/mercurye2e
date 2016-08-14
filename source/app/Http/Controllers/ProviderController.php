@@ -28,7 +28,7 @@ class ProviderController extends Controller{
     public function index(){
   
         $Provider  = Provider::all();
-		$Provider_result = array('status' => 'true','message' =>null,'content'=>$Provider);
+		$Provider_result = array('status' => 'true','message' =>'The Provider List.','content'=>array('invitations'=>$Provider));
 		return json_encode($Provider_result);
   
     }
@@ -41,7 +41,7 @@ class ProviderController extends Controller{
                      ->get();
 		
 		if(!empty($ProviderExists)){
-			$ProviderExists_result = array('status' => 'true','message' =>null,'content'=>$ProviderExists);
+			$ProviderExists_result = array('status' => 'true','message' =>'The given provider details.','content'=>array('invitations'=>$ProviderExists));
 			return json_encode($ProviderExists_result);
 		}
 		$ProviderExists_result = array('status' => 'false','message' =>'The given id is not available. Need to register as new Provider.','content'=>null);
@@ -56,7 +56,7 @@ class ProviderController extends Controller{
                      ->get();
 
 			if($ProviderExists) {
-				$ProviderExists_result = array('status' => 'true','message' =>'Email ID is available.','content'=>$ProviderExists);
+				$ProviderExists_result = array('status' => 'true','message' =>'Email ID is available.','content'=>array('invitations'=>$ProviderExists));
 				return json_encode($ProviderExists_result);
 			}else{
 				$ProviderExists_result = array('status' => 'false','message' =>'No user available for this ID.Please register as new Provider.','content'=>null);
