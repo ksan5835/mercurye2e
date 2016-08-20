@@ -59,7 +59,9 @@ $app->delete('api/v1/customer/{id}','CustomerController@deleteCustomer');
 
 //Matrix API
 
-$app->get('api/v1/matrix1/{provider_email}/{user_email}/{provider_id}/{user_id}/{branch1_id}/{service1_id}/{start_date}/{start_time1}/{end_time1}/{timezone_id}','CustomerController@getMatrix1_Result');
+$app->get('api/v1/matrix1/{provider_email}/{user_email}/{provider_id}/{user_id}/{branch1_id}/{service1_id}/{start_date}/{start_time1}/{end_time1}/{timezone_id}/{frequency}','CustomerController@getMatrix1_Result');
+
+$app->get('api/v1/matrix2/{provider_email}/{user_email}/{provider_id}/{user_id}/{branch1_id}/{service1_id}/{start_date}/{start_time1}/{end_time1}/{timezone_id}/{frequency}','CustomerController@getMatrix2_Result');
 
 $app->get('api/v1/matrix3/{provider_email}/{user_email}/{provider_id}/{user_id}/{branch1_id}/{service1_id}/{start_date}/{start_time1}/{end_time1}/{service2_id}/{start_time2}/{end_time2}/{timezone_id}','CustomerController@getMatrix3_Result');
 
@@ -74,7 +76,7 @@ $app->get('api/v1/matrix9/{provider_email}/{user_email}/{provider_id}/{user_id}/
 
 $app->get('api/v1/branch','BranchController@index'); 
  
-$app->get('api/v1/branch/{branch_id}','BranchController@getBranch');
+$app->get('api/v1/branch/{branch_id}','BranchController@getBranch'); 
 
 $app->get('api/v1/branch/email/{branch_email}','BranchController@getBranchEmail');
 
