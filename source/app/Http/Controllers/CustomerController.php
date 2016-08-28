@@ -289,6 +289,36 @@ class CustomerController extends Controller{
 		
 	}
 	
+	public function getMinimumBookTime($provider_id,$start_time){
+		
+		$Minimum_booktime = DB::table('setting_provider')
+                     ->select('BR_Min_Book_Time')
+                     ->where('provider_id', '=', $provider_id)
+                     ->value('BR_Min_Book_Time');
+					 
+		 $mimimun_hours = date('Y-m-d H:i:s', strtotime('-'.$Minimum_booktime.' hours'));
+		 $Minimum_book_time = ($mimimun_hours < $start_time) ? 1 : 0;
+
+		return $Minimum_book_time;
+		
+	}
+	
+	public function getMinimumBookDate($provider_id,$start_date){
+		
+		$Minimum_bookdate = DB::table('setting_provider')
+                     ->select('BR_Min_Book_Date')
+                     ->where('provider_id', '=', $provider_id)
+                     ->value('BR_Min_Book_Date');
+					 
+		$mimimun_date = date('Y-m-d', strtotime('-'.$Minimum_bookdate.' day'));
+		$start_date = date('Y-m-d', strtotime($start_date));
+		$Minimum_book_date = ($mimimun_date < $start_date)? 1 : 0; 
+		
+
+		return $Minimum_book_date;
+		
+	}
+		
 	public function getBranchTimeSlots($branch_id,$start_time,$end_time){
 		
 		$check_branch_slot_available = DB::select( DB::raw("SELECT workinghours_id FROM biz_branch_workinghours WHERE branch_id = '$branch_id' and date(start_time) <= date('$start_time') and date(end_time) >= date('$end_time')") );
@@ -491,15 +521,29 @@ class CustomerController extends Controller{
 				
 				if($get_service1){
 					
+					$get_service_no_of_booking = DB::table('provider_biz_service')->where('service_id', $service1_id)->value('participants_allowed');
+					
+				if($get_service_no_of_booking != 0){
+					
 					$get_staff1 = $this->getStaffWithServiceid($service1_id);
 						
 						$get_customer_timezone_vlaue = DB::table('timezone')->where('timezone_id', $timezone_id)->value('gmt');
+						
+				if($get_customer_timezone_vlaue == "(GMT+05:30)"){
+					
 						$get_provider_timezone = $this->getGmtWithProviderid($provider_id);
 						$get_provider_timezone_id = DB::table('timezone')->where('gmt', $get_provider_timezone)->value('timezone_id');
 						
 						$vendor_starttime_slot = $this->getTimeSlotWithTimezone($start_date, $start_time1, $get_customer_timezone_vlaue, $get_provider_timezone);
 						$vendor_endtime_slot = $this->getTimeSlotWithTimezone($start_date, $end_time1, $get_customer_timezone_vlaue, $get_provider_timezone);
+						
+						$check_minimum_bookdate = $this->getMinimumBookDate($provider_id,$start_date);
+						
+		if($check_minimum_bookdate == 1){
+			
+						$check_minimum_booktime = $this->getMinimumBookTime($provider_id,$vendor_starttime_slot);
 		
+			if($check_minimum_booktime == 1){
 						$check_branch_slot_available = $this->getProviderTimeSlots($get_staff1,$vendor_starttime_slot,$vendor_endtime_slot);							 
 						$slot_available = $this->checkBookedSlots($provider_id,$branch1_id,0,$vendor_starttime_slot,$vendor_endtime_slot,$get_provider_timezone_id);					
 
@@ -524,10 +568,30 @@ class CustomerController extends Controller{
 								
 								$matrix1_Result = array('status' => 'false','message' => 'The '.$provider_email.' is not available for your time slot.Please check another time slot.', 'content'=>null);
 								}
+							}else{
+								$matrix1_Result= array('status' => 'false','message' => 'The '.$provider_email.' time zone not available.','content'=>null);
+					
+							}
+							
+							}else{
+						
+							$matrix1_Result= array('status' => 'false','message' => 'The given service is not available. The minimum booking time exceed.','content'=>null);			
+							}
+						
 						}else{
-							$matrix1_Result= array('status' => 'false','message' => 'The '.$provider_email.' time zone not available.','content'=>null);
-				
+					
+						$matrix1_Result= array('status' => 'false','message' => 'The given service is not available. The minimum booking Date exceed.','content'=>null);			
 						}
+					
+					}else{
+				
+					$matrix1_Result= array('status' => 'false','message' => 'The International Users Not allowed.','content'=>null);			
+				}
+				
+				}else{
+				
+					$matrix1_Result= array('status' => 'false','message' => 'The given service Participants FUll.','content'=>null);			
+				}
 						
 				}else{
 				
@@ -563,15 +627,29 @@ class CustomerController extends Controller{
 				
 				if($get_service1){
 					
+					$get_service_no_of_booking = DB::table('provider_biz_service')->where('service_id', $service1_id)->value('participants_allowed');
+					
+				if($get_service_no_of_booking != 0){
+					
 					$get_staff1 = $this->getStaffWithServiceid($service1_id);
 						
 						$get_customer_timezone_vlaue = DB::table('timezone')->where('timezone_id', $timezone_id)->value('gmt');
+						
+						if($get_customer_timezone_vlaue == "(GMT+05:30)"){
+						
 						$get_provider_timezone = $this->getGmtWithProviderid($provider_id);
 						$get_provider_timezone_id = DB::table('timezone')->where('gmt', $get_provider_timezone)->value('timezone_id');
 						
 						$vendor_starttime_slot = $this->getTimeSlotWithTimezone($start_date[$i], $start_time1, $get_customer_timezone_vlaue, $get_provider_timezone);
 						$vendor_endtime_slot = $this->getTimeSlotWithTimezone($start_date[$i], $end_time1, $get_customer_timezone_vlaue, $get_provider_timezone);
 		
+						$check_minimum_bookdate = $this->getMinimumBookDate($provider_id,$start_date[$i]);
+						
+		if($check_minimum_bookdate == 1){
+			
+						$check_minimum_booktime = $this->getMinimumBookTime($provider_id,$vendor_starttime_slot);
+		
+			if($check_minimum_booktime == 1){
 						$check_branch_slot_available = $this->getBranchTimeSlots($branch1_id,$vendor_starttime_slot,$vendor_endtime_slot);							 
 
 						$slot_available = $this->checkBookedSlots($provider_id,$branch1_id,0,$vendor_starttime_slot,$vendor_endtime_slot,$get_provider_timezone_id);					
@@ -601,6 +679,26 @@ class CustomerController extends Controller{
 							$matrix2_Result[] = array('status' => 'false','message' => 'The '.$provider_email.' time zone not available.','content'=>null);
 				
 						}
+						
+					}else{
+						
+							$matrix2_Result[] = array('status' => 'false','message' => 'The given service is not available. The minimum booking time exceed.','content'=>null);			
+							}
+						
+						}else{
+					
+						$matrix2_Result[] = array('status' => 'false','message' => 'The given service is not available. The minimum booking Date exceed.','content'=>null);			
+						}
+					
+					}else{
+				
+					$matrix2_Result[] = array('status' => 'false','message' => 'The International Users Not allowed.','content'=>null);			
+				}
+				
+				}else{
+				
+					$matrix2_Result[] = array('status' => 'false','message' => 'The given service Participants FUll.','content'=>null);			
+				}
 						
 				}else{
 				
