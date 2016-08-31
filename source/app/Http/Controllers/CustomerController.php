@@ -371,10 +371,10 @@ class CustomerController extends Controller{
 					$startTime->add(new DateInterval('PT60M'));
 					$i++;
 				}
-		
+		return $time_slot;
 			}
 			
-		return $time_slot;
+		
 	}
 	
 	public function checkBookedSlots($provider_id,$branch_id,$staff_id,$vendor_starttime_slot,$vendor_endtime_slot,$get_provider_timezone_id){
@@ -545,7 +545,7 @@ class CustomerController extends Controller{
 		
 			if($check_minimum_booktime == 1){
 						$check_branch_slot_available = $this->getProviderTimeSlots($get_staff1,$vendor_starttime_slot,$vendor_endtime_slot);							 
-						$slot_available = $this->checkBookedSlots($provider_id,$branch1_id,0,$vendor_starttime_slot,$vendor_endtime_slot,$get_provider_timezone_id);					
+						$slot_available = $this->checkBookedSlots($provider_id,$branch1_id,$get_staff1,$vendor_starttime_slot,$vendor_endtime_slot,$get_provider_timezone_id);					
 
 					if($get_provider_timezone_id){
 					
@@ -652,7 +652,7 @@ class CustomerController extends Controller{
 			if($check_minimum_booktime == 1){
 						$check_branch_slot_available = $this->getBranchTimeSlots($branch1_id,$vendor_starttime_slot,$vendor_endtime_slot);							 
 
-						$slot_available = $this->checkBookedSlots($provider_id,$branch1_id,0,$vendor_starttime_slot,$vendor_endtime_slot,$get_provider_timezone_id);					
+						$slot_available = $this->checkBookedSlots($provider_id,$branch1_id,$get_staff1,$vendor_starttime_slot,$vendor_endtime_slot,$get_provider_timezone_id);					
 
 					if($get_provider_timezone_id){
 					
@@ -714,7 +714,7 @@ class CustomerController extends Controller{
 		
 	}
 	
-	public function getMatrix3_Result($provider_email,$user_email,$provider_id, $user_id, $branch1_id, $service1_id, $start_date, $start_time1, $end_time1, $service2_id, $start_time2, $end_time2, $timezone_id){
+	public function getMatrix3_Result($provider_email,$user_email,$provider_id, $user_id, $branch1_id, $service1_id, $start_date, $start_time1, $end_time1, $service2_id, $start_time2, $end_time2, $timezone_id,$frequency){
 			
 			$provider_email = urldecode($provider_email);
 			$user_email = urldecode($user_email);
@@ -737,134 +737,491 @@ class CustomerController extends Controller{
 				$vendor_starttime_slot2 = $this->getTimeSlotWithTimezone($start_date, $start_time2, $get_customer_timezone_vlaue, $get_provider_timezone);
 				$vendor_endtime_slot2 = $this->getTimeSlotWithTimezone($start_date, $end_time2, $get_customer_timezone_vlaue, $get_provider_timezone);
 				
-				$check_branch_slot_available1 = $this->getBranchTimeSlots($branch1_id,$vendor_starttime_slot1,$vendor_endtime_slot1);	
-				$check_branch_slot_available2 = $this->getBranchTimeSlots($branch1_id,$vendor_starttime_slot2,$vendor_endtime_slot2);				
+				$get_staff1 = $this->getStaffWithServiceid($service1_id);
+				$get_staff2 = $this->getStaffWithServiceid($service2_id);
+				
+				$check_branch_slot_available1 = $this->getProviderTimeSlots($get_staff1,$vendor_starttime_slot1,$vendor_endtime_slot1);	
+				$check_branch_slot_available2 = $this->getProviderTimeSlots($get_staff2,$vendor_starttime_slot2,$vendor_endtime_slot2);				
 						
 				$get_service1 = $this->getServiceWithBranch($service1_id, $branch1_id);
 				$get_service2 = $this->getServiceWithBranch($service2_id, $branch1_id);
 				
+				$get_service_no_of_booking1 = DB::table('provider_biz_service')->where('service_id', $service1_id)->value('participants_allowed');
+				$get_service_no_of_booking2 = DB::table('provider_biz_service')->where('service_id', $service2_id)->value('participants_allowed');
+				
+				$check_minimum_bookdate = $this->getMinimumBookDate($provider_id,$start_date);
+				
+				$check_minimum_booktime1 = $this->getMinimumBookTime($provider_id,$vendor_starttime_slot1);
+				$check_minimum_booktime2 = $this->getMinimumBookTime($provider_id,$vendor_starttime_slot2);
+				
+
+				
 			if($get_provider_timezone_id){
 				
+				if($get_customer_timezone_vlaue == "(GMT+05:30)"){
+				
 				if($get_service1 && $get_service2){
-					
+									
+				if($get_service_no_of_booking1 != 0){
+				
+					if($check_minimum_bookdate == 1){
+						
+						if($check_minimum_booktime1 == 1){
+						
 					//For Service 1
-					 $slot_available1 = $this->checkBookedSlots($provider_id,$branch1_id,0,$vendor_starttime_slot1,$vendor_endtime_slot1,$get_provider_timezone_id);
+					 $slot_available1 = $this->checkBookedSlots($provider_id,$branch1_id,$get_staff1,$vendor_starttime_slot1,$vendor_endtime_slot1,$get_provider_timezone_id);
 					
 						if($check_branch_slot_available1){
 					
 							if($slot_available1){
 				
-								$matrix3_Result= array('status' => 'false','message' => 'The '.$provider_email.' and '.$user_email.' are already booked the given time slot.','content'=>null);
+								$matrix3_Result[] = array('status' => 'false','message' => 'The '.$provider_email.' and '.$user_email.' are already booked the given time slot.','content'=>null);
 							}else{
 								$branch_aval_slots = $this->getBranchAvaliableTimeSlots($branch1_id,$vendor_starttime_slot1);
-								$matrix3_Result = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>array('invitations'=>$branch_aval_slots));
+								$matrix3_Result[] = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>array('invitations'=>$branch_aval_slots));
 								
 								$input_array1 = array('customer_id' => $user_id, 'provider_id' => $provider_id, 'branch_id' => $branch1_id, 'staff_id' => '', 'booking_date' => $vendor_starttime_slot1, 'booking_start_time' => $vendor_starttime_slot1, 'booking_end_time' => $vendor_endtime_slot1, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
 								$get_confirmation_details1 = $this->putConfirmationEntry($input_array1);
 					
-								$matrix3_Result = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>array('invitations'=>$get_confirmation_details1));
+								$matrix3_Result[] = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>array('invitations'=>$get_confirmation_details1));
 								
 							}
 						}else{
 							
-							$matrix3_Result = array('status' => 'false','message' => 'The '.$provider_email.' is not available for your time slot.Please check another time slot.','content'=>null);
+							$matrix3_Result[] = array('status' => 'false','message' => 'The '.$provider_email.' is not available for your time slot.Please check another time slot.','content'=>null);
 						}
 						
+						}else{
+						
+							$matrix3_Result[] = array('status' => 'false','message' => 'The given service1 is not available. The minimum booking time exceed.','content'=>null);			
+							}
+						
+						}else{
+					
+						$matrix3_Result[] = array('status' => 'false','message' => 'The given service1 is not available. The minimum booking Date exceed.','content'=>null);			
+						}
+						
+						}else{
+							
+							$matrix3_Result[] = array('status' => 'false','message' => 'The given service1 Participants FUll.','content'=>null);
+						}
+						
+						
+					if($get_service_no_of_booking2 != 0){
+						
+						if($check_minimum_bookdate == 1){
+						
+						if($check_minimum_booktime2 == 1){
 					//For Service 2	
-					$slot_available2 = $this->checkBookedSlots($provider_id,$branch1_id,0,$vendor_starttime_slot2,$vendor_endtime_slot2,$get_provider_timezone_id);
+					$slot_available2 = $this->checkBookedSlots($provider_id,$branch1_id,$get_staff2,$vendor_starttime_slot2,$vendor_endtime_slot2,$get_provider_timezone_id);
 					
 						if($check_branch_slot_available2){
 					
 							if($slot_available2){
 				
-								$matrix3_Result = array('status' => 'false','message' => 'The '.$provider_email.' and '.$user_email.' are already booked the given time slot.','content'=>null);
+								$matrix3_Result[] = array('status' => 'false','message' => 'The '.$provider_email.' and '.$user_email.' are already booked the given time slot.','content'=>null);
 							}else{
 								$branch_aval_slots = $this->getBranchAvaliableTimeSlots($branch1_id,$vendor_starttime_slot2);
-								$matrix3_Result = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>array('invitations'=>$branch_aval_slots));
+								$matrix3_Result[] = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>array('invitations'=>$branch_aval_slots));
 								
 								$input_array2 = array('customer_id' => $user_id, 'provider_id' => $provider_id, 'branch_id' => $branch1_id, 'staff_id' => '', 'booking_date' => $vendor_starttime_slot2, 'booking_start_time' => $vendor_starttime_slot2, 'booking_end_time' => $vendor_endtime_slot2, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
 								$get_confirmation_details2 = $this->putConfirmationEntry($input_array2);
 					
-								$matrix3_Result = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>array('invitations'=>$get_confirmation_details2));
+								$matrix3_Result[] = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>array('invitations'=>$get_confirmation_details2));
 								
 							}
 						}else{
 							
-							$matrix3_Result = array('status' => 'false','message' => 'The '.$provider_email.' is not available for your time slot.Please check another time slot.','content'=>null);
+							$matrix3_Result[] = array('status' => 'false','message' => 'The '.$provider_email.' is not available for your time slot.Please check another time slot.','content'=>null);
+						}
+						}else{
+						
+							$matrix3_Result[] = array('status' => 'false','message' => 'The given service2 is not available. The minimum booking time exceed.','content'=>null);			
+							}
+						
+						}else{
+					
+						$matrix3_Result[] = array('status' => 'false','message' => 'The given service2 is not available. The minimum booking Date exceed.','content'=>null);			
+						}
+						}else{
+							
+							$matrix3_Result[] = array('status' => 'false','message' => 'The given service2 Participants FUll.','content'=>null);
 						}
 						
 						
 				}else if($get_service1 && $get_service2 == ""){
 					
 					//For Service 1 only booked	
-					 $slot_available1 = $this->checkBookedSlots($provider_id,$branch1_id,0,$vendor_starttime_slot1,$vendor_endtime_slot1,$get_provider_timezone_id);
+					
+					if($get_service_no_of_booking1 != 0){
+						
+						if($check_minimum_bookdate == 1){
+						
+						if($check_minimum_booktime1 == 1){
+						
+					 $slot_available1 = $this->checkBookedSlots($provider_id,$branch1_id,$get_staff1,$vendor_starttime_slot1,$vendor_endtime_slot1,$get_provider_timezone_id);
 					
 						if($check_branch_slot_available1){
 					
 							if($slot_available1){
 				
-								$matrix3_Result = array('status' => 'false','message' => 'The '.$provider_email.' and '.$user_email.' are already booked the given time slot.','content'=>null);
+								$matrix3_Result[] = array('status' => 'false','message' => 'The '.$provider_email.' and '.$user_email.' are already booked the given time slot.','content'=>null);
 							}else{
 								$branch_aval_slots = $this->getBranchAvaliableTimeSlots($branch1_id,$vendor_starttime_slot1);
-								$matrix3_Result = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>array('invitations'=>$branch_aval_slots));
+								$matrix3_Result[] = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>array('invitations'=>$branch_aval_slots));
 								
 								$input_array1 = array('customer_id' => $user_id, 'provider_id' => $provider_id, 'branch_id' => $branch1_id, 'staff_id' => '', 'booking_date' => $vendor_starttime_slot1, 'booking_start_time' => $vendor_starttime_slot1, 'booking_end_time' => $vendor_endtime_slot1, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
 								$get_confirmation_details1 = $this->putConfirmationEntry($input_array1);
 					
-								$matrix3_Result = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>array('invitations'=>$get_confirmation_details1));
+								$matrix3_Result[] = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>array('invitations'=>$get_confirmation_details1));
 								
 							}
 						}else{
 							
-							$matrix3_Result = array('status' => 'false','message' => 'The '.$provider_email.' is not available for your time slot.Please check another time slot.','content'=>null);
+							$matrix3_Result[] = array('status' => 'false','message' => 'The '.$provider_email.' is not available for your time slot.Please check another time slot.','content'=>null);
 						}
+						}else{
+						
+							$matrix3_Result[] = array('status' => 'false','message' => 'The given service1 is not available. The minimum booking time exceed.','content'=>null);			
+							}
+						
+						}else{
 					
-					$matrix3_Result = array('status' => 'false','message' => 'The given service2 is not available in the branch.','content'=>null);
-					
+						$matrix3_Result[] = array('status' => 'false','message' => 'The given service1 is not available. The minimum booking Date exceed.','content'=>null);			
+						}
+						
+					}else{
+							
+							$matrix3_Result[] = array('status' => 'false','message' => 'The given service1 Participants FUll.','content'=>null);
+						}
+						
+							$matrix3_Result[] = array('status' => 'false','message' => 'The given service2 is not available in the branch.','content'=>null);
+
+	
 				}else if($get_service2 && $get_service1 == ""){
 					
 					//For Service 2 only booked	
-					$slot_available2 = $this->checkBookedSlots($provider_id,$vendor_starttime_slot2,$vendor_endtime_slot2,$get_provider_timezone_id);
+					if($get_service_no_of_booking2 != 0){
+						
+						if($check_minimum_bookdate == 1){
+						
+						if($check_minimum_booktime2 == 1){
+					
+					$slot_available2 = $this->checkBookedSlots($provider_id,$branch1_id,$get_staff2,$vendor_starttime_slot2,$vendor_endtime_slot2,$get_provider_timezone_id);
 					
 						if($check_vendor_slot_available2){
 					
 							if($slot_available2){
 				
-								$matrix3_Result = array('status' => 'false','message' => 'The '.$provider_email.' and '.$user_email.' are already booked the given time slot.','content'=>null);
+								$matrix3_Result[] = array('status' => 'false','message' => 'The '.$provider_email.' and '.$user_email.' are already booked the given time slot.','content'=>null);
 							}else{
 						
 								$branch_aval_slots = $this->getBranchAvaliableTimeSlots($branch1_id,$vendor_endtime_slot2);
-								$matrix3_Result = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>array('invitations'=>$branch_aval_slots));
+								$matrix3_Result[] = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>array('invitations'=>$branch_aval_slots));
 								
 								$input_array2 = array('customer_id' => $user_id, 'provider_id' => $provider_id, 'branch_id' => $branch1_id, 'staff_id' => '', 'booking_date' => $vendor_starttime_slot2, 'booking_start_time' => $vendor_starttime_slot2, 'booking_end_time' => $vendor_endtime_slot2, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
 								$get_confirmation_details2 = $this->putConfirmationEntry($input_array2);
 					
-								$matrix3_Result = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>array('invitations'=>$get_confirmation_details2));
+								$matrix3_Result[] = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>array('invitations'=>$get_confirmation_details2));
 								
 							}
 						}else{
 							
-							$matrix3_Result = array('status' => 'false','message' => 'The '.$provider_email.' is not available for your time slot.Please check another time slot.','content'=>null);
+							$matrix3_Result[] = array('status' => 'false','message' => 'The '.$provider_email.' is not available for your time slot.Please check another time slot.','content'=>null);
 						}
+						}else{
 						
+							$matrix3_Result[] = array('status' => 'false','message' => 'The given service2 is not available. The minimum booking time exceed.','content'=>null);			
+							}
+						
+						}else{
 					
-					$matrix3_Result = array('status' => 'false','message' => 'The given service1 is not available in the branch.','content'=>null);
+						$matrix3_Result[] = array('status' => 'false','message' => 'The given service2 is not available. The minimum booking Date exceed.','content'=>null);			
+						}
+						}else{
+							
+							$matrix3_Result[] = array('status' => 'false','message' => 'The given service2 Participants FUll.','content'=>null);
+						}
+					
+					$matrix3_Result[] = array('status' => 'false','message' => 'The given service1 is not available in the branch.','content'=>null);
 				}
 				
 				else{
-					$matrix3_Result = array('status' => 'false','message' => 'The given services are not available in the branch.','content'=>null);				
+					$matrix3_Result[] = array('status' => 'false','message' => 'The given services are not available in the branch.','content'=>null);				
 				}
-			}	
+			}
 			else{
-				$matrix3_Result = array('status' => 'false','message' => 'The '.$provider_email.' time zone not available.','content'=>null);
+				$matrix3_Result[] = array('status' => 'false','message' => 'The International Users Not allowed.','content'=>null);	
 				}
+			
+			}else{
+				$matrix3_Result[] = array('status' => 'false','message' => 'The '.$provider_email.' time zone not available.','content'=>null);
+				}
+				
+			
 			}else{
 				
 				
-				$matrix3_Result = array('status' => 'false','message' => 'The given branch is not available.','content'=>null);			
+				$matrix3_Result[] = array('status' => 'false','message' => 'The given branch is not available.','content'=>null);			
 			}
 			
 			return json_encode(@$matrix3_Result);
+		
+	}
+	
+	
+	public function getMatrix4_Result($provider_email,$user_email,$provider_id, $user_id, $branch1_id, $service1_id, $start_date, $start_time1, $end_time1, $service2_id, $start_time2, $end_time2, $timezone_id,$frequency){
+			
+			$provider_email = urldecode($provider_email);
+			$user_email = urldecode($user_email);
+			$start_time1 = urldecode($start_time1);
+			$end_time1 = urldecode($end_time1);
+			$start_time2 = urldecode($start_time2);
+			$end_time2 = urldecode($end_time2);
+			
+			$get_branch1 = $this->getProviderWithBranch($provider_id,$branch1_id);
+		
+			if($get_branch1){
+				
+				$get_customer_timezone_vlaue = DB::table('timezone')->where('timezone_id', $timezone_id)->value('gmt');
+				$get_provider_timezone = $this->getGmtWithProviderid($provider_id);
+				$get_provider_timezone_id = DB::table('timezone')->where('gmt', $get_provider_timezone)->value('timezone_id');
+
+				$vendor_starttime_slot1 = $this->getTimeSlotWithTimezone($start_date, $start_time1, $get_customer_timezone_vlaue, $get_provider_timezone);
+				$vendor_endtime_slot1 = $this->getTimeSlotWithTimezone($start_date, $end_time1, $get_customer_timezone_vlaue, $get_provider_timezone);
+				
+				$vendor_starttime_slot2 = $this->getTimeSlotWithTimezone($start_date, $start_time2, $get_customer_timezone_vlaue, $get_provider_timezone);
+				$vendor_endtime_slot2 = $this->getTimeSlotWithTimezone($start_date, $end_time2, $get_customer_timezone_vlaue, $get_provider_timezone);
+				
+				$get_staff1 = $this->getStaffWithServiceid($service1_id);
+				$get_staff2 = $this->getStaffWithServiceid($service2_id);
+				
+				$check_branch_slot_available1 = $this->getProviderTimeSlots($get_staff1,$vendor_starttime_slot1,$vendor_endtime_slot1);	
+				$check_branch_slot_available2 = $this->getProviderTimeSlots($get_staff2,$vendor_starttime_slot2,$vendor_endtime_slot2);				
+						
+				$get_service1 = $this->getServiceWithBranch($service1_id, $branch1_id);
+				$get_service2 = $this->getServiceWithBranch($service2_id, $branch1_id);
+				
+				$get_service_no_of_booking1 = DB::table('provider_biz_service')->where('service_id', $service1_id)->value('participants_allowed');
+				$get_service_no_of_booking2 = DB::table('provider_biz_service')->where('service_id', $service2_id)->value('participants_allowed');
+				
+				$check_minimum_bookdate = $this->getMinimumBookDate($provider_id,$start_date);
+				
+				$check_minimum_booktime1 = $this->getMinimumBookTime($provider_id,$vendor_starttime_slot1);
+				$check_minimum_booktime2 = $this->getMinimumBookTime($provider_id,$vendor_starttime_slot2);
+				
+
+				
+			if($get_provider_timezone_id){
+				
+				if($get_customer_timezone_vlaue == "(GMT+05:30)"){
+				
+				if($get_service1 && $get_service2){
+									
+				if($get_service_no_of_booking1 != 0){
+				
+					if($check_minimum_bookdate == 1){
+						
+						if($check_minimum_booktime1 == 1){
+						
+					//For Service 1
+					 $slot_available1 = $this->checkBookedSlots($provider_id,$branch1_id,$get_staff1,$vendor_starttime_slot1,$vendor_endtime_slot1,$get_provider_timezone_id);
+					
+						if($check_branch_slot_available1){
+					
+							if($slot_available1){
+				
+								$matrix4_Result[] = array('status' => 'false','message' => 'The '.$provider_email.' and '.$user_email.' are already booked the given time slot.','content'=>null);
+							}else{
+								$branch_aval_slots = $this->getBranchAvaliableTimeSlots($branch1_id,$vendor_starttime_slot1);
+								$matrix4_Result[] = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>array('invitations'=>$branch_aval_slots));
+								
+								$input_array1 = array('customer_id' => $user_id, 'provider_id' => $provider_id, 'branch_id' => $branch1_id, 'staff_id' => '', 'booking_date' => $vendor_starttime_slot1, 'booking_start_time' => $vendor_starttime_slot1, 'booking_end_time' => $vendor_endtime_slot1, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
+								$get_confirmation_details1 = $this->putConfirmationEntry($input_array1);
+					
+								$matrix4_Result[] = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>array('invitations'=>$get_confirmation_details1));
+								
+							}
+						}else{
+							
+							$matrix4_Result[] = array('status' => 'false','message' => 'The '.$provider_email.' is not available for your time slot.Please check another time slot.','content'=>null);
+						}
+						
+						}else{
+						
+							$matrix4_Result[] = array('status' => 'false','message' => 'The given service1 is not available. The minimum booking time exceed.','content'=>null);			
+							}
+						
+						}else{
+					
+						$matrix4_Result[] = array('status' => 'false','message' => 'The given service1 is not available. The minimum booking Date exceed.','content'=>null);			
+						}
+						
+						}else{
+							
+							$matrix4_Result[] = array('status' => 'false','message' => 'The given service1 Participants FUll.','content'=>null);
+						}
+						
+						
+					if($get_service_no_of_booking2 != 0){
+						
+						if($check_minimum_bookdate == 1){
+						
+						if($check_minimum_booktime2 == 1){
+					//For Service 2	
+					$slot_available2 = $this->checkBookedSlots($provider_id,$branch1_id,$get_staff2,$vendor_starttime_slot2,$vendor_endtime_slot2,$get_provider_timezone_id);
+					
+						if($check_branch_slot_available2){
+					
+							if($slot_available2){
+				
+								$matrix4_Result[] = array('status' => 'false','message' => 'The '.$provider_email.' and '.$user_email.' are already booked the given time slot.','content'=>null);
+							}else{
+								$branch_aval_slots = $this->getBranchAvaliableTimeSlots($branch1_id,$vendor_starttime_slot2);
+								$matrix4_Result[] = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>array('invitations'=>$branch_aval_slots));
+								
+								$input_array2 = array('customer_id' => $user_id, 'provider_id' => $provider_id, 'branch_id' => $branch1_id, 'staff_id' => '', 'booking_date' => $vendor_starttime_slot2, 'booking_start_time' => $vendor_starttime_slot2, 'booking_end_time' => $vendor_endtime_slot2, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
+								$get_confirmation_details2 = $this->putConfirmationEntry($input_array2);
+					
+								$matrix4_Result[] = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>array('invitations'=>$get_confirmation_details2));
+								
+							}
+						}else{
+							
+							$matrix4_Result[] = array('status' => 'false','message' => 'The '.$provider_email.' is not available for your time slot.Please check another time slot.','content'=>null);
+						}
+						}else{
+						
+							$matrix4_Result[] = array('status' => 'false','message' => 'The given service2 is not available. The minimum booking time exceed.','content'=>null);			
+							}
+						
+						}else{
+					
+						$matrix4_Result[] = array('status' => 'false','message' => 'The given service2 is not available. The minimum booking Date exceed.','content'=>null);			
+						}
+						}else{
+							
+							$matrix4_Result[] = array('status' => 'false','message' => 'The given service2 Participants FUll.','content'=>null);
+						}
+						
+						
+				}else if($get_service1 && $get_service2 == ""){
+					
+					//For Service 1 only booked	
+					
+					if($get_service_no_of_booking1 != 0){
+						
+						if($check_minimum_bookdate == 1){
+						
+						if($check_minimum_booktime1 == 1){
+						
+					 $slot_available1 = $this->checkBookedSlots($provider_id,$branch1_id,$get_staff1,$vendor_starttime_slot1,$vendor_endtime_slot1,$get_provider_timezone_id);
+					
+						if($check_branch_slot_available1){
+					
+							if($slot_available1){
+				
+								$matrix4_Result[] = array('status' => 'false','message' => 'The '.$provider_email.' and '.$user_email.' are already booked the given time slot.','content'=>null);
+							}else{
+								$branch_aval_slots = $this->getBranchAvaliableTimeSlots($branch1_id,$vendor_starttime_slot1);
+								$matrix4_Result[] = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>array('invitations'=>$branch_aval_slots));
+								
+								$input_array1 = array('customer_id' => $user_id, 'provider_id' => $provider_id, 'branch_id' => $branch1_id, 'staff_id' => '', 'booking_date' => $vendor_starttime_slot1, 'booking_start_time' => $vendor_starttime_slot1, 'booking_end_time' => $vendor_endtime_slot1, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
+								$get_confirmation_details1 = $this->putConfirmationEntry($input_array1);
+					
+								$matrix4_Result[] = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>array('invitations'=>$get_confirmation_details1));
+								
+							}
+						}else{
+							
+							$matrix4_Result[] = array('status' => 'false','message' => 'The '.$provider_email.' is not available for your time slot.Please check another time slot.','content'=>null);
+						}
+						}else{
+						
+							$matrix4_Result[] = array('status' => 'false','message' => 'The given service1 is not available. The minimum booking time exceed.','content'=>null);			
+							}
+						
+						}else{
+					
+						$matrix4_Result[] = array('status' => 'false','message' => 'The given service1 is not available. The minimum booking Date exceed.','content'=>null);			
+						}
+						
+					}else{
+							
+							$matrix4_Result[] = array('status' => 'false','message' => 'The given service1 Participants FUll.','content'=>null);
+						}
+						
+							$matrix4_Result[] = array('status' => 'false','message' => 'The given service2 is not available in the branch.','content'=>null);
+
+	
+				}else if($get_service2 && $get_service1 == ""){
+					
+					//For Service 2 only booked	
+					if($get_service_no_of_booking2 != 0){
+						
+						if($check_minimum_bookdate == 1){
+						
+						if($check_minimum_booktime2 == 1){
+					
+					$slot_available2 = $this->checkBookedSlots($provider_id,$branch1_id,$get_staff2,$vendor_starttime_slot2,$vendor_endtime_slot2,$get_provider_timezone_id);
+					
+						if($check_vendor_slot_available2){
+					
+							if($slot_available2){
+				
+								$matrix4_Result[] = array('status' => 'false','message' => 'The '.$provider_email.' and '.$user_email.' are already booked the given time slot.','content'=>null);
+							}else{
+						
+								$branch_aval_slots = $this->getBranchAvaliableTimeSlots($branch1_id,$vendor_endtime_slot2);
+								$matrix4_Result[] = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>array('invitations'=>$branch_aval_slots));
+								
+								$input_array2 = array('customer_id' => $user_id, 'provider_id' => $provider_id, 'branch_id' => $branch1_id, 'staff_id' => '', 'booking_date' => $vendor_starttime_slot2, 'booking_start_time' => $vendor_starttime_slot2, 'booking_end_time' => $vendor_endtime_slot2, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
+								$get_confirmation_details2 = $this->putConfirmationEntry($input_array2);
+					
+								$matrix4_Result[] = array('status' => 'true','message' =>'The '.$provider_email.' and '.$user_email.' booking confirmed.','content'=>array('invitations'=>$get_confirmation_details2));
+								
+							}
+						}else{
+							
+							$matrix4_Result[] = array('status' => 'false','message' => 'The '.$provider_email.' is not available for your time slot.Please check another time slot.','content'=>null);
+						}
+						}else{
+						
+							$matrix4_Result[] = array('status' => 'false','message' => 'The given service2 is not available. The minimum booking time exceed.','content'=>null);			
+							}
+						
+						}else{
+					
+						$matrix4_Result[] = array('status' => 'false','message' => 'The given service2 is not available. The minimum booking Date exceed.','content'=>null);			
+						}
+						}else{
+							
+							$matrix4_Result[] = array('status' => 'false','message' => 'The given service2 Participants FUll.','content'=>null);
+						}
+					
+					$matrix4_Result[] = array('status' => 'false','message' => 'The given service1 is not available in the branch.','content'=>null);
+				}
+				
+				else{
+					$matrix4_Result[] = array('status' => 'false','message' => 'The given services are not available in the branch.','content'=>null);				
+				}
+			}
+			else{
+				$matrix4_Result[] = array('status' => 'false','message' => 'The International Users Not allowed.','content'=>null);	
+				}
+			
+			}else{
+				$matrix4_Result[] = array('status' => 'false','message' => 'The '.$provider_email.' time zone not available.','content'=>null);
+				}
+				
+			
+			}else{
+				
+				
+				$matrix4_Result[] = array('status' => 'false','message' => 'The given branch is not available.','content'=>null);			
+			}
+			
+			return json_encode(@$matrix4_Result);
 		
 	}
 	
