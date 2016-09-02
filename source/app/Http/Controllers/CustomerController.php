@@ -979,6 +979,11 @@ class CustomerController extends Controller{
 			$start_time2 = urldecode($start_time2);
 			$end_time2 = urldecode($end_time2);
 			
+			$start_date =  explode(',',$start_date);
+		
+		for($i=0; $i < count($start_date); $i++ )
+		{
+			
 			$get_branch1 = $this->getProviderWithBranch($provider_id,$branch1_id);
 		
 			if($get_branch1){
@@ -987,11 +992,11 @@ class CustomerController extends Controller{
 				$get_provider_timezone = $this->getGmtWithProviderid($provider_id);
 				$get_provider_timezone_id = DB::table('timezone')->where('gmt', $get_provider_timezone)->value('timezone_id');
 
-				$vendor_starttime_slot1 = $this->getTimeSlotWithTimezone($start_date, $start_time1, $get_customer_timezone_vlaue, $get_provider_timezone);
-				$vendor_endtime_slot1 = $this->getTimeSlotWithTimezone($start_date, $end_time1, $get_customer_timezone_vlaue, $get_provider_timezone);
+				$vendor_starttime_slot1 = $this->getTimeSlotWithTimezone($start_date[$i], $start_time1, $get_customer_timezone_vlaue, $get_provider_timezone);
+				$vendor_endtime_slot1 = $this->getTimeSlotWithTimezone($start_date[$i], $end_time1, $get_customer_timezone_vlaue, $get_provider_timezone);
 				
-				$vendor_starttime_slot2 = $this->getTimeSlotWithTimezone($start_date, $start_time2, $get_customer_timezone_vlaue, $get_provider_timezone);
-				$vendor_endtime_slot2 = $this->getTimeSlotWithTimezone($start_date, $end_time2, $get_customer_timezone_vlaue, $get_provider_timezone);
+				$vendor_starttime_slot2 = $this->getTimeSlotWithTimezone($start_date[$i], $start_time2, $get_customer_timezone_vlaue, $get_provider_timezone);
+				$vendor_endtime_slot2 = $this->getTimeSlotWithTimezone($start_date[$i], $end_time2, $get_customer_timezone_vlaue, $get_provider_timezone);
 				
 				$get_staff1 = $this->getStaffWithServiceid($service1_id);
 				$get_staff2 = $this->getStaffWithServiceid($service2_id);
@@ -1005,7 +1010,7 @@ class CustomerController extends Controller{
 				$get_service_no_of_booking1 = DB::table('provider_biz_service')->where('service_id', $service1_id)->value('participants_allowed');
 				$get_service_no_of_booking2 = DB::table('provider_biz_service')->where('service_id', $service2_id)->value('participants_allowed');
 				
-				$check_minimum_bookdate = $this->getMinimumBookDate($provider_id,$start_date);
+				$check_minimum_bookdate = $this->getMinimumBookDate($provider_id,$start_date[$i]);
 				
 				$check_minimum_booktime1 = $this->getMinimumBookTime($provider_id,$vendor_starttime_slot1);
 				$check_minimum_booktime2 = $this->getMinimumBookTime($provider_id,$vendor_starttime_slot2);
@@ -1220,6 +1225,8 @@ class CustomerController extends Controller{
 				
 				$matrix4_Result[] = array('status' => 'false','message' => 'The given branch is not available.','content'=>null);			
 			}
+			
+		}
 			
 			return json_encode(@$matrix4_Result);
 		
