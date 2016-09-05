@@ -1232,7 +1232,7 @@ class CustomerController extends Controller{
 		
 	}
 	
-	public function getMatrix5_Result($provider_email,$user_email,$provider_id, $user_id, $branch1_id, $service1_id, $start_date, $start_time1, $end_time1, $branch2_id, $service2_id, $start_time2, $end_time2, $timezone_id, $type){
+	public function getMatrix5_Result($provider_email,$user_email,$provider_id, $user_id, $branch1_id, $service1_id, $start_date, $start_time1, $end_time1, $branch2_id, $service2_id, $start_time2, $end_time2, $timezone_id, $type,$frequency){
 			
 			$provider_email = urldecode($provider_email);
 			$user_email = urldecode($user_email);
@@ -1259,13 +1259,29 @@ class CustomerController extends Controller{
 					
 			$get_service1 = $this->getServiceWithBranch($service1_id, $branch1_id);
 			$get_service2 = $this->getServiceWithBranch($service2_id, $branch2_id);
+			
+			$get_staff1 = $this->getStaffWithServiceid($service1_id);
+			$get_staff2 = $this->getStaffWithServiceid($service2_id);
 				
 		if($get_provider_timezone_id){
 			
+			if($get_customer_timezone_vlaue == "(GMT+05:30)"){
+			
 			//For Branch 1
 			if($get_branch1 && $get_service1){
+				$get_service1_no_of_booking = DB::table('provider_biz_service')->where('service_id', $service1_id)->value('participants_allowed');
 				
-				$slot_available1 = $this->checkBookedSlots($provider_id,$branch1_id,0,$vendor_starttime_slot1,$vendor_endtime_slot1,$get_provider_timezone_id);
+				if($get_service_no_of_booking != 0){
+					
+					$check_minimum_bookdate = $this->getMinimumBookDate($provider_id,$start_date);
+						
+					if($check_minimum_bookdate == 1){
+						
+									$check_minimum_booktime = $this->getMinimumBookTime($provider_id,$vendor_starttime_slot1);
+					
+						if($check_minimum_booktime == 1){
+					
+					$slot_available1 = $this->checkBookedSlots($provider_id,$branch1_id,$get_staff1,$vendor_starttime_slot1,$vendor_endtime_slot1,$get_provider_timezone_id);
 					
 						if($check_vendor_slot_available1){
 					
@@ -1289,6 +1305,21 @@ class CustomerController extends Controller{
 							$matrix5_Result = array('status' => 'false','message' => 'The '.$provider_email.' is not available for your time slot.Please check another time slot.','content'=>null);
 						}
 						
+						}else{
+						
+							$matrix5_Result= array('status' => 'false','message' => 'The given service is not available. The minimum booking time exceed.','content'=>null);			
+							}
+						
+						}else{
+					
+						$matrix5_Result= array('status' => 'false','message' => 'The given service is not available. The minimum booking Date exceed.','content'=>null);			
+						}
+						
+						}else{
+				
+					$matrix5_Result = array('status' => 'false','message' => 'The given service Participants FUll.','content'=>null);			
+				}
+						
 			}else if($get_branch1 && $get_service1 == ""){
 				
 				$matrix5_Result = array('status' => 'false','message' => 'The given service1 is not available in the branch1.','content'=>null);
@@ -1305,7 +1336,19 @@ class CustomerController extends Controller{
 			//For Branch 2
 			if($get_branch2 && $get_service2){
 				
-				$slot_available2 = $this->checkBookedSlots($provider_id,$branch2_id,0,$vendor_starttime_slot2,$vendor_endtime_slot2,$get_provider_timezone_id);
+				$get_service2_no_of_booking = DB::table('provider_biz_service')->where('service_id', $service2_id)->value('participants_allowed');
+				
+				if($get_service_no_of_booking != 0){
+					
+					$check_minimum_bookdate = $this->getMinimumBookDate($provider_id,$start_date);
+						
+					if($check_minimum_bookdate == 1){
+						
+									$check_minimum_booktime = $this->getMinimumBookTime($provider_id,$vendor_starttime_slot2);
+					
+						if($check_minimum_booktime == 1){
+				
+				$slot_available2 = $this->checkBookedSlots($provider_id,$branch2_id,$get_staff2,$vendor_starttime_slot2,$vendor_endtime_slot2,$get_provider_timezone_id);
 					
 						if($check_vendor_slot_available2){
 					
@@ -1327,6 +1370,20 @@ class CustomerController extends Controller{
 							
 							$matrix5_Result = array('status' => 'false','message' => 'The '.$provider_email.' is not available for your time slot.Please check another time slot.','content'=>null);
 						}
+						}else{
+						
+							$matrix5_Result= array('status' => 'false','message' => 'The given service is not available. The minimum booking time exceed.','content'=>null);			
+							}
+						
+						}else{
+					
+						$matrix5_Result= array('status' => 'false','message' => 'The given service is not available. The minimum booking Date exceed.','content'=>null);			
+						}
+						
+						}else{
+				
+					$matrix5_Result = array('status' => 'false','message' => 'The given service Participants FUll.','content'=>null);			
+				}
 						
 			}else if($get_branch2 && $get_service2 == ""){
 				
@@ -1339,6 +1396,11 @@ class CustomerController extends Controller{
 				
 				$matrix5_Result = array('status' => 'false','message' => 'The given branch2 and Service2 is not available.','content'=>null);
 			}
+			
+			}else{
+				
+					$matrix5_Result= array('status' => 'false','message' => 'The International Users Not allowed.','content'=>null);			
+				}
 
 		}else{
 			
