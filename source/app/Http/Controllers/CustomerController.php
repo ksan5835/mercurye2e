@@ -509,7 +509,7 @@ class CustomerController extends Controller{
 	
 	public function getStaffWithServiceid($service_id){
 		
-		$service_staff_id = DB::table('biz_service_staff')
+		$service_staff_id = DB::table('biz_service_staff1')
                      ->select('staff_id')
                      ->where('service_id', '=', $service_id)
 					 ->value('staff_id');
@@ -568,17 +568,16 @@ class CustomerController extends Controller{
 		
 		//$get_branch1 = $this->getProviderWithBranch($provider_id,$branch1_id);
 		//$get_service1 = $this->getServiceWithBranch($service1_id, $branch1_id);
-		$get_service_no_of_booking = DB::table('provider_biz_service')->where('service_id', $service1_id)->value('participants_allowed');
+		//$get_service_no_of_booking = DB::table('provider_biz_service')->where('service_id', $service1_id)->value('participants_allowed');
 		$get_staff1 = $this->getStaffWithServiceid($service1_id);
 		$get_customer_timezone_vlaue = DB::table('timezone')->where('timezone_id', $timezone_id)->value('gmt');
 		$get_provider_timezone = $this->getGmtWithProviderid($provider_id);
 		$get_provider_timezone_id = DB::table('timezone')->where('gmt', $get_provider_timezone)->value('timezone_id');
 		$get_provider_timezone = $this->getGmtWithProviderid($provider_id);
-		$get_provider_timezone_id = DB::table('timezone')->where('gmt', $get_provider_timezone)->value('timezone_id');
 		$vendor_starttime_slot = $this->getTimeSlotWithTimezone($start_date, $start_time1, $get_customer_timezone_vlaue, $get_provider_timezone);
 		$vendor_endtime_slot = $this->getTimeSlotWithTimezone($start_date, $end_time1, $get_customer_timezone_vlaue, $get_provider_timezone);
-		$check_minimum_bookdate = $this->getMinimumBookDate($provider_id,$start_date);
-		$check_minimum_booktime = $this->getMinimumBookTime($provider_id,$vendor_starttime_slot);
+		//$check_minimum_bookdate = $this->getMinimumBookDate($provider_id,$start_date);
+		//$check_minimum_booktime = $this->getMinimumBookTime($provider_id,$vendor_starttime_slot);
 		$check_branch_slot_available = $this->getStaffTimeSlots($get_staff1,$vendor_starttime_slot,$vendor_endtime_slot);							 
 		//$slot_available = $this->checkBookedSlots($provider_id,$branch1_id,$get_staff1,$vendor_starttime_slot,$vendor_endtime_slot,$get_provider_timezone_id);
 		
@@ -592,15 +591,15 @@ class CustomerController extends Controller{
 			
 				$branch_aval_slots = $this->getProviderAvaliableTimeSlots($get_staff1,$vendor_starttime_slot,$service1_id);
 			
-			if($get_service_no_of_booking != 0){
+			//if($get_service_no_of_booking != 0){
 
-				if($get_customer_timezone_vlaue == "(GMT+05:30)"){			
+				//if($get_customer_timezone_vlaue == "(GMT+05:30)"){			
 						
-					if($check_minimum_bookdate == 1){			
+					//if($check_minimum_bookdate == 1){			
 		
-						if($check_minimum_booktime == 1){							
+						//if($check_minimum_booktime == 1){							
 
-							if($get_provider_timezone_id){
+							//if($get_provider_timezone_id){
 				
 										
 										$input_array = array('customer_id' => $user_id, 'provider_id' => $provider_id, 'branch_id' => $branch1_id, 'staff_id' => $get_staff1,  'booking_date' => $vendor_starttime_slot, 'booking_start_time' => $vendor_starttime_slot, 'booking_end_time' => $vendor_endtime_slot, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
@@ -612,7 +611,7 @@ class CustomerController extends Controller{
 										$matrix1_Result = array('status' => '(Busy)');
 								}
 								
-							}else{
+							/*}else{
 								$matrix1_Result = array('status' => '(Busy)');
 					
 							}
@@ -636,7 +635,7 @@ class CustomerController extends Controller{
 			
 				$matrix1_Result = array('status' => '(Busy)');			
 			}
-		/* 				
+		 				
 		}else{
 		
 			$matrix1_Result = array('status' => '(Busy)');			
