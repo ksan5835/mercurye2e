@@ -278,8 +278,8 @@ class CustomerController extends Controller{
 	
 	public function getStaffTimeSlots($staff_id,$start_date){
 		
-		$start_date = date('Y-m-d', strtotime($start_date));
-		$check_vendor_slot_available = DB::select( DB::raw("SELECT workinghours_id FROM biz_staff_workinghours WHERE staff_id = '$staff_id' and date(start_time) = date('$start_date')") );
+		$start_date = date('l', strtotime($start_date));
+		$check_vendor_slot_available = DB::select( DB::raw("SELECT workinghours_id FROM biz_staff_workinghours WHERE staff_id = '$staff_id' and day = '$start_date'") );
 		if($check_vendor_slot_available){
 			$check_vendor_slot_available_id = $check_vendor_slot_available[0]->workinghours_id;
 		}else{
@@ -340,11 +340,29 @@ class CustomerController extends Controller{
 
 		//$precision_start_time_slot = str_replace('.',':',$precision_start_time_slot).':00';
 	
-		$slot_available = DB::select( DB::raw("SELECT id FROM customer_booking_confirmation WHERE staff_id = '$staff_id' and date(booking_date) = date('$bookdate') and booking_start_time = '$precision_start_time_slot'") );
+		$slot_available = DB::select( DB::raw("SELECT appointment_id FROM customer_booking_confirmation WHERE staff_id = '$staff_id' and date(appointment_date) = date('$bookdate') and appointment_start_time = '$precision_start_time_slot'") );
 
 							 
 		if($slot_available){
-			$slot_available_id = $slot_available[0]->id;
+			$slot_available_id = $slot_available[0]->appointment_id;
+		}else{
+			$slot_available_id = '';
+			}
+		
+		return $slot_available_id;
+	}
+	
+	public function checkStaffBlockedHours($staff_id,$bookdate,$precision_start_time_slot){
+		
+		$vendor_book_date = date_create($bookdate);
+		$bookdate = date_format($vendor_book_date,"Y-m-d");
+
+		
+		$slot_available = DB::select( DB::raw("SELECT block_id FROM biz_branch_staff_blocking_hours WHERE staff_id = '$staff_id' and date(block_date) = date('$bookdate') and block_start = '$precision_start_time_slot'") );
+
+							 
+		if($slot_available){
+			$slot_available_id = $slot_available[0]->block_id;
 		}else{
 			$slot_available_id = '';
 			}
@@ -355,7 +373,7 @@ class CustomerController extends Controller{
 	public function getProviderAvaliableTimeSlots($staff_id,$bookdate,$service_id){
 		
 		$start_datetime = date_create($bookdate);
-		$start_date = date_format($start_datetime,"Y-m-d");	
+		$start_date = date_format($start_datetime,"l");	
 		
 		$get_service_slot_available = DB::select( DB::raw("SELECT duration,precision_time,breaks_time FROM provider_biz_service WHERE service_id = '$service_id'" ));
 		
@@ -365,7 +383,11 @@ class CustomerController extends Controller{
 				
 				$check_book_time_slot = $this->checkStaffBookedSlots($staff_id,$bookdate,$precision_time_slot[$i]);
 				
-				if($check_book_time_slot){
+				$check_blocked_hours = $this->checkStaffBlockedHours($staff1_id,$bookdate,$precision_time_slot[$i]);
+				
+				if($check_blocked_hours){
+					$time_slot [] = str_replace('.',':',$precision_time_slot[$i]).':00'.' '.'(Blocked)';
+				}elseif($check_book_time_slot){
 					$time_slot [] = str_replace('.',':',$precision_time_slot[$i]).':00'.' '.'(Busy)';
 				}else{
 					$time_slot [] = str_replace('.',':',$precision_time_slot[$i]).':00'.' '.'(Available)';
@@ -373,8 +395,9 @@ class CustomerController extends Controller{
 			}
 			
 		}else{
+			
 		
-		$check_vendor_slot_available = DB::select( DB::raw("SELECT start_time,end_time FROM biz_staff_workinghours WHERE staff_id = ".$staff_id." and date(start_time) = date('".$start_date."') ") );
+		$check_vendor_slot_available = DB::select( DB::raw("SELECT start_time,end_time FROM biz_staff_workinghours WHERE staff_id = ".$staff_id." and day = '".$start_date."' ") );
 						
 			if(!empty($check_vendor_slot_available)){	
 				
@@ -397,10 +420,15 @@ class CustomerController extends Controller{
 				
 				$check_book_time_slot = $this->checkStaffBookedSlots($staff_id,$bookdate,$staff_time_slot[$i]);
 				
-				if($check_book_time_slot){
-					$time_slot [] = $staff_time_slot[$i].' '.'(Busy)';
+				$check_blocked_hours = $this->checkStaffBlockedHours($staff_id,$bookdate,$staff_time_slot[$i]);
+				
+				if($i < count(@$staff_time_slot)-1)
+				if($check_blocked_hours){
+					$time_slot [] = str_replace('.',':',$staff_time_slot[$i]).'-'.$staff_time_slot[$i+1].' '.'(Blocked)';
+				}elseif($check_book_time_slot){
+					$time_slot [] = $staff_time_slot[$i].'-'.$staff_time_slot[$i+1].' '.'(Busy)';
 				}else{
-					$time_slot [] = $staff_time_slot[$i].' '.'(Available)';
+					$time_slot [] = $staff_time_slot[$i].'-'.$staff_time_slot[$i+1].' '.'(Available)';
 				}
 			}
 				
@@ -577,6 +605,7 @@ class CustomerController extends Controller{
 		//$get_service1 = $this->getServiceWithBranch($service1_id, $branch1_id);
 		//$get_service_no_of_booking = DB::table('provider_biz_service')->where('service_id', $service1_id)->value('participants_allowed');
 		$get_staff1 = $this->getStaffWithServiceid($service1_id);
+		//print_r($get_staff1);die;
 		//$get_customer_timezone_vlaue = DB::table('timezone')->where('timezone_id', $timezone_id)->value('gmt');
 		//$get_provider_timezone = $this->getGmtWithProviderid($provider_id);
 		//$get_provider_timezone_id = DB::table('timezone')->where('gmt', $get_provider_timezone)->value('timezone_id');
