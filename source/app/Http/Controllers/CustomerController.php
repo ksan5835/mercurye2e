@@ -386,11 +386,17 @@ class CustomerController extends Controller{
 				$check_blocked_hours = $this->checkStaffBlockedHours($staff1_id,$bookdate,$precision_time_slot[$i]);
 				
 				if($check_blocked_hours){
-					$time_slot [] = str_replace('.',':',$precision_time_slot[$i]).':00'.' '.'(Blocked)';
+					$time_slot [] .= str_replace('.',':',$precision_time_slot[$i]).':00';
+					$time_slot_status = "H";
+					$final_slot [] = array ("timeslot" => $time_slot, "status" => $time_slot_status);
 				}elseif($check_book_time_slot){
-					$time_slot [] = str_replace('.',':',$precision_time_slot[$i]).':00'.' '.'(Busy)';
+					$time_slot [] = str_replace('.',':',$precision_time_slot[$i]).':00';
+					$time_slot_status  = "B";
+					$final_slot [] = array ("timeslot" => $time_slot, "status" => $time_slot_status);
 				}else{
-					$time_slot [] = str_replace('.',':',$precision_time_slot[$i]).':00'.' '.'(Available)';
+					$time_slot [] = str_replace('.',':',$precision_time_slot[$i]).':00';
+					$time_slot_status = "A";
+					$final_slot [] = array ("timeslot" => $time_slot, "status" => $time_slot_status);
 				}
 			}
 			
@@ -424,17 +430,25 @@ class CustomerController extends Controller{
 				
 				if($i < count(@$staff_time_slot)-1)
 				if($check_blocked_hours){
-					$time_slot [] = str_replace('.',':',$staff_time_slot[$i]).'-'.$staff_time_slot[$i+1].' '.'(Blocked)';
+					$time_slot = str_replace('.',':',$staff_time_slot[$i]).'-'.$staff_time_slot[$i+1].'';
+					$time_slot_status = "H";
+					$final_slot [] = array ("timeslot" => $time_slot, "status" => $time_slot_status);
 				}elseif($check_book_time_slot){
-					$time_slot [] = $staff_time_slot[$i].'-'.$staff_time_slot[$i+1].' '.'(Busy)';
+					$time_slot  = $staff_time_slot[$i].'-'.$staff_time_slot[$i+1].' ';
+					$time_slot_status  = "B";
+					$final_slot [] = array ("timeslot" => $time_slot, "status" => $time_slot_status);
 				}else{
-					$time_slot [] = $staff_time_slot[$i].'-'.$staff_time_slot[$i+1].' '.'(Available)';
+					$time_slot = $staff_time_slot[$i].'-'.$staff_time_slot[$i+1].'';
+					$time_slot_status = "A";
+					$final_slot [] = array ("timeslot" => $time_slot, "status" => $time_slot_status);
 				}
 			}
 				
 			}
 		}
-		return @$time_slot;
+		
+		//print_r($final_slot);die;
+		return @$final_slot;
 	}
 	
 	public function getBranchAvaliableTimeSlots($branch_id,$bookdate){
@@ -591,7 +605,7 @@ class CustomerController extends Controller{
 	} 
 	
 	
-	public function getMatrix1_Result($provider_email,$user_email,$branch1_id, $service1_id, $start_date, $timezone_id, $frequency){
+	public function getMatrix1_Result($provider_email,$user_email,$branch1_id, $service1_id, $staff1_id, $start_date, $timezone_id, $frequency){
 		
 		$provider_email = urldecode($provider_email);
 		$user_email = urldecode($user_email);
@@ -604,7 +618,11 @@ class CustomerController extends Controller{
 		//$get_branch1 = $this->getProviderWithBranch($provider_id,$branch1_id);
 		//$get_service1 = $this->getServiceWithBranch($service1_id, $branch1_id);
 		//$get_service_no_of_booking = DB::table('provider_biz_service')->where('service_id', $service1_id)->value('participants_allowed');
+		if($staff1_id == 0){
 		$get_staff1 = $this->getStaffWithServiceid($service1_id);
+		}else{
+			$get_staff1 = $staff1_id;
+		}
 		//print_r($get_staff1);die;
 		//$get_customer_timezone_vlaue = DB::table('timezone')->where('timezone_id', $timezone_id)->value('gmt');
 		//$get_provider_timezone = $this->getGmtWithProviderid($provider_id);
@@ -641,11 +659,11 @@ class CustomerController extends Controller{
 										
 										//$input_array = array('customer_id' => $user_id, 'provider_id' => $provider_id, 'branch_id' => $branch1_id, 'staff_id' => $get_staff1,  'booking_date' => $vendor_starttime_slot, 'booking_start_time' => $vendor_starttime_slot, 'booking_end_time' => $vendor_endtime_slot, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
 										//$get_confirmation_details = $this->putConfirmationEntry($input_array);
-										$matrix1_Result=  array('status'=>array('Time slots ('.$start_date.')'=> $branch_aval_slots ));
+										$matrix1_Result=  array('status'=> 'true', 'content('.$start_date.')'=>$branch_aval_slots );
 									
 									
 								}else{
-										$matrix1_Result = array('status' => 'Time slots ('.$start_date.'(Busy)');
+										$matrix1_Result =  array('status'=> 'false', 'content('.$start_date.')'=>'(Busy)' );
 								}
 								
 							/*}else{
@@ -688,12 +706,12 @@ class CustomerController extends Controller{
 	$matrix1_Result = array('status' => '(Busy)');			
 } */
 			
-			return json_encode($matrix1_Result);
+			return $matrix1_Result;
 		
 	}
 	
 	
-	public function getMatrix2_Result($provider_email,$user_email,$branch1_id, $service1_id, $start_date, $timezone_id, $frequency){
+	public function getMatrix2_Result($provider_email,$user_email,$branch1_id, $service1_id, $staff1_id, $start_date, $timezone_id, $frequency){
 		
 		$provider_email = urldecode($provider_email);
 		$user_email = urldecode($user_email);
@@ -713,7 +731,11 @@ class CustomerController extends Controller{
 				
 				//if($get_service1){
 					
-				$get_staff1 = $this->getStaffWithServiceid($service1_id);
+				if($staff1_id == 0){
+					$get_staff1 = $this->getStaffWithServiceid($service1_id);
+				}else{
+					$get_staff1 = $staff1_id;
+				}
 				//$get_provider_timezone = $this->getGmtWithProviderid($provider_id);
 				//$get_customer_timezone_vlaue = DB::table('timezone')->where('timezone_id', $timezone_id)->value('gmt');
 				//$get_provider_timezone_id = DB::table('timezone')->where('gmt', $get_provider_timezone)->value('timezone_id');
@@ -746,12 +768,15 @@ class CustomerController extends Controller{
 								//$input_array = array('customer_id' => $user_id, 'provider_id' => $provider_id, 'branch_id' => $branch1_id, 'staff_id' => $get_staff1,  'booking_date' => $start_date[$i], 'booking_start_time' => $vendor_starttime_slot, 'booking_end_time' => $vendor_endtime_slot, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
 								//$get_confirmation_details = $this->putConfirmationEntry($input_array);
 					
-								$matrix2_Result[] =  array('status'=>array('Time slots ('.$start_date[$i].')'=> $branch_aval_slots ));
+								//$matrix2_Result[] =  array('status'=>array('Time slots ('.$start_date[$i].')'=> $branch_aval_slots ));
+								$matrix2_Result[] =  array('status'=> 'true', 'content('.$start_date[$i].')'=>$branch_aval_slots );
 								
 							
 							}else{
 								
-								$matrix2_Result[] = array('status' => 'Time slots ('.$start_date[$i].'(Busy)');
+								//$matrix2_Result[] = array('status' => 'Time slots ('.$start_date[$i].'(Busy)');
+								
+								$matrix2_Result[] =  array('status'=> 'false', 'content('.$start_date[$i].')'=>'(Busy)' );
 								}
 						//}else{
 							//$matrix2_Result[] = array('status' => '(Busy)');
@@ -788,7 +813,7 @@ class CustomerController extends Controller{
 				$matrix2_Result[] = array('status' => 'false','message' => 'The given branch is not available.','content'=>null);			
 			} */
 		}
-			return json_encode($matrix2_Result);
+			return $matrix2_Result;
 		
 	}
 	
