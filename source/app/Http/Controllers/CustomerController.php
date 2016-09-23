@@ -605,19 +605,19 @@ class CustomerController extends Controller{
 	} 
 	
 	
-	public function getMatrix1_Result($provider_email,$user_email,$branch1_id, $service1_id, $staff1_id, $start_date, $timezone_id, $frequency){
+	public function getMatrix1_Result($provider_email,$participants,$branch1_id, $service1_id, $staff1_id, $start_date, $timezone_id, $frequency){
 		
-		$provider_email = urldecode($provider_email);
-		$user_email = urldecode($user_email);
+		//$provider_email = urldecode($provider_email);
+		//$user_email = urldecode($user_email);
 		//$start_time1 = urldecode($start_time1);
 		//$end_time1 = urldecode($end_time1);
 		
-		$provider_id = DB::table('provider')->where('email', $provider_email)->value('user_id');
-		$user_id = DB::table('customer')->where('email', $user_email)->value('user_id');		
+		//$provider_id = DB::table('provider')->where('email', $provider_email)->value('user_id');
+		//$user_id = DB::table('customer')->where('email', $user_email)->value('user_id');		
 		
 		//$get_branch1 = $this->getProviderWithBranch($provider_id,$branch1_id);
 		//$get_service1 = $this->getServiceWithBranch($service1_id, $branch1_id);
-		//$get_service_no_of_booking = DB::table('provider_biz_service')->where('service_id', $service1_id)->value('participants_allowed');
+		$get_service_no_of_booking = DB::table('provider_biz_service')->where('service_id', $service1_id)->value('participants_allowed');
 		if($staff1_id == 0){
 		$get_staff1 = $this->getStaffWithServiceid($service1_id);
 		}else{
@@ -634,7 +634,7 @@ class CustomerController extends Controller{
 		//$check_minimum_booktime = $this->getMinimumBookTime($provider_id,$vendor_starttime_slot);
 		$check_branch_slot_available = $this->getStaffTimeSlots($get_staff1,$start_date);							 
 		//$slot_available = $this->checkBookedSlots($provider_id,$branch1_id,$get_staff1,$vendor_starttime_slot,$vendor_endtime_slot,$get_provider_timezone_id);
-		
+			
 		
 //if(!$slot_available){
 	
@@ -642,7 +642,7 @@ class CustomerController extends Controller{
 				
 		//if($get_service1){
 			
-		if($check_branch_slot_available){
+		if($check_branch_slot_available && $get_service_no_of_booking != 0){
 			
 				$branch_aval_slots = $this->getProviderAvaliableTimeSlots($get_staff1,$start_date,$service1_id);
 			
@@ -656,15 +656,17 @@ class CustomerController extends Controller{
 
 							//if($get_provider_timezone_id){
 				
-										
+										$start_datetime = date_create($start_date);
+										$start_date = date_format($start_datetime,"d-m-y");
 										//$input_array = array('customer_id' => $user_id, 'provider_id' => $provider_id, 'branch_id' => $branch1_id, 'staff_id' => $get_staff1,  'booking_date' => $vendor_starttime_slot, 'booking_start_time' => $vendor_starttime_slot, 'booking_end_time' => $vendor_endtime_slot, 'booking_title' => "Meeting", 'booking_desc' => "Meeting for project requirement discussion.", 'booking_timezone_id' => $get_provider_timezone_id);
 										//$get_confirmation_details = $this->putConfirmationEntry($input_array);
-										$matrix1_Result=  array('status'=> 'true', 'content('.$start_date.')'=>$branch_aval_slots );
+										$matrix1_Result=  array('status'=> 'true', 'message' =>'success','content'=> array('date' =>$start_date, 'service_id' => $service1_id, 'no_of_participants' => $get_service_no_of_booking, 'time_slots' => $branch_aval_slots ));
 									
 									
 								}else{
 										$matrix1_Result =  array('status'=> 'false', 'content('.$start_date.')'=>'(Busy)' );
 								}
+
 								
 							/*}else{
 								$matrix1_Result = array('status' => '(Busy)');
@@ -711,16 +713,16 @@ class CustomerController extends Controller{
 	}
 	
 	
-	public function getMatrix2_Result($provider_email,$user_email,$branch1_id, $service1_id, $staff1_id, $start_date, $timezone_id, $frequency){
+	public function getMatrix2_Result($provider_email,$participants,$branch1_id, $service1_id, $staff1_id, $start_date, $timezone_id, $frequency){
 		
-		$provider_email = urldecode($provider_email);
-		$user_email = urldecode($user_email);
+		//$provider_email = urldecode($provider_email);
+		//$user_email = urldecode($user_email);
 		//$start_time1 = urldecode($start_time1);
 		//$end_time1 = urldecode($end_time1);
 		
 		$start_date =  explode(',',$start_date);
-		$provider_id = DB::table('provider')->where('email', $provider_email)->value('user_id');
-		$user_id = DB::table('customer')->where('email', $user_email)->value('user_id');
+		//$provider_id = DB::table('provider')->where('email', $provider_email)->value('user_id');
+		//$user_id = DB::table('customer')->where('email', $user_email)->value('user_id');
 		for($i=0; $i < count($start_date); $i++ )
 		{
 				
@@ -743,11 +745,12 @@ class CustomerController extends Controller{
 				//$vendor_endtime_slot = $this->getTimeSlotWithTimezone($start_date[$i], $end_time1, $get_customer_timezone_vlaue, $get_provider_timezone);
 				//$check_minimum_bookdate = $this->getMinimumBookDate($provider_id,$start_date[$i]);
 				$check_branch_slot_available = $this->getStaffTimeSlots($get_staff1,$start_date[$i]);
+				$get_service_no_of_booking = DB::table('provider_biz_service')->where('service_id', $service1_id)->value('participants_allowed');
 				
-			if($check_branch_slot_available){
+			if($check_branch_slot_available && $get_service_no_of_booking != 0){
 				
 					$branch_aval_slots =  $this->getProviderAvaliableTimeSlots($get_staff1,$start_date[$i],$service1_id);		
-					//$get_service_no_of_booking = DB::table('provider_biz_service')->where('service_id', $service1_id)->value('participants_allowed');
+					
 					
 				//if($get_service_no_of_booking != 0){
 
@@ -769,7 +772,11 @@ class CustomerController extends Controller{
 								//$get_confirmation_details = $this->putConfirmationEntry($input_array);
 					
 								//$matrix2_Result[] =  array('status'=>array('Time slots ('.$start_date[$i].')'=> $branch_aval_slots ));
-								$matrix2_Result[] =  array('status'=> 'true', 'content('.$start_date[$i].')'=>$branch_aval_slots );
+								$start_datetime = date_create($start_date[$i]);
+								$start_date[$i] = date_format($start_datetime,"d-m-y");
+								//$matrix2_Result[] =  array('status'=> 'true', 'content('.$start_date[$i].')'=>$branch_aval_slots );
+								$matrix2_Result [] =  array('status'=> 'true', 'message' =>'success','content'=> array('date' =>$start_date[$i], 'service_id' => $service1_id, 'no_of_participants' => $get_service_no_of_booking, 'time_slots' => $branch_aval_slots ));
+
 								
 							
 							}else{
@@ -817,7 +824,47 @@ class CustomerController extends Controller{
 		
 	}
 	
-	public function getMatrix3_Result($provider_email,$user_email,$provider_id, $user_id, $branch1_id, $service1_id, $start_date, $start_time1, $end_time1, $service2_id, $start_time2, $end_time2, $timezone_id,$frequency){
+	public function getMatrix3_Result($provider_email,$user_email,$branch1_id, $service1_id,$service2_id,$start_date, $timezone_id,$frequency){
+	
+			$provider_email = urldecode($provider_email);
+			$user_email = urldecode($user_email);
+			$provider_id = DB::table('provider')->where('email', $provider_email)->value('user_id');
+			$user_id = DB::table('customer')->where('email', $user_email)->value('user_id');
+			
+			$get_staff1 = $this->getStaffWithServiceid($service1_id);
+			echo $get_staff2 = $this->getStaffWithServiceid($service2_id);die;
+			
+			$check_branch_slot_available1 = $this->getStaffTimeSlots($get_staff1,$start_date);	
+			$check_branch_slot_available2 = $this->getStaffTimeSlots($get_staff2,$start_date);
+			
+			if($check_branch_slot_available1){
+					
+				$branch_aval_slots =  $this->getProviderAvaliableTimeSlots($get_staff1,$start_date,$service1_id);					
+				
+				$matrix3_Result[] =  array('status'=> 'true', 'content('.$start_date.')'=>$branch_aval_slots );
+								
+			}else{
+				
+				$matrix3_Result[] =  array('status'=> 'false', 'content('.$start_date.')'=>'(Busy)' );
+				
+			}	
+
+			if($check_branch_slot_available2){
+					
+				$branch_aval_slots =  $this->getProviderAvaliableTimeSlots($get_staff2,$start_date,$service2_id);					
+				
+				$matrix3_Result[] =  array('status'=> 'true', 'content('.$start_date.')'=>$branch_aval_slots );
+								
+			}else{
+				
+				$matrix3_Result[] =  array('status'=> 'false', 'content('.$start_date.')'=>'(Busy)' );
+				
+			}					
+			
+			return $matrix3_Result;
+	}
+	
+	/* public function getMatrix3_Result($provider_email,$user_email,$provider_id, $user_id, $branch1_id, $service1_id, $start_date, $start_time1, $end_time1, $service2_id, $start_time2, $end_time2, $timezone_id,$frequency){
 			
 			$provider_email = urldecode($provider_email);
 			$user_email = urldecode($user_email);
@@ -1070,7 +1117,7 @@ class CustomerController extends Controller{
 			
 			return json_encode(@$matrix3_Result);
 		
-	}
+	} */
 	
 	
 	public function getMatrix4_Result($provider_email,$user_email,$provider_id, $user_id, $branch1_id, $service1_id, $start_date, $start_time1, $end_time1, $service2_id, $start_time2, $end_time2, $timezone_id,$frequency){
