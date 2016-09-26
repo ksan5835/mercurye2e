@@ -59,13 +59,13 @@ $app->delete('api/v1/customer/{id}','CustomerController@deleteCustomer');
 
 //Matrix API
 
-$app->get('api/v1/matrix1/{provider_email}/{participants}/{branch1_id}/{service1_id}/{staff1_id}/{start_date}/{timezone_id}/{frequency}','CustomerController@getMatrix1_Result');
+$app->get('api/v1/matrix1/{participants}/{branch1_id}/{service1_id}/{staff1_id}/{start_date}/{timezone_id}/{frequency}','CustomerController@getMatrix1_Result');
 
-$app->get('api/v1/matrix2/{provider_email}/{participants}/{branch1_id}/{service1_id}/{staff1_id}/{start_date}/{timezone_id}/{frequency}','CustomerController@getMatrix2_Result');
+$app->get('api/v1/matrix2/{participants}/{branch1_id}/{service1_id}/{staff1_id}/{start_date}/{timezone_id}/{frequency}','CustomerController@getMatrix2_Result');
 
-$app->get('api/v1/matrix3/{provider_email}/{participants}/{branch1_id}/{service1_id}/{service2_id}/{start_date}/{timezone_id}/{frequency}','CustomerController@getMatrix3_Result');
+$app->get('api/v1/matrix3/{participants}/{branch1_id}/{service1_id}/{service2_id}/{start_date}/{timezone_id}/{frequency}','CustomerController@getMatrix3_Result');
 
-$app->get('api/v1/matrix4/{provider_email}/{participants}/{branch1_id}/{service1_id}/{service2_id}/{start_date}/{timezone_id}/{frequency}','CustomerController@getMatrix4_Result');
+$app->get('api/v1/matrix4/{participants}/{branch1_id}/{service1_id}/{service2_id}/{start_date}/{timezone_id}/{frequency}','CustomerController@getMatrix4_Result');
 
 $app->get('api/v1/matrix5/{provider_email}/{user_email}/{provider_id}/{user_id}/{branch1_id}/{service1_id}/{start_date}/{start_time1}/{end_time1}/{branch2_id}/{service2_id}/{start_time2}/{end_time2}/{timezone_id}/{type}','CustomerController@getMatrix5_Result');
 
