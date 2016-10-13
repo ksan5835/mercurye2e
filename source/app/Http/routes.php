@@ -59,7 +59,7 @@ $app->delete('api/v1/customer/{id}','CustomerController@deleteCustomer');
 
 //Matrix API
 
-$app->get('api/v1/matrix1/{participants}/{branch1_id}/{service1_id}/{staff1_id}/{start_date}/{timezone_id}/{frequency}','CustomerController@getMatrix1_Result');
+$app->get('api/v1/matrix1/{participants}/{branch1_id}/{service1_id}/{staff1_id}/{start_date}/{timezone_id}/{meetingtype_id}','CustomerController@getMatrix1_Result');
 
 $app->get('api/v1/matrix2/{participants}/{branch1_id}/{service1_id}/{staff1_id}/{start_date}/{timezone_id}/{frequency}','CustomerController@getMatrix2_Result');
 
