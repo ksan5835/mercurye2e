@@ -231,7 +231,7 @@ class CustomerController extends Controller{
 			$start_datetime = date_create($bookdate);
 			$start_date = date_format($start_datetime,"l");	
 			
-			$get_service_slot_available = DB::select( DB::raw("SELECT padding_minutes,precision_time FROM provider_biz_service WHERE service_id = '$service_id' and is_active = 1" ));
+			$get_service_slot_available = DB::select( DB::raw("SELECT padding_minutes,precision_time FROM provider_biz_service WHERE service_id = '$service_id'" ));
 			
 			if($get_service_slot_available[0]->precision_time){
 				$precision_time_slot = explode(",",$get_service_slot_available[0]->precision_time);
