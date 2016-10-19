@@ -82,7 +82,7 @@ class CustomerController extends Controller{
 						 ->value('BR_slot_interval'); */
 						 
 			$BR_slot_interval = DB::table('setting_provider')
-								->leftJoin('provider_biz_branch', 'setting_provider.provider_id', '=', 'provider_biz_branch.provider_id')
+								->leftJoin('provider_biz_branch', 'setting_provider.provider_id', '=', 'provider_biz_branch.biz_id')
 								->select('setting_provider.BR_slot_interval')
 								->where('provider_biz_branch.branch_id', '=', $branch_id)
 								->value('setting_provider.BR_slot_interval');
@@ -95,7 +95,7 @@ class CustomerController extends Controller{
 		
 	 
 			$BookingTimePeriod = DB::table('setting_provider')
-								->leftJoin('provider_biz_branch', 'setting_provider.provider_id', '=', 'provider_biz_branch.provider_id')
+								->leftJoin('provider_biz_branch', 'setting_provider.provider_id', '=', 'provider_biz_branch.biz_id')
 								->select('setting_provider.BR_Booking_Allowed_From', 'setting_provider.BR_Booking_Allowed_Till')
 								->where('provider_biz_branch.branch_id', '=', $branch_id)
 								->get();
@@ -240,7 +240,7 @@ class CustomerController extends Controller{
 						
 					$check_book_time_slot = $this->checkStaffBookedSlots($branch_id,$staff_id,$bookdate,$precision_time_slot[$i]);
 					
-					$check_blocked_hours = $this->checkStaffBlockedHours($staff_id,$bookdate,$precision_time_slot[$i],$precision_time_slot[$i+1]);
+					$check_blocked_hours = $this->checkStaffBlockedHours($staff_id,$bookdate,$precision_time_slot[$i],@$precision_time_slot[$i+1]);
 					if($i < count(@$precision_time_slot)-1)
 					if($check_blocked_hours){
 						//$time_slot = str_replace('.',':',$precision_time_slot[$i]).'- '.$precision_time_slot[$i+1];
@@ -309,7 +309,9 @@ print_r(count($slot_data[0]['weekends']));
 					}else{
 					$interval = (30 + $breaks_time);	
 					} */
-					$interval = $breaks_time + @$get_service_slot_available[0]->padding_minutes;
+					//$interval = $breaks_time + @$get_service_slot_available[0]->padding_minutes;
+					
+					$interval = $breaks_time;
 					
 					$i=1;
 					
