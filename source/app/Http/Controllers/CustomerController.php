@@ -411,6 +411,59 @@ print_r(count($slot_data[0]['weekends']));
 	}
 	
 	
+	public function getMatrix2_Result($participants,$branch1_id, $service1_id, $staff1_id, $start_date, $timezone_id, $meetingtype_id){
+		
+		$start_date =  explode(',',$start_date);
+		
+		$get_service_no_of_booking = DB::table('provider_biz_service')->where('service_id', $service1_id)->value('participants_allowed');
+		
+		if($staff1_id == 0){
+			
+		$get_staff1 = $this->getStaffWithServiceid($service1_id,$meetingtype_id);
+		$staff_flag = 0;
+		
+		}else{
+			$get_staff1 = array($staff1_id);
+			$staff_flag = 1;
+		}
+		
+		$get_booking_time_period = explode("-",$this->getBookingTimePeriod($branch1_id));
+		
+		$booking_time_from = $get_booking_time_period[0];
+		
+		$booking_time_till = $get_booking_time_period[1];
+		
+
+		for($i=0; $i < count($start_date); $i++ )
+		{
+			
+			$booking_date = strtotime($start_date[$i]); 
+				
+			if($get_service_no_of_booking != 0 && $get_service_no_of_booking >= $participants && $get_staff1[0] != "" && $booking_time_from <= $booking_date ){
+				
+				$branch_aval_slots = $this->getProviderAvaliableTimeSlots($branch1_id,$service1_id,$get_staff1,$start_date[$i],$staff_flag);
+ 
+
+				if($branch_aval_slots == ""){
+					$matrix2_Result[] =  array('status'=> 'false', 'content('.$start_date[$i].')'=>'(Busy)' );
+
+				}else{
+					$start_datetime = date_create($start_date[$i]);
+					$start_date = date_format($start_datetime,"d-m-Y");
+
+					$staff_ids = implode(",",$get_staff1 );
+					$matrix2_Result[] =  array('status'=> 'true', 'message' =>'success','content'=> array('date' =>$start_date, 'service_id' => $service1_id, 'staff_id'=>$staff_ids, 'no_of_participants' => $get_service_no_of_booking, 'time_slots' => $branch_aval_slots ));					
+				}	
+				
+			}else{
+				$matrix2_Result[] =  array('status'=> 'false', 'content('.$start_date[$i].')'=>'(Busy)' );
+			}						
+			
+		}
+		
+			return $matrix2_Result;
+		
+	}
 }
 	
 ?>
