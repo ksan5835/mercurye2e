@@ -211,7 +211,7 @@ class CustomerController extends Controller{
 
 			for($i=0; $i< count($staff_id); $i++){
 				
-			$slot_available = DB::select( DB::raw("SELECT staff_blocked_hours_id FROM provider_biz_staff_blocked_hours WHERE staff_id = '$staff_id[$i]' and date(start_date) <= date('$bookdate') and start_time <= '$book_start_time' and date(end_date) >= date('$bookdate') and end_time >= '$book_start_time'") );
+			$slot_available = DB::select( DB::raw("SELECT staff_blocked_hours_id FROM provider_biz_staff_blocked_hours WHERE staff_id = '$staff_id[$i]' and date(start_date) <= date('$bookdate') and start_time <= '$book_start_time' and date(end_date) >= date('$bookdate') and end_time >= '$book_end_time'") );
 				
 				if(@$slot_available[0]->staff_blocked_hours_id)
 				$slot_availables[] = $slot_available[0]->staff_blocked_hours_id;
