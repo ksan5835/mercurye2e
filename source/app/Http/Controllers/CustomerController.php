@@ -185,7 +185,7 @@ class CustomerController extends Controller{
 					
 			for($i=0; $i< count($staff_id); $i++){
 				
-				$slot_available = DB::select( "SELECT booking_id FROM booking WHERE staff_id = '$staff_id[$i]' and booking_date = '$book_start_date' and booking_time = '$book_start_time' and provider_id = '$branch_id'") ;
+				$slot_available = DB::select( "SELECT booking_id FROM appointment WHERE staff_id = '$staff_id[$i]' and appointment_date = '$book_start_date' and appointment_start_time = '$book_start_time' and provider_id = '$branch_id'") ;
 				
 				if(@$slot_available[0]->booking_id)
 				$slot_availables[] = $slot_available[0]->booking_id;
