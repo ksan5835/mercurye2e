@@ -415,7 +415,14 @@ print_r(count($slot_data[0]['weekends']));
 		
 		$start_date =  explode(',',$start_date);
 		
-		$get_service_no_of_booking = DB::table('provider_biz_service')->where('service_id', $service1_id)->value('participants_allowed');
+		
+		
+
+		for($i=0; $i < count($start_date); $i++ )
+		{
+			echo $i;
+			$booking_date = strtotime($start_date[$i]); 
+			$get_service_no_of_booking = DB::table('provider_biz_service')->where('service_id', $service1_id)->value('participants_allowed');
 		
 		if($staff1_id == 0){
 			
@@ -431,16 +438,11 @@ print_r(count($slot_data[0]['weekends']));
 		
 		$booking_time_from = $get_booking_time_period[0];
 		
-		$booking_time_till = $get_booking_time_period[1];
-		
+		$booking_time_till = $get_booking_time_period[1];			
 
-		for($i=0; $i < count($start_date); $i++ )
-		{
 			
-			$booking_date = strtotime($start_date[$i]); 
-				
 			if($get_service_no_of_booking != 0 && $get_service_no_of_booking >= $participants && $get_staff1[0] != "" && $booking_time_from <= $booking_date ){
-				
+				echo "dsd";
 				$branch_aval_slots = $this->getProviderAvaliableTimeSlots($branch1_id,$service1_id,$get_staff1,$start_date[$i],$staff_flag);
  
 

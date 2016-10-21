@@ -61,7 +61,7 @@ $app->delete('api/v1/customer/{id}','CustomerController@deleteCustomer');
 
 $app->get('api/v1/matrix1/{participants}/{branch1_id}/{service1_id}/{staff1_id}/{start_date}/{timezone_id}/{meetingtype_id}','CustomerController@getMatrix1_Result');
 
-$app->get('api/v1/matrix2/{participants}/{branch1_id}/{service1_id}/{staff1_id}/{start_date}/{timezone_id}/{frequency}','CustomerController@getMatrix2_Result');
+$app->get('api/v1/matrix2/{participants}/{branch1_id}/{service1_id}/{staff1_id}/{start_date}/{timezone_id}/{meetingtype_id}','CustomerController@getMatrix2_Result');
 
 $app->get('api/v1/matrix3/{participants}/{branch1_id}/{service1_id}/{service2_id}/{start_date}/{timezone_id}/{frequency}','CustomerController@getMatrix3_Result');
 
