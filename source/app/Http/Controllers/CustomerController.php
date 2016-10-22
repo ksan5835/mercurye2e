@@ -390,7 +390,7 @@ print_r(count($slot_data[0]['weekends']));
 
 				}else{
 										$start_datetime = date_create($start_date);
-										$start_date = date_format($start_datetime,"d-m-y");
+										$start_date = date_format($start_datetime,"d-m-Y");
 										
 								
 										$staff_ids = implode(",",$get_staff1 );
