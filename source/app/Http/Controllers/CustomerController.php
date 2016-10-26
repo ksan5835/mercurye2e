@@ -117,6 +117,7 @@ class CustomerController extends Controller{
 					$branch_time_data = unserialize($branch_time[0]->weekendadd);
 					/* echo '<pre>';
 					print_r(unserialize($branch_time[0]->weekendadd));
+					echo count($branch_time_data[0]['weekends']);
 					echo '</pre>'; */
 					for($s = 0; $s < count($branch_time_data[0]['weekends']); $s++){
 						
@@ -178,7 +179,7 @@ class CustomerController extends Controller{
 			
 		}
 		
-		public function checkStaffBookedSlots($branch_id,$staff_id,$book_start_date,$book_start_time ){
+		public function checkStaffBookedSlots($branch_id,$staff_id,$book_start_date,$book_start_time,$book_end_time ){
 		
 			$book_start_date = date_create($book_start_date);
 			$book_start_date = date_format($book_start_date,"Y-m-d");
@@ -186,7 +187,8 @@ class CustomerController extends Controller{
 			for($i=0; $i< count($staff_id); $i++){
 				
 				$slot_available = DB::select( "SELECT booking_id FROM appointment WHERE staff_id = '$staff_id[$i]' and appointment_date = '$book_start_date' and appointment_start_time = '$book_start_time' and provider_id = '$branch_id'") ;
-				
+				//$slot_available = DB::select( "SELECT booking_id FROM appointment WHERE staff_id = '$staff_id[$i]' and appointment_date = '$book_start_date' and appointment_start_time BETWEEN '$book_start_time' and '$book_end_time' OR appointment_end_time BETWEEN '$book_start_time' and '$book_end_time' and provider_id = '$branch_id'") ;
+
 				if(@$slot_available[0]->booking_id)
 				$slot_availables[] = $slot_available[0]->booking_id;
 		
@@ -211,7 +213,7 @@ class CustomerController extends Controller{
 
 			for($i=0; $i< count($staff_id); $i++){
 				
-			$slot_available = DB::select( DB::raw("SELECT staff_blocked_hours_id FROM provider_biz_staff_blocked_hours WHERE staff_id = '$staff_id[$i]' and date(start_date) <= date('$bookdate') and start_time <= '$book_start_time' and date(end_date) >= date('$bookdate') and end_time >= '$book_end_time'") );
+			$slot_available = DB::select( DB::raw("SELECT staff_blocked_hours_id FROM provider_biz_staff_blocked_hours WHERE staff_id = '$staff_id[$i]' and date(start_date) = date('$bookdate') and start_time BETWEEN '$book_start_time' AND '$book_end_time' or date(end_date) = date('$bookdate') and end_time BETWEEN '$book_start_time' AND '$book_end_time'") );
 				
 				if(@$slot_available[0]->staff_blocked_hours_id)
 				$slot_availables[] = $slot_available[0]->staff_blocked_hours_id;
@@ -224,6 +226,48 @@ class CustomerController extends Controller{
 			
 			return $slot_available_id;
 		}
+		
+		public function checkStaffBlockedSlots($branch_id,$service_id,$staff_id,$start_date,$start_time,$end_time){
+		
+		//print_r($start_date);die;		
+
+			for($i=0; $i< count($staff_id); $i++){
+				
+				$check_vendor_slot_available = DB::select( DB::raw("SELECT weekendadd FROM provider_biz_staff_working_hours WHERE staff_id = ".$staff_id[$i]." and branch_id = '".$branch_id."' and service_id = '".$service_id."' ") );
+				
+				$staff_time_data = unserialize($check_vendor_slot_available[0]->weekendadd);
+					
+				  /*echo '<pre>';
+				print_r(unserialize($check_vendor_slot_available[0]->weekendadd));
+				echo '</pre>'; */
+				for($s = 0; $s < count($staff_time_data[0]['weekends']); $s++){
+					
+					$staff_slot_details = $staff_time_data[0]['weekends'][$s];
+					
+					$staff_slot_day = $staff_slot_details['weekstr'];
+					$staff_slot_active = $staff_slot_details['active'];
+					if($staff_slot_day == $start_date  && $staff_slot_active == 1){
+						$start_Time = $staff_time_data[0]['timing']['start_time'];
+						$end_Time = $staff_time_data[0]['timing']['end_time'];
+						
+						$staff_avil_start_time [] = $start_Time;
+						$staff_avil_end_time [] = $end_Time;
+					}
+				}
+
+			}
+				$start_min_value = min($staff_avil_start_time);
+				$end_max_value = max($staff_avil_end_time);
+			//print_r($staff_avil_start_time);die;
+			
+			if($start_time >= $start_min_value && $end_time <= $end_max_value){
+				$staff_available_id = 1;
+			}else{
+				$staff_available_id = 0;
+			}
+
+			return $staff_available_id;
+		}
 	
 
 		public function getProviderAvaliableTimeSlots($branch_id,$service_id,$staff_id,$bookdate,$staff_flag){
@@ -231,18 +275,22 @@ class CustomerController extends Controller{
 			$start_datetime = date_create($bookdate);
 			$start_date = date_format($start_datetime,"l");	
 			
-			$get_service_slot_available = DB::select( DB::raw("SELECT padding_minutes,precision_time FROM provider_biz_service WHERE service_id = '$service_id'" ));
+			$get_service_slot_available = DB::select( DB::raw("SELECT duration,precision_time FROM provider_biz_service WHERE service_id = '$service_id'" ));
 			
 			if($get_service_slot_available[0]->precision_time){
 				$precision_time_slot = explode(",",$get_service_slot_available[0]->precision_time);
 				
 				for($i=0; $i < count($precision_time_slot); $i++){
 						
-					$check_book_time_slot = $this->checkStaffBookedSlots($branch_id,$staff_id,$bookdate,$precision_time_slot[$i]);
+					$check_book_time_slot = $this->checkStaffBookedSlots($branch_id,$staff_id,$bookdate,$precision_time_slot[$i],@$precision_time_slot[$i+1]);
 					
 					$check_blocked_hours = $this->checkStaffBlockedHours($staff_id,$bookdate,$precision_time_slot[$i],@$precision_time_slot[$i+1]);
+					
+					$check_staff_blocked_hours = $this->checkStaffBlockedSlots($branch_id,$service_id,$staff_id,$start_date,$precision_time_slot[$i],@$precision_time_slot[$i+1]);
+
+					
 					if($i < count(@$precision_time_slot)-1)
-					if($check_blocked_hours){
+					if($check_blocked_hours || $check_staff_blocked_hours == 0){
 						//$time_slot = str_replace('.',':',$precision_time_slot[$i]).'- '.$precision_time_slot[$i+1];
 						$time_slot_status = "H";
 						$final_slot [] = array ("slot_start_time" => $precision_time_slot[$i], "slot_end_time" => $precision_time_slot[$i+1], "status" => $time_slot_status);
@@ -327,12 +375,14 @@ print_r(count($slot_data[0]['weekends']));
 					
 					//$slot_end_date = $bookdate.' '.$staff_time_slot[$i+1];
 								
-					$check_book_time_slot = $this->checkStaffBookedSlots($branch_id,$staff_id,$bookdate,$staff_time_slot[$i]);
+					$check_book_time_slot = $this->checkStaffBookedSlots($branch_id,$staff_id,$bookdate,$staff_time_slot[$i],@$staff_time_slot[$i+1]);
 					
 					$check_blocked_hours = $this->checkStaffBlockedHours($staff_id,$bookdate,$staff_time_slot[$i],@$staff_time_slot[$i+1]);
 					
+					$check_staff_blocked_hours = $this->checkStaffBlockedSlots($branch_id,$service_id,$staff_id,$start_date,$staff_time_slot[$i],@$staff_time_slot[$i+1]);
+					
 					if($i < count(@$staff_time_slot)-1)
-					if($check_blocked_hours){
+					if($check_blocked_hours || $check_staff_blocked_hours == 0){
 						//$time_slot = str_replace('.',':',$staff_time_slot[$i]).'- '.$staff_time_slot[$i+1].'';
 						$time_slot_status = "H";
 						$final_slot [] = array ("slot_start_time" => $staff_time_slot[$i], "slot_end_time" => $staff_time_slot[$i+1], "status" => $time_slot_status);
@@ -342,6 +392,8 @@ print_r(count($slot_data[0]['weekends']));
 						$final_slot [] = array ("slot_start_time" => $staff_time_slot[$i], "slot_end_time" => $staff_time_slot[$i+1], "status" => $time_slot_status);
 					}else{
 						//$time_slot = $staff_time_slot[$i].'- '.$staff_time_slot[$i+1].'';
+						
+						
 						$time_slot_status = "A";
 						$final_slot [] = array ("slot_start_time" => $staff_time_slot[$i], "slot_end_time" => $staff_time_slot[$i+1], "status" => $time_slot_status);
 					}
@@ -390,7 +442,7 @@ print_r(count($slot_data[0]['weekends']));
 
 				}else{
 										$start_datetime = date_create($start_date);
-										$start_date = date_format($start_datetime,"d-m-y");
+										$start_date = date_format($start_datetime,"d-m-Y");
 										
 								
 										$staff_ids = implode(",",$get_staff1 );
@@ -442,7 +494,7 @@ print_r(count($slot_data[0]['weekends']));
 
 			
 			if($get_service_no_of_booking != 0 && $get_service_no_of_booking >= $participants && $get_staff1[0] != "" && $booking_time_from <= $booking_date ){
-				echo "dsd";
+				
 				$branch_aval_slots = $this->getProviderAvaliableTimeSlots($branch1_id,$service1_id,$get_staff1,$start_date[$i],$staff_flag);
  
 
