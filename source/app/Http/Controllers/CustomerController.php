@@ -213,7 +213,10 @@ class CustomerController extends Controller{
 
 			for($i=0; $i< count($staff_id); $i++){
 				
-			$slot_available = DB::select( DB::raw("SELECT staff_blocked_hours_id FROM provider_biz_staff_blocked_hours WHERE staff_id = '$staff_id[$i]' and date(start_date) = date('$bookdate') and start_time BETWEEN '$book_start_time' AND '$book_end_time' or date(end_date) = date('$bookdate') and end_time BETWEEN '$book_start_time' AND '$book_end_time'") );
+			//$slot_available = DB::select( DB::raw("SELECT staff_blocked_hours_id FROM provider_biz_staff_blocked_hours WHERE staff_id = '$staff_id[$i]' and date(start_date) = date('$bookdate') and start_time BETWEEN '$book_start_time' AND '$book_end_time' or date(end_date) = date('$bookdate') and end_time BETWEEN '$book_start_time' AND '$book_end_time'") );
+			
+			$slot_available = DB::select( DB::raw("SELECT staff_blocked_hours_id FROM provider_biz_staff_blocked_hours WHERE staff_id = '$staff_id[$i]' and date(start_date) = date('$bookdate') AND start_time <= '$book_start_time' AND end_time >= '$book_end_time'") );
+
 				
 				if(@$slot_available[0]->staff_blocked_hours_id)
 				$slot_availables[] = $slot_available[0]->staff_blocked_hours_id;
@@ -229,7 +232,7 @@ class CustomerController extends Controller{
 		
 		public function checkStaffBlockedSlots($branch_id,$service_id,$staff_id,$start_date,$start_time,$end_time){
 		
-		//print_r($start_date);die;		
+		//print_r($start_time);die;		
 
 			for($i=0; $i< count($staff_id); $i++){
 				
@@ -247,11 +250,13 @@ class CustomerController extends Controller{
 					$staff_slot_day = $staff_slot_details['weekstr'];
 					$staff_slot_active = $staff_slot_details['active'];
 					if($staff_slot_day == $start_date  && $staff_slot_active == 1){
-						$start_Time = $staff_time_data[0]['timing']['start_time'];
-						$end_Time = $staff_time_data[0]['timing']['end_time'];
+						$staff_avil_start_time [] = $staff_time_data[0]['timing']['start_time'];
+						$staff_avil_end_time [] = $staff_time_data[0]['timing']['end_time'];
 						
-						$staff_avil_start_time [] = $start_Time;
-						$staff_avil_end_time [] = $end_Time;
+					}else{
+						
+						$staff_avil_start_time [] = $start_time;
+						$staff_avil_end_time [] = $end_time;
 					}
 				}
 
@@ -428,17 +433,19 @@ print_r(count($slot_data[0]['weekends']));
 		$booking_time_till = $get_booking_time_period[1];
 		
 		$booking_date = strtotime($start_date); 
-		//print_r($get_staff1);
 		
-		//die;
-		//$check_branch_slot_available = $this->getStaffTimeSlots($branch1_id,$service1_id,$get_staff1);
-			
+		$get_service_duration = DB::select( DB::raw("SELECT duration FROM provider_biz_service WHERE service_id = '$service1_id'" ));
+
+		$breaks_time = $this->get_breaks_time($branch1_id);
+		
+		$block_argument_count = $get_service_duration[0]->duration / $breaks_time;
+		
 		if($get_service_no_of_booking != 0 && $get_service_no_of_booking >= $participants && $get_staff1[0] != "" && $booking_time_from <= $booking_date ){
 			
 				$branch_aval_slots = $this->getProviderAvaliableTimeSlots($branch1_id,$service1_id,$get_staff1,$start_date,$staff_flag);
 			//print_r($branch_aval_slots);die;
 				if($branch_aval_slots == ""){
-					$matrix1_Result =  array('status'=> 'false', 'content('.$start_date.')'=>'(Busy)' );
+					$matrix1_Result =  array('status'=> 'false', 'content('.$start_date.')'=>'(Busy1)' );
 
 				}else{
 										$start_datetime = date_create($start_date);
@@ -446,14 +453,14 @@ print_r(count($slot_data[0]['weekends']));
 										
 								
 										$staff_ids = implode(",",$get_staff1 );
-										$matrix1_Result=  array('status'=> 'true', 'message' =>'success','content'=> array('date' =>$start_date, 'service_id' => $service1_id, 'staff_id'=>$staff_ids, 'no_of_participants' => $get_service_no_of_booking, 'time_slots' => $branch_aval_slots ));
+										$matrix1_Result=  array('status'=> 'true', 'message' =>'success','content'=> array('date' =>$start_date, 'service_id' => $service1_id, 'staff_id'=>$staff_ids, 'no_of_participants' => $get_service_no_of_booking, 'block_argument' => @$block_argument_count, 'time_slots' => $branch_aval_slots ));
 									
 									
 				}		
 									
 									
 								}else{
-										$matrix1_Result =  array('status'=> 'false', 'content('.$start_date.')'=>'(Busy)' );
+										$matrix1_Result =  array('status'=> 'false', 'content('.$start_date.')'=>'(Busy2)' );
 								}
 
 								
