@@ -445,7 +445,7 @@ print_r(count($slot_data[0]['weekends']));
 				$branch_aval_slots = $this->getProviderAvaliableTimeSlots($branch1_id,$service1_id,$get_staff1,$start_date,$staff_flag);
 			//print_r($branch_aval_slots);die;
 				if($branch_aval_slots == ""){
-					$matrix1_Result =  array('status'=> 'false', 'content('.$start_date.')'=>'(Busy1)' );
+					$matrix1_Result =  array('status'=> 'false', 'content('.$start_date.')'=>'(Busy)' );
 
 				}else{
 										$start_datetime = date_create($start_date);
@@ -460,7 +460,7 @@ print_r(count($slot_data[0]['weekends']));
 									
 									
 								}else{
-										$matrix1_Result =  array('status'=> 'false', 'content('.$start_date.')'=>'(Busy2)' );
+										$matrix1_Result =  array('status'=> 'false', 'content('.$start_date.')'=>'(Busy)' );
 								}
 
 								
