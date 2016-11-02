@@ -438,14 +438,22 @@ print_r(count($slot_data[0]['weekends']));
 
 		$breaks_time = $this->get_breaks_time($branch1_id);
 		
-		$block_argument_count = $get_service_duration[0]->duration / $breaks_time;
+		$block_argument_count = @$get_service_duration[0]->duration / @$breaks_time;
 		
-		if($get_service_no_of_booking != 0 && $get_service_no_of_booking >= $participants && $get_staff1[0] != "" && $booking_time_from <= $booking_date ){
+		$today_date = strtotime(date('Y-m-d'));
+		
+		if($booking_time_till >= $booking_date && $booking_date >= $today_date ){
 			
+			if($get_service_no_of_booking != 0 ){
+				
+				if($get_service_no_of_booking >= $participants){
+
+					if($get_staff1[0] != ""){ 
+				
 				$branch_aval_slots = $this->getProviderAvaliableTimeSlots($branch1_id,$service1_id,$get_staff1,$start_date,$staff_flag);
 			//print_r($branch_aval_slots);die;
 				if($branch_aval_slots == ""){
-					$matrix1_Result =  array('status'=> 'false', 'content('.$start_date.')'=>'(Busy)' );
+					$matrix1_Result =  array('status'=> 'false', 'message' =>'The given service/staff based slots not available.', 'content('.$start_date.')'=>'(Busy)' );
 
 				}else{
 										$start_datetime = date_create($start_date);
@@ -453,15 +461,23 @@ print_r(count($slot_data[0]['weekends']));
 										
 								
 										$staff_ids = implode(",",$get_staff1 );
-										$matrix1_Result=  array('status'=> 'true', 'message' =>'success','content'=> array('date' =>$start_date, 'service_id' => $service1_id, 'staff_id'=>$staff_ids, 'no_of_participants' => $get_service_no_of_booking, 'block_argument' => @$block_argument_count, 'time_slots' => $branch_aval_slots ));
+										$matrix1_Result=  array('status'=> 'true', 'message' =>'success','content'=> array('date' =>$start_date, 'service_id' => $service1_id, 'staff_id'=>$staff_ids, 'no_of_participants' => $get_service_no_of_booking, 'slots_to_be_blocked' => @$block_argument_count, 'time_slots' => $branch_aval_slots ));
 									
 									
-				}		
-									
-									
+						}			
 								}else{
-										$matrix1_Result =  array('status'=> 'false', 'content('.$start_date.')'=>'(Busy)' );
+										$matrix1_Result =  array('status'=> 'false','message' =>'The Staff is not available for thi service. ', 'content('.$start_date.')'=>'(Busy)' );
+								}				
+								}else{
+										$matrix1_Result =  array('status'=> 'false','message' =>'The given participants count is grater than the allowed participants. ','content('.$start_date.')'=>'(Busy)' );
 								}
+								}else{
+										$matrix1_Result =  array('status'=> 'false','message' =>'The Service no of participants is Full. ','content('.$start_date.')'=>'(Busy)' );
+								}
+								}else{
+										$matrix1_Result =  array('status'=> 'false','message' =>'The given booking date is past or blocked future date. ', 'content('.$start_date.')'=>'(Busy)' );
+								}
+								
 
 								
 			
