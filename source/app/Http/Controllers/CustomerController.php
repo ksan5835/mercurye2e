@@ -102,7 +102,7 @@ class CustomerController extends Controller{
 
 			
 			$date = date('Y-m-d');
-			$prev_date = date('d-m-Y', strtotime($date .' -'.$BookingTimePeriod[0]->BR_Booking_Allowed_From.' day'));
+			$prev_date = date('d-m-Y', strtotime($date .' +'.$BookingTimePeriod[0]->BR_Booking_Allowed_From.' day'));
 			$next_date = date('d-m-Y', strtotime($date .' +'.$BookingTimePeriod[0]->BR_Booking_Allowed_Till.' day')); 
 			
 			$BookingTimePeriod = strtotime($prev_date).'-'.strtotime($next_date); 
@@ -179,14 +179,14 @@ class CustomerController extends Controller{
 			
 		}
 		
-		public function checkStaffBookedSlots($branch_id,$staff_id,$book_start_date,$book_start_time,$book_end_time ){
+		public function checkStaffBookedSlots($branch_id,$service_id,$staff_id,$book_start_date,$book_start_time,$book_end_time ){
 		
 			$book_start_date = date_create($book_start_date);
 			$book_start_date = date_format($book_start_date,"Y-m-d");
 					
 			for($i=0; $i< count($staff_id); $i++){
 				
-				$slot_available = DB::select( "SELECT booking_id FROM appointment WHERE staff_id = '$staff_id[$i]' and appointment_date = '$book_start_date' and appointment_start_time = '$book_start_time' and provider_id = '$branch_id'") ;
+				$slot_available = DB::select( "SELECT booking_id FROM appointment WHERE staff_id = '$staff_id[$i]' and branch_id = '$branch_id' and service_id = '$service_id' and appointment_date = '$book_start_date' and appointment_start_time <= '$book_start_time' and appointment_end_time  >= '$book_end_time' ") ;
 				//$slot_available = DB::select( "SELECT booking_id FROM appointment WHERE staff_id = '$staff_id[$i]' and appointment_date = '$book_start_date' and appointment_start_time BETWEEN '$book_start_time' and '$book_end_time' OR appointment_end_time BETWEEN '$book_start_time' and '$book_end_time' and provider_id = '$branch_id'") ;
 
 				if(@$slot_available[0]->booking_id)
@@ -253,19 +253,21 @@ class CustomerController extends Controller{
 						$staff_avil_start_time [] = $staff_time_data[0]['timing']['start_time'];
 						$staff_avil_end_time [] = $staff_time_data[0]['timing']['end_time'];
 						
-					}else{
-						
-						$staff_avil_start_time [] = $start_time;
-						$staff_avil_end_time [] = $end_time;
 					}
 				}
 
 			}
-				$start_min_value = min($staff_avil_start_time);
-				$end_max_value = max($staff_avil_end_time);
+			
+			if(isset($staff_avil_start_time) && isset($staff_avil_start_time)){
+				$start_min_value = min(@$staff_avil_start_time);
+				$end_max_value = max(@$staff_avil_end_time);
+			}else{
+				$start_min_value = $start_time;
+				$end_max_value = $end_time;
+			}
 			//print_r($staff_avil_start_time);die;
 			
-			if($start_time >= $start_min_value && $end_time <= $end_max_value){
+			if($start_time >= @$start_min_value && $end_time <= @$end_max_value){
 				$staff_available_id = 1;
 			}else{
 				$staff_available_id = 0;
@@ -287,7 +289,7 @@ class CustomerController extends Controller{
 				
 				for($i=0; $i < count($precision_time_slot); $i++){
 						
-					$check_book_time_slot = $this->checkStaffBookedSlots($branch_id,$staff_id,$bookdate,$precision_time_slot[$i],@$precision_time_slot[$i+1]);
+					$check_book_time_slot = $this->checkStaffBookedSlots($branch_id,$service_id,$staff_id,$bookdate,$precision_time_slot[$i],@$precision_time_slot[$i+1]);
 					
 					$check_blocked_hours = $this->checkStaffBlockedHours($staff_id,$bookdate,$precision_time_slot[$i],@$precision_time_slot[$i+1]);
 					
@@ -380,7 +382,7 @@ print_r(count($slot_data[0]['weekends']));
 					
 					//$slot_end_date = $bookdate.' '.$staff_time_slot[$i+1];
 								
-					$check_book_time_slot = $this->checkStaffBookedSlots($branch_id,$staff_id,$bookdate,$staff_time_slot[$i],@$staff_time_slot[$i+1]);
+					$check_book_time_slot = $this->checkStaffBookedSlots($branch_id,$service_id,$staff_id,$bookdate,$staff_time_slot[$i],@$staff_time_slot[$i+1]);
 					
 					$check_blocked_hours = $this->checkStaffBlockedHours($staff_id,$bookdate,$staff_time_slot[$i],@$staff_time_slot[$i+1]);
 					
@@ -442,7 +444,7 @@ print_r(count($slot_data[0]['weekends']));
 		
 		$today_date = strtotime(date('Y-m-d'));
 		
-		if($booking_time_till >= $booking_date && $booking_date >= $today_date ){
+		if($booking_time_from >= $booking_date && $booking_date >= $today_date ){
 			
 			if($get_service_no_of_booking != 0 ){
 				
@@ -451,9 +453,15 @@ print_r(count($slot_data[0]['weekends']));
 					if($get_staff1[0] != ""){ 
 				
 				$branch_aval_slots = $this->getProviderAvaliableTimeSlots($branch1_id,$service1_id,$get_staff1,$start_date,$staff_flag);
+				
+				$get_service_padding_after = DB::table('provider_biz_service')->where('service_id', $service1_id)->value('padding_time_after');
+				$get_service_padding_before = DB::table('provider_biz_service')->where('service_id', $service1_id)->value('padding_time_before');
+				
+				$padding_after_value = ($get_service_padding_after)? 1 : 0 ;
+				$padding_before_value = ($get_service_padding_before)? 1 : 0 ;
 			//print_r($branch_aval_slots);die;
 				if($branch_aval_slots == ""){
-					$matrix1_Result =  array('status'=> 'false', 'message' =>'The given service/staff based slots not available.', 'content('.$start_date.')'=>'(Busy)' );
+					$matrix1_Result =  array('status'=> 'false', 'message' =>'The given service or staff based slots not available.', 'content('.$start_date.')'=>'(Busy)' );
 
 				}else{
 										$start_datetime = date_create($start_date);
@@ -461,7 +469,7 @@ print_r(count($slot_data[0]['weekends']));
 										
 								
 										$staff_ids = implode(",",$get_staff1 );
-										$matrix1_Result=  array('status'=> 'true', 'message' =>'success','content'=> array('date' =>$start_date, 'service_id' => $service1_id, 'staff_id'=>$staff_ids, 'no_of_participants' => $get_service_no_of_booking, 'slots_to_be_blocked' => @$block_argument_count, 'time_slots' => $branch_aval_slots ));
+										$matrix1_Result=  array('status'=> 'true', 'message' =>'success','content'=> array('date' =>$start_date, 'service_id' => $service1_id, 'staff_id'=>$staff_ids, 'no_of_participants' => $get_service_no_of_booking, 'slots_to_be_blocked' => @$block_argument_count, 'padding_before_value' => @$padding_before_value, 'padding_after_value' => @$padding_after_value, 'time_slots' => $branch_aval_slots ));
 									
 									
 						}			
