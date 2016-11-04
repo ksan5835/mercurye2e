@@ -297,11 +297,15 @@ class CustomerController extends Controller{
 
 					
 					if($i < count(@$precision_time_slot)-1)
-					if($check_blocked_hours || $check_staff_blocked_hours == 0){
+					if($check_blocked_hours  || $check_staff_blocked_hours == 0){
 						//$time_slot = str_replace('.',':',$precision_time_slot[$i]).'- '.$precision_time_slot[$i+1];
 						$time_slot_status = "H";
 						$final_slot [] = array ("slot_start_time" => $precision_time_slot[$i], "slot_end_time" => $precision_time_slot[$i+1], "status" => $time_slot_status);
-					}elseif($check_book_time_slot){
+					}/*elseif($check_staff_blocked_hours == 0){
+						//$time_slot  = $staff_time_slot[$i].'- '.$staff_time_slot[$i+1].' ';
+						$time_slot_status  = "NA";
+						$final_slot [] = array ("slot_start_time" => $staff_time_slot[$i], "slot_end_time" => $staff_time_slot[$i+1], "status" => $time_slot_status);
+					}*/elseif($check_book_time_slot){
 						//$time_slot = str_replace('.',':',$precision_time_slot[$i]).'- '.$precision_time_slot[$i+1];
 						$time_slot_status  = "B";
 						$final_slot [] = array ("slot_start_time" => $precision_time_slot[$i], "slot_end_time" => $precision_time_slot[$i+1], "status" => $time_slot_status);
@@ -393,7 +397,11 @@ print_r(count($slot_data[0]['weekends']));
 						//$time_slot = str_replace('.',':',$staff_time_slot[$i]).'- '.$staff_time_slot[$i+1].'';
 						$time_slot_status = "H";
 						$final_slot [] = array ("slot_start_time" => $staff_time_slot[$i], "slot_end_time" => $staff_time_slot[$i+1], "status" => $time_slot_status);
-					}elseif($check_book_time_slot){
+					}/*elseif($check_staff_blocked_hours == 0){
+						//$time_slot  = $staff_time_slot[$i].'- '.$staff_time_slot[$i+1].' ';
+						$time_slot_status  = "NA";
+						$final_slot [] = array ("slot_start_time" => $staff_time_slot[$i], "slot_end_time" => $staff_time_slot[$i+1], "status" => $time_slot_status);
+					}*/elseif($check_book_time_slot){
 						//$time_slot  = $staff_time_slot[$i].'- '.$staff_time_slot[$i+1].' ';
 						$time_slot_status  = "B";
 						$final_slot [] = array ("slot_start_time" => $staff_time_slot[$i], "slot_end_time" => $staff_time_slot[$i+1], "status" => $time_slot_status);
@@ -454,11 +462,21 @@ print_r(count($slot_data[0]['weekends']));
 				
 				$branch_aval_slots = $this->getProviderAvaliableTimeSlots($branch1_id,$service1_id,$get_staff1,$start_date,$staff_flag);
 				
-				$get_service_padding_after = DB::table('provider_biz_service')->where('service_id', $service1_id)->value('padding_time_after');
-				$get_service_padding_before = DB::table('provider_biz_service')->where('service_id', $service1_id)->value('padding_time_before');
-				
-				$padding_after_value = ($get_service_padding_after)? 1 : 0 ;
-				$padding_before_value = ($get_service_padding_before)? 1 : 0 ;
+				$get_service_padding = DB::table('provider_biz_service')->where('service_id', $service1_id)->value('padding_time_when');
+								
+				if($get_service_padding == 1 ){
+					$padding_before_value = 1;
+					$padding_after_value = 0;
+				}else if($get_service_padding == 2 ){
+					$padding_before_value = 0;
+					$padding_after_value = 1;
+				}else if($get_service_padding == 3 ){
+					$padding_before_value = 1;
+					$padding_after_value = 1;
+				}else {
+					$padding_before_value = 0;
+					$padding_after_value = 0;
+				}
 			//print_r($branch_aval_slots);die;
 				if($branch_aval_slots == ""){
 					$matrix1_Result =  array('status'=> 'false', 'message' =>'The given service or staff based slots not available.', 'content('.$start_date.')'=>'(Busy)' );
