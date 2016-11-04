@@ -450,6 +450,12 @@ print_r(count($slot_data[0]['weekends']));
 		
 		$block_argument_count = @$get_service_duration[0]->duration / @$breaks_time;
 		
+		if(empty($block_argument_count)){
+			$block_argument_count = 0;
+		}else{
+			$block_argument_count = $block_argument_count;
+		}
+		
 		$today_date = strtotime(date('Y-m-d'));
 		
 		if($booking_time_from >= $booking_date && $booking_date >= $today_date ){
@@ -487,7 +493,7 @@ print_r(count($slot_data[0]['weekends']));
 										
 								
 										$staff_ids = implode(",",$get_staff1 );
-										$matrix1_Result=  array('status'=> 'true', 'message' =>'success','content'=> array('date' =>$start_date, 'service_id' => $service1_id, 'staff_id'=>$staff_ids, 'no_of_participants' => $get_service_no_of_booking, 'slots_to_be_blocked' => @$block_argument_count, 'padding_before_value' => @$padding_before_value, 'padding_after_value' => @$padding_after_value, 'time_slots' => $branch_aval_slots ));
+										$matrix1_Result=  array('status'=> 'true', 'message' =>'success','content'=> array('date' =>$start_date, 'service_id' => $service1_id, 'staff_id'=>$staff_ids, 'no_of_participants' => $get_service_no_of_booking, 'slots_to_be_blocked' => $block_argument_count, 'padding_before_value' => @$padding_before_value, 'padding_after_value' => @$padding_after_value, 'time_slots' => $branch_aval_slots ));
 									
 									
 						}			
