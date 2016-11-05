@@ -72,13 +72,13 @@ $app->routeMiddleware([
     'oauth-client' => \LucaDegasperi\OAuth2Server\Middleware\OAuthClientOwnerMiddleware::class,
     'oauth-user' => \LucaDegasperi\OAuth2Server\Middleware\OAuthUserOwnerMiddleware::class,
 ]);
- $app->middleware([
+ /*$app->middleware([
     App\Http\Middleware\Cors::class
- ]);
+ ]);*/
 
-// $app->routeMiddleware([
-//     'auth' => App\Http\Middleware\Authenticate::class,
-// ]);
+ $app->routeMiddleware([
+     'auth' => App\Http\Middleware\Cors::class,
+ ]);
 
 /*
 |--------------------------------------------------------------------------
