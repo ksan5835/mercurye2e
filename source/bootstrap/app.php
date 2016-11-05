@@ -8,6 +8,11 @@ try {
     //
 }
 
+// allow origin
+header('Access-Control-Allow-Origin: *');
+// add any additional headers you need to support here
+header('Access-Control-Allow-Headers: Origin, Content-Type');
+
 /*
 |--------------------------------------------------------------------------
 | Create The Application
@@ -77,7 +82,7 @@ $app->routeMiddleware([
  ]);*/
 
  $app->routeMiddleware([
-     'auth' => App\Http\Middleware\Cors::class,
+     'cors' => App\Http\Middleware\Cors::class,
  ]);
 
 /*
