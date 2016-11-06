@@ -61,7 +61,7 @@ $app->delete('api/v1/customer/{id}','ServiceappointmentController@deleteCustomer
 
 $app->post('api/v1/appointment/service/{participants}/{branch1_id}/{service1_id}/{staff1_id}/{start_date}/{timezone_id}/{meetingtype_id}','ServiceappointmentController@getMatrix1_Result');
 
-$app->get('api/v1/matrix2/{participants}/{branch1_id}/{service1_id}/{staff1_id}/{start_date}/{timezone_id}/{meetingtype_id}','ServiceappointmentController@getMatrix2_Result');
+$app->get('api/v1/appointment/serviceRecurring/{participants}/{branch1_id}/{service1_id}/{staff1_id}/{start_date}/{end_date}/{repetition_type}/{timezone_id}/{meetingtype_id}','ServiceappointmentController@getMatrix2_Result');
 
 $app->get('api/v1/matrix3/{participants}/{branch1_id}/{service1_id}/{service2_id}/{start_date}/{timezone_id}/{frequency}','ServiceappointmentController@getMatrix3_Result');
 
