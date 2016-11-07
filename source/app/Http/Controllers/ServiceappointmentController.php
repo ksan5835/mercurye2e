@@ -554,10 +554,9 @@ print_r(count($slot_data[0]['weekends']));
 
 		//here make above array as key in $a array
 		$start_date = $dateArray;
-
+		
 		for($i=0; $i < count($start_date); $i++ )
 		{
-			 
 			$get_service_no_of_booking = DB::table('provider_biz_service')->where('service_id', $service1_id)->value('participants_allowed');
 		
 		if($staff1_id == 0){
@@ -626,11 +625,11 @@ print_r(count($slot_data[0]['weekends']));
 					}
 					
 						$start_datetime = date_create($start_date[$i]);
-						$start_date = date_format($start_datetime,"d-m-Y");
+						$start_date_format = date_format($start_datetime,"d-m-Y");
 
 						$staff_ids = implode(",",$get_staff1 );
 
-						$matrix2_Result[] =  array('status'=> 'true', 'message' =>'success','content'=> array('date' =>$start_date, 'service_id' => $service1_id, 'staff_id'=>$staff_ids, 'no_of_participants' => $get_service_no_of_booking, 'slots_to_be_blocked' => $block_argument_count, 'padding_before_value' => @$padding_before_value, 'padding_after_value' => @$padding_after_value, 'time_slots' => $branch_aval_slots ));					
+						$matrix2_Result[] =  array('status'=> 'true', 'message' =>'success','content'=> array('date' =>$start_date_format, 'service_id' => $service1_id, 'staff_id'=>$staff_ids, 'no_of_participants' => $get_service_no_of_booking, 'slots_to_be_blocked' => $block_argument_count, 'padding_before_value' => @$padding_before_value, 'padding_after_value' => @$padding_after_value, 'time_slots' => $branch_aval_slots ));					
 						
 					}	
 				
