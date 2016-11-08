@@ -485,7 +485,10 @@ print_r(count($slot_data[0]['weekends']));
 				}
 			//print_r($branch_aval_slots);die;
 				if($branch_aval_slots == ""){
-					$matrix1_Result =  array('status'=> 'false', 'message' =>'The given service or staff based slots not available.', 'content('.$start_date.')'=>'(Busy)' );
+					
+					return $this->createErrorResponse("The given service or staff based slots not available.", 405);
+
+					//$matrix1_Result =  array('status'=> 'false', 'message' =>'The given service or staff based slots not available.', 'content('.$start_date.')'=>'(Busy)' );
 
 				}else{
 										$start_datetime = date_create($start_date);
@@ -498,16 +501,24 @@ print_r(count($slot_data[0]['weekends']));
 									
 						}			
 								}else{
-										$matrix1_Result =  array('status'=> 'false','message' =>'The Staff is not available for thi service. ', 'content('.$start_date.')'=>'(Busy)' );
+										return $this->createErrorResponse("The Staff is not available for this service.", 406);
+
+										//$matrix1_Result =  array('status'=> 'false','message' =>'The Staff is not available for thi service. ', 'content('.$start_date.')'=>'(Busy)' );
 								}				
 								}else{
-										$matrix1_Result =  array('status'=> 'false','message' =>'The given participants count is grater than the allowed participants. ','content('.$start_date.')'=>'(Busy)' );
+										return $this->createErrorResponse("The given participants count is grater than the allowed participants.", 407);
+																			
+										//$matrix1_Result =  array('status'=> 'false','message' =>'The given participants count is grater than the allowed participants. ','content('.$start_date.')'=>'(Busy)' );
 								}
 								}else{
-										$matrix1_Result =  array('status'=> 'false','message' =>'The Service no of participants is Full. ','content('.$start_date.')'=>'(Busy)' );
+										return $this->createErrorResponse("The Service no of participants is Full.", 408);
+
+										//$matrix1_Result =  array('status'=> 'false','message' =>'The Service no of participants is Full. ','content('.$start_date.')'=>'(Busy)' );
 								}
 								}else{
-										$matrix1_Result =  array('status'=> 'false','message' =>'The given booking date is past or blocked future date. ', 'content('.$start_date.')'=>'(Busy)' );
+										return $this->createErrorResponse("The given booking date is past or blocked future date.", 409);
+
+										//$matrix1_Result =  array('status'=> 'false','message' =>'The given booking date is past or blocked future date. ', 'content('.$start_date.')'=>'(Busy)' );
 								}
 								
 
