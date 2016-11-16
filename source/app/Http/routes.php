@@ -65,7 +65,9 @@ $app->post('api/v1/appointment/service','ServiceappointmentController@getMatrix1
 
 $app->post('api/v1/appointment/serviceRecurring/{participants}/{branch1_id}/{service1_id}/{staff1_id}/{start_date}/{end_date}/{repetition_type}/{timezone_id}/{meetingtype_id}','ServiceappointmentController@getMatrix2_Result');
 
-$app->get('api/v1/matrix3/{participants}/{branch1_id}/{service1_id}/{service2_id}/{start_date}/{timezone_id}/{frequency}','ServiceappointmentController@getMatrix3_Result');
+//$app->get('api/v1/matrix3/{participants}/{branch1_id}/{service1_id}/{service2_id}/{start_date}/{timezone_id}/{frequency}','ServiceappointmentController@getMatrix3_Result');
+
+$app->post('api/v1/appointment/staff','ServiceappointmentController@getMatrix3_Result');
 
 $app->get('api/v1/matrix4/{participants}/{branch1_id}/{service1_id}/{service2_id}/{start_date}/{timezone_id}/{frequency}','ServiceappointmentController@getMatrix4_Result');
 

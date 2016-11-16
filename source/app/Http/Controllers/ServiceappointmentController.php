@@ -238,7 +238,8 @@ class ServiceappointmentController extends Controller{
 				
 				$check_vendor_slot_available = DB::select( DB::raw("SELECT weekendadd FROM provider_biz_staff_working_hours WHERE staff_id = ".$staff_id[$i]." and branch_id = '".$branch_id."' and service_id = '".$service_id."' ") );
 				
-				$staff_time_data = unserialize($check_vendor_slot_available[0]->weekendadd);
+
+				$staff_time_data = unserialize(@$check_vendor_slot_available[0]->weekendadd);
 					
 				  /*echo '<pre>';
 				print_r(unserialize($check_vendor_slot_available[0]->weekendadd));
@@ -778,63 +779,106 @@ print_r(count($slot_data[0]['weekends']));
 		
 	}
 	
-	/* public function getMatrix3_Result($participants,$branch1_id, $service1_id,$service2_id,$start_date, $timezone_id,$frequency){
-	
-		$get_service_no_of_booking1 = DB::table('provider_biz_service')->where('service_id', $service1_id)->value('participants_allowed');
-		$get_service_no_of_booking2 = DB::table('provider_biz_service')->where('service_id', $service2_id)->value('participants_allowed');
-
-			$get_staff1 = $this->getStaffWithServiceid($service1_id,$meetingtype_id);
-			$get_staff2 = $this->getStaffWithServiceid($service2_id,$meetingtype_id);
-			$staff_flag = 0;
-			
-			$get_booking_time_period = explode("-",$this->getBookingTimePeriod($branch1_id));
+	public function getMatrix3_Result(Request $request){
 		
-			$booking_time_from = $get_booking_time_period[0];
-			
-			$booking_time_till = $get_booking_time_period[1];
-			
-			$booking_date = strtotime($start_date); 
-			
-			$get_service_duration = DB::select( DB::raw("SELECT duration FROM provider_biz_service WHERE service_id = '$service1_id'" ));
+		$participants=$request->input('participants');
+		$branch1_id=$request->input('branch1_id');
+		$service1_id=$request->input('service1_id');
+		$staff1_id=$request->input('staff1_id');
+		$start_date=$request->input('start_date');
+		$timezone_id=$request->input('timezone_id');
+		$meetingtype_id=$request->input('meetingtype_id');
+		
+		$get_service_no_of_booking = DB::table('provider_biz_service')->where('service_id', $service1_id)->value('participants_allowed');
+		
+		//get staff
+		$get_staff1 = explode(",",$staff1_id);
+		$staff_flag = 1;
 
-			$breaks_time = $this->get_breaks_time($branch1_id);
-			
-			$block_argument_count = @$get_service_duration[0]->duration / @$breaks_time;
-			
-			if(empty($block_argument_count)){
-				$block_argument_count = 0;
-			}else{
-				$block_argument_count = $block_argument_count;
-			}
-			
-			$today_date = strtotime(date('Y-m-d'));;
-			
-			if($check_branch_slot_available1){
-					
-				$branch_aval_slots =  $this->getProviderAvaliableTimeSlots($get_staff1,$start_date,$service1_id);					
-				
-				$matrix3_Result[] =  array('status'=> 'true', 'content('.$start_date.')'=>$branch_aval_slots );
-								
-			}else{
-				
-				$matrix3_Result[] =  array('status'=> 'false', 'content('.$start_date.')'=>'(Busy)' );
-				
-			}	
+		$get_booking_time_period = explode("-",$this->getBookingTimePeriod($branch1_id));
+		
+		$booking_time_from = $get_booking_time_period[0];
+		
+		$booking_time_till = $get_booking_time_period[1];
+		
+		$booking_date = strtotime($start_date); 
+		
+		$get_service_duration = DB::select( DB::raw("SELECT duration FROM provider_biz_service WHERE service_id = '$service1_id'" ));
 
-			if($check_branch_slot_available2){
-					
-				$branch_aval_slots =  $this->getProviderAvaliableTimeSlots($get_staff2,$start_date,$service2_id);					
-				
-				$matrix3_Result[] =  array('status'=> 'true', 'content('.$start_date.')'=>$branch_aval_slots );
-								
-			}else{
-				
-				$matrix3_Result[] =  array('status'=> 'false', 'content('.$start_date.')'=>'(Busy)' );
-				
-			}					
+		$breaks_time = $this->get_breaks_time($branch1_id);
+		
+		$block_argument_count = @$get_service_duration[0]->duration / @$breaks_time;
+		
+		if(empty($block_argument_count)){
+			$block_argument_count = 0;
+		}else{
+			$block_argument_count = $block_argument_count;
+		}
+		
+		$today_date = strtotime(date('Y-m-d'));
+		
+		if($booking_time_from >= $booking_date && $booking_date >= $today_date ){
 			
+			if($get_service_no_of_booking != 0 ){
+				
+				if($get_service_no_of_booking >= $participants){
+
+					if($get_staff1[0] != ""){ 
+				
+				$branch_aval_slots = $this->getProviderAvaliableTimeSlots($branch1_id,$service1_id,$get_staff1,$start_date,$staff_flag);
+				
+				$get_service_padding = DB::table('provider_biz_service')->where('service_id', $service1_id)->value('padding_time_when');
+								
+				if($get_service_padding == 1 ){
+					$padding_before_value = 1;
+					$padding_after_value = 0;
+				}else if($get_service_padding == 2 ){
+					$padding_before_value = 0;
+					$padding_after_value = 1;
+				}else if($get_service_padding == 3 ){
+					$padding_before_value = 1;
+					$padding_after_value = 1;
+				}else {
+					$padding_before_value = 0;
+					$padding_after_value = 0;
+				}
+				if($branch_aval_slots == ""){
+					
+					return $this->createErrorResponse("The given service or staff based slots not available.", 405);
+
+
+				}else{
+										$start_datetime = date_create($start_date);
+										$start_date = date_format($start_datetime,"d-m-Y");
+										
+								
+										$staff_ids = implode(",",$get_staff1 );
+										$matrix3_Result=  array('status'=> 'true', 'message' =>'success','content'=> array('date' =>$start_date, 'service_id' => $service1_id, 'staff_id'=>$staff_ids, 'no_of_participants' => $get_service_no_of_booking, 'slots_to_be_blocked' => $block_argument_count, 'padding_before_value' => @$padding_before_value, 'padding_after_value' => @$padding_after_value, 'time_slots' => $branch_aval_slots ));
+									
+									
+						}			
+								}else{
+										return $this->createErrorResponse("The Staff is not available for this service.", 406);
+
+								}				
+								}else{
+										return $this->createErrorResponse("The given participants count is grater than the allowed participants.", 407);
+																			
+								}
+								}else{
+										return $this->createErrorResponse("The Service no of participants is Full.", 408);
+
+
+								}
+								}else{
+										return $this->createErrorResponse("The given booking date is past or blocked future date.", 409);
+
+								}
+								
+
 			return $matrix3_Result;
-	} */
+		
+	}
 	
 	
 }
