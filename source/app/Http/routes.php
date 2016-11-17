@@ -59,17 +59,17 @@ $app->delete('api/v1/customer/{id}','ServiceappointmentController@deleteCustomer
 
 //Matrix API
 
-//$app->post('api/v1/appointment/service/{participants}/{branch1_id}/{service1_id}/{staff1_id}/{start_date}/{timezone_id}/{meetingtype_id}','ServiceappointmentController@getMatrix1_Result');
+$app->get('api/v1/appointment/service/{participants}/{branch1_id}/{service1_id}/{staff1_id}/{start_date}/{timezone_id}/{meetingtype_id}','ServiceappointmentController@getMatrix1_Result');
 
-$app->post('api/v1/appointment/service','ServiceappointmentController@getMatrix1_Result');
+//$app->post('api/v1/appointment/service','ServiceappointmentController@getMatrix1_Result');
 
-$app->post('api/v1/appointment/serviceRecurring/{participants}/{branch1_id}/{service1_id}/{staff1_id}/{start_date}/{end_date}/{repetition_type}/{timezone_id}/{meetingtype_id}','ServiceappointmentController@getMatrix2_Result');
+$app->get('api/v1/appointment/serviceRecurring/{participants}/{branch1_id}/{service1_id}/{staff1_id}/{start_date}/{end_date}/{repetition_type}/{timezone_id}/{meetingtype_id}','ServiceappointmentController@getMatrix2_Result');
 
-//$app->get('api/v1/matrix3/{participants}/{branch1_id}/{service1_id}/{service2_id}/{start_date}/{timezone_id}/{frequency}','ServiceappointmentController@getMatrix3_Result');
+$app->get('api/v1/appointment/staff/{participants}/{branch1_id}/{service1_id}/{staff1_id}/{start_date}/{timezone_id}/{meetingtype_id}','ServiceappointmentController@getMatrix3_Result');
 
-$app->post('api/v1/appointment/staff','ServiceappointmentController@getMatrix3_Result');
+//$app->post('api/v1/appointment/staff','ServiceappointmentController@getMatrix3_Result');
 
-$app->get('api/v1/matrix4/{participants}/{branch1_id}/{service1_id}/{service2_id}/{start_date}/{timezone_id}/{frequency}','ServiceappointmentController@getMatrix4_Result');
+$app->get('api/v1/appointment/staffRecurring/{participants}/{branch1_id}/{service1_id}/{staff1_id}/{start_date}/{end_date}/{repetition_type}/{timezone_id}/{meetingtype_id}','ServiceappointmentController@getMatrix4_Result');
 
 $app->get('api/v1/matrix5/{provider_email}/{user_email}/{provider_id}/{user_id}/{branch1_id}/{service1_id}/{start_date}/{start_time1}/{end_time1}/{branch2_id}/{service2_id}/{start_time2}/{end_time2}/{timezone_id}/{type}','ServiceappointmentController@getMatrix5_Result');
 
