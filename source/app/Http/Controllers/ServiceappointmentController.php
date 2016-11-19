@@ -612,7 +612,7 @@ print_r(count($slot_data[0]['weekends']));
 										
 								
 										$staff_ids = implode(",",$get_staff1 );
-										$matrix1_Result=  array('status'=> 'true', 'message' =>'success','content'=> array('date' =>$start_date, 'service_id' => $service1_id, 'staff_id'=>$staff_ids, 'no_of_participants' => $get_service_no_of_booking, 'slots_to_be_blocked' => $block_argument_count, 'padding_before_value' => @$padding_before_value, 'padding_after_value' => @$padding_after_value, 'time_slots' => $branch_aval_slots ));
+										$matrix1_Result=  array('status'=> 'true', 'message' =>'success','content'=> array('date' =>$start_date, 'service_id' => $service1_id, 'service_duration' => $get_service_duration[0]->duration, 'staff_id'=>$staff_ids, 'no_of_participants' => $get_service_no_of_booking, 'slots_to_be_blocked' => $block_argument_count, 'padding_before_value' => @$padding_before_value, 'padding_after_value' => @$padding_after_value, 'time_slots' => $branch_aval_slots ));
 									
 									
 						}			
@@ -653,13 +653,13 @@ print_r(count($slot_data[0]['weekends']));
 
 		$date_calculation = "";
 		switch ($event_repetition_type) {
-			case "Daily":
+			case "1":
 			$date_calculation = " +1 day";
 			break;
-		case "Weekly":
+		case "2":
 			$date_calculation = " +1 week";
 			break;
-		case "Monthly":
+		case "3":
 			$date_calculation = " +1 month";
 			break;
 		default:
@@ -756,7 +756,7 @@ print_r(count($slot_data[0]['weekends']));
 
 						$staff_ids = implode(",",$get_staff1 );
 
-						$matrix2_Result[] =  array('status'=> 'true', 'message' =>'success','content'=> array('date' =>$start_date_format, 'service_id' => $service1_id, 'staff_id'=>$staff_ids, 'no_of_participants' => $get_service_no_of_booking, 'slots_to_be_blocked' => $block_argument_count, 'padding_before_value' => @$padding_before_value, 'padding_after_value' => @$padding_after_value, 'time_slots' => $branch_aval_slots ));					
+						$matrix2_Result[] =  array('status'=> 'true', 'message' =>'success','content'=> array('date' =>$start_date_format, 'service_id' => $service1_id, 'service_duration' => $get_service_duration[0]->duration, 'staff_id'=>$staff_ids, 'no_of_participants' => $get_service_no_of_booking, 'slots_to_be_blocked' => $block_argument_count, 'padding_before_value' => @$padding_before_value, 'padding_after_value' => @$padding_after_value, 'time_slots' => $branch_aval_slots ));					
 						
 					}	
 				
@@ -798,7 +798,7 @@ print_r(count($slot_data[0]['weekends']));
 		$get_staff1 = explode(",",$staff1_id);
 		$staff_flag = 1;
 		
-		print_r($get_staff1);die;
+		//print_r($get_staff1);die;
 
 		$get_booking_time_period = explode("-",$this->getBookingTimePeriod($branch1_id));
 		
@@ -858,7 +858,7 @@ print_r(count($slot_data[0]['weekends']));
 										
 								
 										$staff_ids = implode(",",$get_staff1 );
-										$matrix3_Result=  array('status'=> 'true', 'message' =>'success','content'=> array('date' =>$start_date, 'service_id' => $service1_id, 'staff_id'=>$staff_ids, 'no_of_participants' => $get_service_no_of_booking, 'slots_to_be_blocked' => $block_argument_count, 'padding_before_value' => @$padding_before_value, 'padding_after_value' => @$padding_after_value, 'time_slots' => $branch_aval_slots ));
+										$matrix3_Result=  array('status'=> 'true', 'message' =>'success','content'=> array('date' =>$start_date, 'service_id' => $service1_id, 'service_duration' => $get_service_duration[0]->duration, 'staff_id'=>$staff_ids, 'no_of_participants' => $get_service_no_of_booking, 'slots_to_be_blocked' => $block_argument_count, 'padding_before_value' => @$padding_before_value, 'padding_after_value' => @$padding_after_value, 'time_slots' => $branch_aval_slots ));
 									
 									
 						}			
@@ -895,13 +895,13 @@ print_r(count($slot_data[0]['weekends']));
 
 		$date_calculation = "";
 		switch ($event_repetition_type) {
-			case "Daily":
+			case "1":
 			$date_calculation = " +1 day";
 			break;
-		case "Weekly":
+		case "2":
 			$date_calculation = " +1 week";
 			break;
-		case "Monthly":
+		case "3":
 			$date_calculation = " +1 month";
 			break;
 		default:
@@ -992,7 +992,7 @@ print_r(count($slot_data[0]['weekends']));
 
 						$staff_ids = implode(",",$get_staff1 );
 
-						$matrix4_Result[] =  array('status'=> 'true', 'message' =>'success','content'=> array('date' =>$start_date_format, 'service_id' => $service1_id, 'staff_id'=>$staff_ids, 'no_of_participants' => $get_service_no_of_booking, 'slots_to_be_blocked' => $block_argument_count, 'padding_before_value' => @$padding_before_value, 'padding_after_value' => @$padding_after_value, 'time_slots' => $branch_aval_slots ));					
+						$matrix4_Result[] =  array('status'=> 'true', 'message' =>'success','content'=> array('date' =>$start_date_format, 'service_id' => $service1_id, 'service_duration' => $get_service_duration[0]->duration, 'staff_id'=>$staff_ids, 'no_of_participants' => $get_service_no_of_booking, 'slots_to_be_blocked' => $block_argument_count, 'padding_before_value' => @$padding_before_value, 'padding_after_value' => @$padding_after_value, 'time_slots' => $branch_aval_slots ));					
 						
 					}	
 				
