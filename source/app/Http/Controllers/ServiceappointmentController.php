@@ -115,10 +115,10 @@ class ServiceappointmentController extends Controller{
 			$branch_time = DB::select( DB::raw("SELECT weekendadd FROM provider_biz_branch WHERE branch_id = '".$branch_id."'") );
 			//echo $branch_time[0]->weekendadd;die;
 					$branch_time_data = unserialize($branch_time[0]->weekendadd);
-					/* echo '<pre>';
+					/*  echo '<pre>';
 					print_r(unserialize($branch_time[0]->weekendadd));
 					echo count($branch_time_data[0]['weekends']);
-					echo '</pre>'; */
+					echo '</pre>'; die; */
 					for($s = 0; $s < count($branch_time_data[0]['weekends']); $s++){
 						
 						$branch_slot_details = $branch_time_data[0]['weekends'][$s];
@@ -681,7 +681,7 @@ print_r(count($slot_data[0]['weekends']));
 
 		//here make above array as key in $a array
 		$start_date = $dateArray;
-		
+		$j = 1;
 		for($i=0; $i < count($start_date); $i++ )
 		{
 			$get_service_no_of_booking = DB::table('provider_biz_service')->where('service_id', $service1_id)->value('participants_allowed');
@@ -729,11 +729,11 @@ print_r(count($slot_data[0]['weekends']));
 		
 				$branch_aval_slots = $this->getProviderAvaliableTimeSlots($branch1_id,$service1_id,$get_staff1,$start_date[$i],$staff_flag);
  
-				if($branch_aval_slots == ""){
+				//if($branch_aval_slots == ""){
 					
-					$matrix2_Result [] =  array('status'=> 'false', 'message' =>'The given service or staff based slots not available.', 'content('.$start_date[$i].')'=>'(Busy)' );
+					//$matrix2_Result [] =  array('status'=> 'false', 'message' =>'The given service or staff based slots not available.', 'content('.$start_date[$i].')'=>'(Busy)' );
 
-				}else{
+				//}else{
 					
 					$get_service_padding = DB::table('provider_biz_service')->where('service_id', $service1_id)->value('padding_time_when');
 
@@ -756,11 +756,17 @@ print_r(count($slot_data[0]['weekends']));
 
 						$staff_ids = implode(",",$get_staff1 );
 
-						$matrix2_Result[] =  array('status'=> 'true', 'message' =>'success','content'=> array('date' =>$start_date_format, 'service_id' => $service1_id, 'service_duration' => $get_service_duration[0]->duration, 'staff_id'=>$staff_ids, 'no_of_participants' => $get_service_no_of_booking, 'slots_to_be_blocked' => $block_argument_count, 'padding_before_value' => @$padding_before_value, 'padding_after_value' => @$padding_after_value, 'time_slots' => $branch_aval_slots ));					
+						//$matrix2_Result[] =  array('status'=> 'true', 'message' =>'success','content'=> array('date' =>$start_date_format, 'service_id' => $service1_id, 'service_duration' => $get_service_duration[0]->duration, 'staff_id'=>$staff_ids, 'no_of_participants' => $get_service_no_of_booking, 'slots_to_be_blocked' => $block_argument_count, 'padding_before_value' => @$padding_before_value, 'padding_after_value' => @$padding_after_value, 'time_slots' => $branch_aval_slots ));					
 						
-					}	
+						if($branch_aval_slots){
+						
+							$branch_aval_slots_list[] =  array('date'.$j =>$start_date_format,  'time_slots'.$j => $branch_aval_slots );					
+	
+						}
+						$j = $j+1;
+					//}	
 				
-			}else{
+			}/* else{
 						$matrix2_Result[] =  array('status'=> 'false','message' =>'The Staff is not available for thi service. ', 'content('.$start_date[$i].')'=>'(Busy)' );
 				}				
 					}else{
@@ -771,10 +777,15 @@ print_r(count($slot_data[0]['weekends']));
 						}
 							}else{
 									$matrix2_Result[] =  array('status'=> 'false','message' =>'The given booking date is past or blocked future date. ', 'content('.$start_date[$i].')'=>'(Busy)' );
-							}					
+							}	 */				
 			
 		}
+	}
+	}
+}
 		
+			$matrix2_Result =  array('status'=> 'true', 'message' =>'success','content'=> array('service_id' => $service1_id, 'service_duration' => $get_service_duration[0]->duration, 'staff_id'=>$staff_ids, 'no_of_participants' => $get_service_no_of_booking, 'slots_to_be_blocked' => $block_argument_count, 'padding_before_value' => @$padding_before_value, 'padding_after_value' => @$padding_after_value, 'slots' => $branch_aval_slots_list ));					
+
 			return $matrix2_Result;
 		
 	}
@@ -923,7 +934,7 @@ print_r(count($slot_data[0]['weekends']));
 
 		//here make above array as key in $a array
 		$start_date = $dateArray;
-		
+		$j = 1;
 		for($i=0; $i < count($start_date); $i++ )
 		{
 			$get_service_no_of_booking = DB::table('provider_biz_service')->where('service_id', $service1_id)->value('participants_allowed');
@@ -965,11 +976,11 @@ print_r(count($slot_data[0]['weekends']));
 		
 				$branch_aval_slots = $this->getProviderAvaliableTimeSlots($branch1_id,$service1_id,$get_staff1,$start_date[$i],$staff_flag);
  
-				if($branch_aval_slots == ""){
+				//if($branch_aval_slots == ""){
 					
-					$matrix4_Result [] =  array('status'=> 'false', 'message' =>'The given service or staff based slots not available.', 'content('.$start_date[$i].')'=>'(Busy)' );
+					//$matrix4_Result [] =  array('status'=> 'false', 'message' =>'The given service or staff based slots not available.', 'content('.$start_date[$i].')'=>'(Busy)' );
 
-				}else{
+				//}else{
 					
 					$get_service_padding = DB::table('provider_biz_service')->where('service_id', $service1_id)->value('padding_time_when');
 
@@ -992,11 +1003,19 @@ print_r(count($slot_data[0]['weekends']));
 
 						$staff_ids = implode(",",$get_staff1 );
 
-						$matrix4_Result[] =  array('status'=> 'true', 'message' =>'success','content'=> array('date' =>$start_date_format, 'service_id' => $service1_id, 'service_duration' => $get_service_duration[0]->duration, 'staff_id'=>$staff_ids, 'no_of_participants' => $get_service_no_of_booking, 'slots_to_be_blocked' => $block_argument_count, 'padding_before_value' => @$padding_before_value, 'padding_after_value' => @$padding_after_value, 'time_slots' => $branch_aval_slots ));					
+						//$matrix4_Result[] =  array('status'=> 'true', 'message' =>'success','content'=> array('date' =>$start_date_format, 'service_id' => $service1_id, 'service_duration' => $get_service_duration[0]->duration, 'staff_id'=>$staff_ids, 'no_of_participants' => $get_service_no_of_booking, 'slots_to_be_blocked' => $block_argument_count, 'padding_before_value' => @$padding_before_value, 'padding_after_value' => @$padding_after_value, 'time_slots' => $branch_aval_slots ));					
 						
-					}	
+						
+						if($branch_aval_slots){
+						
+						$branch_aval_slots_list[] =  array('date'.$j =>$start_date_format,  'time_slots'.$j => $branch_aval_slots );					
+						
+							
+						}
+						$j = $j+1;
+					//}	
 				
-			}else{
+			}/* else{
 						$matrix4_Result[] =  array('status'=> 'false','message' =>'The Staff is not available for thi service. ', 'content('.$start_date[$i].')'=>'(Busy)' );
 				}				
 					}else{
@@ -1007,17 +1026,18 @@ print_r(count($slot_data[0]['weekends']));
 						}
 							}else{
 									$matrix4_Result[] =  array('status'=> 'false','message' =>'The given booking date is past or blocked future date. ', 'content('.$start_date[$i].')'=>'(Busy)' );
-							}					
+							}	 */				
 			
-		}
-		
-			return $matrix4_Result;
-		
-	}
-	
+} 
+}
+}
+}
+		$matrix4_Result =  array('status'=> 'true', 'message' =>'success','content'=> array('service_id' => $service1_id, 'service_duration' => $get_service_duration[0]->duration, 'staff_id'=>$staff_ids, 'no_of_participants' => $get_service_no_of_booking, 'slots_to_be_blocked' => $block_argument_count, 'padding_before_value' => @$padding_before_value, 'padding_after_value' => @$padding_after_value, 'slots' => $branch_aval_slots_list ));					
+
+	return $matrix4_Result;
 	
 }
 
 	
-	
+}	
 ?>
