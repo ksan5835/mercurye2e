@@ -117,17 +117,20 @@ class ServiceappointmentController extends Controller{
 					$branch_time_data = unserialize($branch_time[0]->weekendadd);
 					/*  echo '<pre>';
 					print_r(unserialize($branch_time[0]->weekendadd));
-					echo count($branch_time_data[0]['weekends']);
+					echo count($branch_time_data);
 					echo '</pre>'; die; */
-					for($s = 0; $s < count($branch_time_data[0]['weekends']); $s++){
+					for($s = 1; $s < count($branch_time_data); $s++){
 						
-						$branch_slot_details = $branch_time_data[0]['weekends'][$s];
+						$branch_slot_details = $branch_time_data[$s];
 						
 						$branch_slot_day = $branch_slot_details['weekstr'];
-						$branch_slot_active = $branch_slot_details['active'];
+						$branch_slot_active = $branch_slot_details['active']; 
+						//echo $start_Time = $branch_slot_details['working_hours']['start_time'];
+						
+						//print_r($branch_slot_details['working_hours'][0]['start_time']);die;
 						if($branch_slot_day == $start_date  && $branch_slot_active == 1){
-							$start_Time = $branch_time_data[0]['timing']['start_time'];
-							$end_Time = $branch_time_data[0]['timing']['end_time'];
+							$start_Time = $branch_slot_details['working_hours'][0]['start_time'];
+							$end_Time = $branch_slot_details['working_hours'][0]['end_time'];
 						}
 					}
 				$branch_time = isset($start_Time) ? $start_Time.'-'.$end_Time : '' ;		 
