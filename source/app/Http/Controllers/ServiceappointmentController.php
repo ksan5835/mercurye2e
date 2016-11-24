@@ -102,8 +102,8 @@ class ServiceappointmentController extends Controller{
 
 			
 			$date = date('Y-m-d');
-			$prev_date = date('d-m-Y', strtotime($date .' +'.$BookingTimePeriod[0]->BR_Booking_Allowed_From.' day'));
-			$next_date = date('d-m-Y', strtotime($date .' +'.$BookingTimePeriod[0]->BR_Booking_Allowed_Till.' day')); 
+			$prev_date = date('d-m-Y', strtotime($date .' +'.@$BookingTimePeriod[0]->BR_Booking_Allowed_From.' day'));
+			$next_date = date('d-m-Y', strtotime($date .' +'.@$BookingTimePeriod[0]->BR_Booking_Allowed_Till.' day')); 
 			
 			$BookingTimePeriod = strtotime($prev_date).'-'.strtotime($next_date); 
 			
@@ -244,18 +244,19 @@ class ServiceappointmentController extends Controller{
 
 				$staff_time_data = unserialize(@$check_vendor_slot_available[0]->weekendadd);
 					
-				  /*echo '<pre>';
+				 /*  echo '<pre>';
 				print_r(unserialize($check_vendor_slot_available[0]->weekendadd));
-				echo '</pre>'; */
-				for($s = 0; $s < count($staff_time_data[0]['weekends']); $s++){
+				echo '</pre>';  */
+				
+				for($s = 0; $s < count($staff_time_data); $s++){
 					
-					$staff_slot_details = $staff_time_data[0]['weekends'][$s];
+					$staff_slot_details = $staff_time_data[$s];
 					
 					$staff_slot_day = $staff_slot_details['weekstr'];
 					$staff_slot_active = $staff_slot_details['active'];
 					if($staff_slot_day == $start_date  && $staff_slot_active == 1){
-						$staff_avil_start_time [] = $staff_time_data[0]['timing']['start_time'];
-						$staff_avil_end_time [] = $staff_time_data[0]['timing']['end_time'];
+						$staff_avil_start_time [] = $staff_slot_details['working_hours'][0]['start_time'];
+						$staff_avil_end_time [] = $staff_slot_details['working_hours'][0]['end_time'];
 						
 					}
 				}
@@ -711,7 +712,7 @@ print_r(count($slot_data[0]['weekends']));
 
 		$breaks_time = $this->get_breaks_time($branch1_id);
 		
-		$block_argument_count = @$get_service_duration[0]->duration / @$breaks_time;
+		@$block_argument_count = @$get_service_duration[0]->duration / @$breaks_time;
 		
 		if(empty($block_argument_count)){
 			$block_argument_count = 0;
@@ -786,9 +787,12 @@ print_r(count($slot_data[0]['weekends']));
 	}
 	}
 }
-		
+		if(@$branch_aval_slots_list){
 			$matrix2_Result =  array('status'=> 'true', 'message' =>'success','content'=> array('service_id' => $service1_id, 'service_duration' => $get_service_duration[0]->duration, 'staff_id'=>$staff_ids, 'no_of_participants' => $get_service_no_of_booking, 'slots_to_be_blocked' => $block_argument_count, 'padding_before_value' => @$padding_before_value, 'padding_after_value' => @$padding_after_value, 'slots' => $branch_aval_slots_list ));					
-
+		}else{
+			
+			$matrix2_Result =  array('status'=> 'false', 'content'=>'(Busy)' );
+		}
 			return $matrix2_Result;
 		
 	}
@@ -958,7 +962,7 @@ print_r(count($slot_data[0]['weekends']));
 
 		$breaks_time = $this->get_breaks_time($branch1_id);
 		
-		$block_argument_count = @$get_service_duration[0]->duration / @$breaks_time;
+		@$block_argument_count = @$get_service_duration[0]->duration / @$breaks_time;
 		
 		if(empty($block_argument_count)){
 			$block_argument_count = 0;
@@ -1035,8 +1039,12 @@ print_r(count($slot_data[0]['weekends']));
 }
 }
 }
+		if(@$branch_aval_slots_list){
 		$matrix4_Result =  array('status'=> 'true', 'message' =>'success','content'=> array('service_id' => $service1_id, 'service_duration' => $get_service_duration[0]->duration, 'staff_id'=>$staff_ids, 'no_of_participants' => $get_service_no_of_booking, 'slots_to_be_blocked' => $block_argument_count, 'padding_before_value' => @$padding_before_value, 'padding_after_value' => @$padding_after_value, 'slots' => $branch_aval_slots_list ));					
-
+		}else{
+			
+			$matrix4_Result =  array('status'=> 'false', 'content'=>'(Busy)' );
+		}
 	return $matrix4_Result;
 	
 }
