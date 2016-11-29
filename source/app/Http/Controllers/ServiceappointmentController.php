@@ -110,10 +110,22 @@ class ServiceappointmentController extends Controller{
 			return $BookingTimePeriod;
 		} 
 		
-		public function get_branch_timeing($branch_id,$start_date){
+		public function get_branch_timeing($branch_id,$service_id,$start_date){
 		
 			$branch_time = DB::select( DB::raw("SELECT weekendadd FROM provider_biz_branch WHERE branch_id = '".$branch_id."'") );
 			//echo $branch_time[0]->weekendadd;die;
+			
+			/* $branch_time = DB::table('provider_biz_branch')
+								->leftJoin('provider_biz_service_branch', 'provider_biz_branch.branch_id', '=', 'provider_biz_service_branch.branch_id')
+								->select('provider_biz_branch.weekendadd')
+								->where('provider_biz_branch.branch_id', '=', $branch_id)
+								->where('provider_biz_service_branch.branch_id', '=', $branch_id)
+								->where('provider_biz_service_branch.service_id', '=', $service_id)
+								//->value('provider_biz_staff_service.staff_id');
+								->get(); */
+								
+					
+			
 					$branch_time_data = unserialize($branch_time[0]->weekendadd);
 					/*  echo '<pre>';
 					print_r(unserialize($branch_time[0]->weekendadd));
@@ -244,9 +256,9 @@ class ServiceappointmentController extends Controller{
 
 				$staff_time_data = unserialize(@$check_vendor_slot_available[0]->weekendadd);
 					
-				 /*  echo '<pre>';
+				  /*  echo '<pre>';
 				print_r(unserialize($check_vendor_slot_available[0]->weekendadd));
-				echo '</pre>';  */
+				echo '</pre>';   */
 				
 				for($s = 0; $s < count($staff_time_data); $s++){
 					
@@ -266,10 +278,11 @@ class ServiceappointmentController extends Controller{
 			if(isset($staff_avil_start_time) && isset($staff_avil_start_time)){
 				$start_min_value = min(@$staff_avil_start_time);
 				$end_max_value = max(@$staff_avil_end_time);
-			}else{
+			}
+			/* else{
 				$start_min_value = $start_time;
 				$end_max_value = $end_time;
-			}
+			} */
 			//print_r($staff_avil_start_time);die;
 			
 			if($start_time >= @$start_min_value && $end_time <= @$end_max_value){
@@ -353,7 +366,7 @@ print_r(count($slot_data[0]['weekends']));
 		
 	}else{ */
 		
-		$branch_avil_times = $this->get_branch_timeing($branch_id,$start_date);
+		$branch_avil_times = $this->get_branch_timeing($branch_id,$service_id,$start_date);
 		
 		$branch_timings = isset($branch_avil_times)? explode("-",$branch_avil_times) : "";
 		
