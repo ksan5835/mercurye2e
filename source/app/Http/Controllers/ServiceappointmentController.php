@@ -293,6 +293,29 @@ class ServiceappointmentController extends Controller{
 
 			return $staff_available_id;
 		}
+		
+		public function getSpecificAvaliableTimeSlots($branch_id,$service_id,$staff_id,$bookdate,$start_time,$end_time){
+			
+			$start_datetime = date_create($bookdate);
+			$start_date = date_format($start_datetime,"l");	
+			
+			$check_book_time_slot = $this->checkStaffBookedSlots($branch_id,$service_id,$staff_id,$bookdate,$start_time,@$end_time);
+					
+			$check_blocked_hours = $this->checkStaffBlockedHours($staff_id,$bookdate,$start_time,@$end_time);
+			
+			$check_staff_blocked_hours = $this->checkStaffBlockedSlots($branch_id,$service_id,$staff_id,$start_date,$start_time,@$end_time);
+			
+			if($check_blocked_hours || $check_staff_blocked_hours == 0){
+				$time_slot_status = "2";
+			}elseif($check_book_time_slot){
+				$time_slot_status  = "3";
+			}else{
+				$time_slot_status = "1";
+			}
+			
+			return $time_slot_status;
+		}
+
 	
 
 		public function getProviderAvaliableTimeSlots($branch_id,$service_id,$staff_id,$bookdate,$staff_flag){
@@ -662,7 +685,7 @@ print_r(count($slot_data[0]['weekends']));
 	}
 	
 	
-	public function getMatrix2_Result($participants,$branch1_id, $service1_id, $staff1_id, $start_date,$end_date, $repetition_type, $timezone_id, $meetingtype_id){
+	public function getMatrix2_Result($participants,$branch1_id, $service1_id, $staff1_id, $start_date,$end_date,$start_time,$end_time,$repetition_type, $timezone_id, $meetingtype_id){
 
 		$event_date = $start_date;
 		$event_end_date = $end_date;
@@ -776,8 +799,10 @@ print_r(count($slot_data[0]['weekends']));
 						//$matrix2_Result[] =  array('status'=> 'true', 'message' =>'success','content'=> array('date' =>$start_date_format, 'service_id' => $service1_id, 'service_duration' => $get_service_duration[0]->duration, 'staff_id'=>$staff_ids, 'no_of_participants' => $get_service_no_of_booking, 'slots_to_be_blocked' => $block_argument_count, 'padding_before_value' => @$padding_before_value, 'padding_after_value' => @$padding_after_value, 'time_slots' => $branch_aval_slots ));					
 						
 						if($branch_aval_slots){
+							
+							$aval_status = $this->getSpecificAvaliableTimeSlots($branch1_id,$service1_id,$get_staff1,$start_date[$i],$start_time,$end_time);
 						
-							$branch_aval_slots_list[] =  array('date'.$j =>$start_date_format,  'time_slots'.$j => $branch_aval_slots );					
+							$branch_aval_slots_list[] =  array('date'.$j =>$start_date_format, 'status' => $aval_status , 'time_slots'.$j => $branch_aval_slots );					
 	
 						}
 						$j = $j+1;
@@ -918,7 +943,7 @@ print_r(count($slot_data[0]['weekends']));
 	
 	
 	
-	public function getMatrix4_Result($participants,$branch1_id, $service1_id, $staff1_id, $start_date,$end_date, $repetition_type, $timezone_id, $meetingtype_id){
+	public function getMatrix4_Result($participants,$branch1_id, $service1_id, $staff1_id, $start_date,$end_date,$start_time,$end_time,$repetition_type, $timezone_id, $meetingtype_id){
 
 		$event_date = $start_date;
 		$event_end_date = $end_date;
@@ -1027,8 +1052,10 @@ print_r(count($slot_data[0]['weekends']));
 						
 						
 						if($branch_aval_slots){
-						
-						$branch_aval_slots_list[] =  array('date'.$j =>$start_date_format,  'time_slots'.$j => $branch_aval_slots );					
+							
+						$aval_status = $this->getSpecificAvaliableTimeSlots($branch1_id,$service1_id,$get_staff1,$start_date[$i],$start_time,$end_time);
+
+						$branch_aval_slots_list[] =  array('date'.$j =>$start_date_format, 'status' => $aval_status , 'time_slots'.$j => $branch_aval_slots );					
 						
 							
 						}
