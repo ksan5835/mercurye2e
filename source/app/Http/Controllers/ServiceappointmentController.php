@@ -131,6 +131,7 @@ class ServiceappointmentController extends Controller{
 					print_r(unserialize($branch_time[0]->weekendadd));
 					echo count($branch_time_data);
 					echo '</pre>'; die; */
+					
 					for($s = 1; $s < count($branch_time_data); $s++){
 						
 						$branch_slot_details = $branch_time_data[$s];
