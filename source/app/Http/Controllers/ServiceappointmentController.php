@@ -340,21 +340,17 @@ class ServiceappointmentController extends Controller{
 					
 					if($i < count(@$precision_time_slot)-1)
 					if($check_blocked_hours  || $check_staff_blocked_hours == 0){
-						//$time_slot = str_replace('.',':',$precision_time_slot[$i]).'- '.$precision_time_slot[$i+1];
+						$selected_value = "false";
 						$time_slot_status = "H";
-						$final_slot [] = array ("slot_start_time" => $precision_time_slot[$i], "slot_end_time" => $precision_time_slot[$i+1], "status" => $time_slot_status);
-					}/*elseif($check_staff_blocked_hours == 0){
-						//$time_slot  = $staff_time_slot[$i].'- '.$staff_time_slot[$i+1].' ';
-						$time_slot_status  = "NA";
-						$final_slot [] = array ("slot_start_time" => $staff_time_slot[$i], "slot_end_time" => $staff_time_slot[$i+1], "status" => $time_slot_status);
-					}*/elseif($check_book_time_slot){
-						//$time_slot = str_replace('.',':',$precision_time_slot[$i]).'- '.$precision_time_slot[$i+1];
+						$final_slot [] = array ("slot_start_time" => $precision_time_slot[$i], "slot_end_time" => $precision_time_slot[$i+1], "status" => $time_slot_status, "selected" => $selected_value);
+					}elseif($check_book_time_slot){
+						$selected_value = "false";
 						$time_slot_status  = "B";
-						$final_slot [] = array ("slot_start_time" => $precision_time_slot[$i], "slot_end_time" => $precision_time_slot[$i+1], "status" => $time_slot_status);
+						$final_slot [] = array ("slot_start_time" => $precision_time_slot[$i], "slot_end_time" => $precision_time_slot[$i+1], "status" => $time_slot_status, "selected" => $selected_value);
 					}else{
-						//$time_slot = str_replace('.',':',$precision_time_slot[$i]).'- '.$precision_time_slot[$i+1];
+						$selected_value = "true";
 						$time_slot_status = "A";
-						$final_slot [] = array ("slot_start_time" => $precision_time_slot[$i], "slot_end_time" => $precision_time_slot[$i+1], "status" => $time_slot_status);
+						$final_slot [] = array ("slot_start_time" => $precision_time_slot[$i], "slot_end_time" => $precision_time_slot[$i+1], "status" => $time_slot_status, "selected" => $selected_value);
 					}
 				}
 				
@@ -436,23 +432,17 @@ print_r(count($slot_data[0]['weekends']));
 					
 					if($i < count(@$staff_time_slot)-1)
 					if($check_blocked_hours || $check_staff_blocked_hours == 0){
-						//$time_slot = str_replace('.',':',$staff_time_slot[$i]).'- '.$staff_time_slot[$i+1].'';
+						$selected_value = "false";
 						$time_slot_status = "H";
-						$final_slot [] = array ("slot_start_time" => $staff_time_slot[$i], "slot_end_time" => $staff_time_slot[$i+1], "status" => $time_slot_status);
-					}/*elseif($check_staff_blocked_hours == 0){
-						//$time_slot  = $staff_time_slot[$i].'- '.$staff_time_slot[$i+1].' ';
-						$time_slot_status  = "NA";
-						$final_slot [] = array ("slot_start_time" => $staff_time_slot[$i], "slot_end_time" => $staff_time_slot[$i+1], "status" => $time_slot_status);
-					}*/elseif($check_book_time_slot){
-						//$time_slot  = $staff_time_slot[$i].'- '.$staff_time_slot[$i+1].' ';
+						$final_slot [] = array ("slot_start_time" => $staff_time_slot[$i], "slot_end_time" => $staff_time_slot[$i+1], "status" => $time_slot_status, "selected" => $selected_value);
+					}elseif($check_book_time_slot){
+						$selected_value = "false";
 						$time_slot_status  = "B";
-						$final_slot [] = array ("slot_start_time" => $staff_time_slot[$i], "slot_end_time" => $staff_time_slot[$i+1], "status" => $time_slot_status);
+						$final_slot [] = array ("slot_start_time" => $staff_time_slot[$i], "slot_end_time" => $staff_time_slot[$i+1], "status" => $time_slot_status, "selected" => $selected_value);
 					}else{
-						//$time_slot = $staff_time_slot[$i].'- '.$staff_time_slot[$i+1].'';
-						
-						
+						$selected_value = "true";
 						$time_slot_status = "A";
-						$final_slot [] = array ("slot_start_time" => $staff_time_slot[$i], "slot_end_time" => $staff_time_slot[$i+1], "status" => $time_slot_status);
+						$final_slot [] = array ("slot_start_time" => $staff_time_slot[$i], "slot_end_time" => $staff_time_slot[$i+1], "status" => $time_slot_status, "selected" => $selected_value);
 					}
 				}
 					
