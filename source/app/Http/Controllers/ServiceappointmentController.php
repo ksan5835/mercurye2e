@@ -96,7 +96,7 @@ class ServiceappointmentController extends Controller{
 	 
 			$BookingTimePeriod = DB::table('setting_provider')
 								->leftJoin('provider_biz_branch', 'setting_provider.provider_id', '=', 'provider_biz_branch.biz_id')
-								->select('setting_provider.BR_Booking_Allowed_From', 'setting_provider.BR_Booking_Allowed_Till')
+								->select('setting_provider.BR_Booking_Allowed_From', 'setting_provider.BR_Booking_Allowed_Till','setting_provider.BR_Min_Book_Time_Type')
 								->where('provider_biz_branch.branch_id', '=', $branch_id)
 								->get();
 
@@ -637,7 +637,7 @@ print_r(count($slot_data[0]['weekends']));
 			//print_r($branch_aval_slots);die;
 				if($branch_aval_slots == ""){
 					
-					return $this->createErrorResponse("The given service or staff based slots not available.", 405);
+					return $this->createErrorResponse("The given service or staff based slots not available.", 1200);
 
 					//$matrix1_Result =  array('status'=> 'false', 'message' =>'The given service or staff based slots not available.', 'content('.$start_date.')'=>'(Busy)' );
 
@@ -652,22 +652,22 @@ print_r(count($slot_data[0]['weekends']));
 									
 						}			
 								}else{
-										return $this->createErrorResponse("The Staff is not available for this service.", 406);
+										return $this->createErrorResponse("The Staff is not available for this service.", 1201);
 
 										//$matrix1_Result =  array('status'=> 'false','message' =>'The Staff is not available for thi service. ', 'content('.$start_date.')'=>'(Busy)' );
 								}				
 								}else{
-										return $this->createErrorResponse("The given participants count is grater than the allowed participants.", 407);
+										return $this->createErrorResponse("The given participants count is grater than the allowed participants.", 1202);
 																			
 										//$matrix1_Result =  array('status'=> 'false','message' =>'The given participants count is grater than the allowed participants. ','content('.$start_date.')'=>'(Busy)' );
 								}
 								}else{
-										return $this->createErrorResponse("The Service no of participants is Full.", 408);
+										return $this->createErrorResponse("The Service no of participants is Full.", 1203);
 
 										//$matrix1_Result =  array('status'=> 'false','message' =>'The Service no of participants is Full. ','content('.$start_date.')'=>'(Busy)' );
 								}
 								}else{
-										return $this->createErrorResponse("The given booking date is past or blocked future date.", 409);
+										return $this->createErrorResponse("The given booking date is past or blocked future date.", 405);
 
 										//$matrix1_Result =  array('status'=> 'false','message' =>'The given booking date is past or blocked future date. ', 'content('.$start_date.')'=>'(Busy)' );
 								}
@@ -900,7 +900,7 @@ print_r(count($slot_data[0]['weekends']));
 				}
 				if($branch_aval_slots == ""){
 					
-					return $this->createErrorResponse("The given service or staff based slots not available.", 405);
+					return $this->createErrorResponse("The given service or staff based slots not available.", 1200);
 
 
 				}else{
@@ -914,7 +914,7 @@ print_r(count($slot_data[0]['weekends']));
 									
 						}			
 								}else{
-										return $this->createErrorResponse("The Staff is not available for this service.", 406);
+										return $this->createErrorResponse("The Staff is not available for this service.", 1201);
 
 								}				
 								}else{
@@ -922,12 +922,12 @@ print_r(count($slot_data[0]['weekends']));
 																			
 								}
 								}else{
-										return $this->createErrorResponse("The Service no of participants is Full.", 408);
+										return $this->createErrorResponse("The Service no of participants is Full.", 1202);
 
 
 								}
 								}else{
-										return $this->createErrorResponse("The given booking date is past or blocked future date.", 409);
+										return $this->createErrorResponse("The given booking date is past or blocked future date.", 1203);
 
 								}
 								
