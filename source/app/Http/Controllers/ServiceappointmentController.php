@@ -99,13 +99,24 @@ class ServiceappointmentController extends Controller{
 								->select('setting_provider.BR_Booking_Allowed_From', 'setting_provider.BR_Booking_Allowed_Till','setting_provider.BR_Min_Book_Time_Type')
 								->where('provider_biz_branch.branch_id', '=', $branch_id)
 								->get();
-
-			
-			$date = date('Y-m-d');
-			$prev_date = date('d-m-Y', strtotime($date .' +'.@$BookingTimePeriod[0]->BR_Booking_Allowed_From.' day'));
-			$next_date = date('d-m-Y', strtotime($date .' +'.@$BookingTimePeriod[0]->BR_Booking_Allowed_Till.' day')); 
-			
-			$BookingTimePeriod = strtotime($prev_date).'-'.strtotime($next_date); 
+			//print_r($BookingTimePeriod[0]->BR_Booking_Allowed_From);die;
+			if(@$BookingTimePeriod[0]->BR_Min_Book_Time_Type == 1){
+				$date = date('Y-m-d H:i:s');
+				$prev_date = strtotime('+'.@$BookingTimePeriod[0]->BR_Booking_Allowed_From.' minutes', strtotime($date));
+				$next_date = strtotime('+'.@$BookingTimePeriod[0]->BR_Booking_Allowed_Till.' minutes', strtotime($date)); 
+				
+			}elseif(@$BookingTimePeriod[0]->BR_Min_Book_Time_Type == 2){
+				$date = date('Y-m-d H:i:s');
+				$prev_date = strtotime(date("Y-m-d H:i:s", strtotime('+'.@$BookingTimePeriod[0]->BR_Booking_Allowed_From.' hours', $date)));
+				$next_date = strtotime(date("Y-m-d H:i:s", strtotime('+'.@$BookingTimePeriod[0]->BR_Booking_Allowed_Till.' hours', $date))); 
+				
+			}
+			elseif(@$BookingTimePeriod[0]->BR_Min_Book_Time_Type == 3){
+				$date = date('Y-m-d');
+				$prev_date = strtotime(date('d-m-Y', strtotime($date .' +'.@$BookingTimePeriod[0]->BR_Booking_Allowed_From.' day')));
+				$next_date = strtotime(date('d-m-Y', strtotime($date .' +'.@$BookingTimePeriod[0]->BR_Booking_Allowed_Till.' day'))); 
+			}
+			$BookingTimePeriod = $prev_date.'-'.$next_date; 
 			
 			return $BookingTimePeriod;
 		} 
@@ -593,7 +604,7 @@ print_r(count($slot_data[0]['weekends']));
 		
 		$booking_time_till = $get_booking_time_period[1];
 		
-		$booking_date = strtotime($start_date); 
+		$booking_date = strtotime($start_date .'H:i:s'); 
 		
 		$get_service_duration = DB::select( DB::raw("SELECT duration FROM provider_biz_service WHERE service_id = '$service1_id'" ));
 
@@ -607,7 +618,7 @@ print_r(count($slot_data[0]['weekends']));
 			$block_argument_count = $block_argument_count;
 		}
 		
-		$today_date = strtotime(date('Y-m-d'));
+		$today_date = strtotime(date('Y-m-d H:i:s'));
 		
 		if($booking_time_from >= $booking_date && $booking_date >= $today_date ){
 			
@@ -662,7 +673,7 @@ print_r(count($slot_data[0]['weekends']));
 										//$matrix1_Result =  array('status'=> 'false','message' =>'The given participants count is grater than the allowed participants. ','content('.$start_date.')'=>'(Busy)' );
 								}
 								}else{
-										return $this->createErrorResponse("The Service no of participants is Full.", 1203);
+										return $this->createErrorResponse("The Service no of participants is Full.", 403);
 
 										//$matrix1_Result =  array('status'=> 'false','message' =>'The Service no of participants is Full. ','content('.$start_date.')'=>'(Busy)' );
 								}
@@ -737,7 +748,7 @@ print_r(count($slot_data[0]['weekends']));
 		
 		$booking_time_till = $get_booking_time_period[1];	
 		
-		$booking_date = strtotime($start_date[$i]);
+		$booking_date = strtotime($start_date[$i].'H:i:s');
 		
 		$get_service_duration = DB::select( DB::raw("SELECT duration FROM provider_biz_service WHERE service_id = '$service1_id'" ));
 
@@ -751,7 +762,7 @@ print_r(count($slot_data[0]['weekends']));
 			$block_argument_count = $block_argument_count;
 		}
 		
-		$today_date = strtotime(date('Y-m-d'));
+		$today_date = strtotime(date('Y-m-d H:i:s'));
 		
 			
 		if($booking_time_from >= $booking_date && $booking_date >= $today_date ){
@@ -857,7 +868,7 @@ print_r(count($slot_data[0]['weekends']));
 		
 		$booking_time_till = $get_booking_time_period[1];
 		
-		$booking_date = strtotime($start_date); 
+		$booking_date = strtotime($start_date .'H:i:s');  
 		
 		$get_service_duration = DB::select( DB::raw("SELECT duration FROM provider_biz_service WHERE service_id = '$service1_id'" ));
 
@@ -871,7 +882,7 @@ print_r(count($slot_data[0]['weekends']));
 			$block_argument_count = $block_argument_count;
 		}
 		
-		$today_date = strtotime(date('Y-m-d'));
+		$today_date = strtotime(date('Y-m-d H:i:s'));
 		
 		if($booking_time_from >= $booking_date && $booking_date >= $today_date ){
 			
@@ -927,7 +938,7 @@ print_r(count($slot_data[0]['weekends']));
 
 								}
 								}else{
-										return $this->createErrorResponse("The given booking date is past or blocked future date.", 1203);
+										return $this->createErrorResponse("The given booking date is past or blocked future date.", 403);
 
 								}
 								
@@ -989,7 +1000,7 @@ print_r(count($slot_data[0]['weekends']));
 		
 		$booking_time_till = $get_booking_time_period[1];	
 		
-		$booking_date = strtotime($start_date[$i]);
+		$booking_date = strtotime($start_date[$i].'H:i:s');
 		
 		$get_service_duration = DB::select( DB::raw("SELECT duration FROM provider_biz_service WHERE service_id = '$service1_id'" ));
 
@@ -1003,7 +1014,7 @@ print_r(count($slot_data[0]['weekends']));
 			$block_argument_count = $block_argument_count;
 		}
 		
-		$today_date = strtotime(date('Y-m-d'));
+		$today_date = strtotime(date('Y-m-d H:i:s'));
 		
 			
 		if($booking_time_from >= $booking_date && $booking_date >= $today_date ){
