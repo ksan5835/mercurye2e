@@ -604,7 +604,9 @@ print_r(count($slot_data[0]['weekends']));
 		
 		$booking_time_till = $get_booking_time_period[1];
 		
-		$booking_date = strtotime($start_date .'H:i:s'); 
+		//echo $start_date.' '.date('H:i:s');die;
+		
+		$booking_date = strtotime($start_date .' '.date('H:i:s')); 
 		
 		$get_service_duration = DB::select( DB::raw("SELECT duration FROM provider_biz_service WHERE service_id = '$service1_id'" ));
 
@@ -748,7 +750,7 @@ print_r(count($slot_data[0]['weekends']));
 		
 		$booking_time_till = $get_booking_time_period[1];	
 		
-		$booking_date = strtotime($start_date[$i].'H:i:s');
+		$booking_date = strtotime($start_date[$i].' '.date('H:i:s'));
 		
 		$get_service_duration = DB::select( DB::raw("SELECT duration FROM provider_biz_service WHERE service_id = '$service1_id'" ));
 
@@ -868,7 +870,7 @@ print_r(count($slot_data[0]['weekends']));
 		
 		$booking_time_till = $get_booking_time_period[1];
 		
-		$booking_date = strtotime($start_date .'H:i:s');  
+		$booking_date = strtotime($start_date .' '.date('H:i:s'));  
 		
 		$get_service_duration = DB::select( DB::raw("SELECT duration FROM provider_biz_service WHERE service_id = '$service1_id'" ));
 
@@ -1000,7 +1002,7 @@ print_r(count($slot_data[0]['weekends']));
 		
 		$booking_time_till = $get_booking_time_period[1];	
 		
-		$booking_date = strtotime($start_date[$i].'H:i:s');
+		$booking_date = strtotime($start_date[$i].' '.date('H:i:s'));
 		
 		$get_service_duration = DB::select( DB::raw("SELECT duration FROM provider_biz_service WHERE service_id = '$service1_id'" ));
 
