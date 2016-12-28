@@ -82,7 +82,7 @@ class ServiceappointmentController extends Controller{
 						 ->value('BR_slot_interval'); */
 						 
 			$BR_slot_interval = DB::table('setting_provider')
-								->leftJoin('provider_biz_branch', 'setting_provider.provider_id', '=', 'provider_biz_branch.biz_id')
+								->leftJoin('provider_biz_branch', 'setting_provider.provider_id', '=', 'provider_biz_branch.provider_id')
 								->select('setting_provider.BR_slot_interval')
 								->where('provider_biz_branch.branch_id', '=', $branch_id)
 								->value('setting_provider.BR_slot_interval');
@@ -95,7 +95,7 @@ class ServiceappointmentController extends Controller{
 		
 	 
 			$BookingTimePeriod = DB::table('setting_provider')
-								->leftJoin('provider_biz_branch', 'setting_provider.provider_id', '=', 'provider_biz_branch.biz_id')
+								->leftJoin('provider_biz_branch', 'setting_provider.provider_id', '=', 'provider_biz_branch.provider_id')
 								->select('setting_provider.BR_Booking_Allowed_From', 'setting_provider.BR_Booking_Allowed_Till','setting_provider.BR_Min_Book_Time_Type')
 								->where('provider_biz_branch.branch_id', '=', $branch_id)
 								->get();
